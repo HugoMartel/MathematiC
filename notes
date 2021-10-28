@@ -12,3 +12,10 @@ Technologies :
     - CMake
     - Bison/Flex
 
+Afficher plusieurs arrays ? (a vérifier)
+les paramètres d'une courbe :
+    - couleur
+    - xmin, xmax, ymin, ymax
+    - pointillés, tirés, continu ?
+    - 
+
