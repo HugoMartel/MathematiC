@@ -1,0 +1,85 @@
+// code utilisateur
+
+var x  = 0;
+
+def fonction1: (x) => {
+    
+    return 2*x^2 +2*x -3;
+}
+
+draw fonction1 in [-8..8] {
+    color: red,
+    label: "xsd"
+}
+
+def fonction2: (x) => {
+    
+    return cos(x);
+}
+
+def fonction3: (x) => {
+    
+    return sin(x);
+}
+
+drawParam fonction2, fonction3{
+    color: green
+}
+
+for x in range(2,8){
+    draw x,7;
+}
+
+while condition {
+    
+}
+
+if x<0 {
+    draw x,1{
+        color:green
+    }
+}else{
+    draw x,1;
+}
+
+switch key {
+    case value:
+        
+        break;
+
+    default:
+        break;
+}
+
+/* 
+(tout le regex est à refaire)
+
+Pour les variables
+var ou string
+
+pour les fonctions
+def             def [^\{\}:=<>]+: \([^\{\}\(\)]+\) => \{(.|\n)+\}
+
+var|def|string
+
+identificateur
+for             for [^\{\}]+ in [^\{\}]+\{(.|\n)+\}
+while
+if
+else
+switch          switch [^;\{\} ]+ \{[^\{\}]+\}
+
+mot clé: return return [^;]+;
+
+for|while|if|else|switch|case|break|default|return
+
+résumé des fonctions de base
+draw peut dessinner un point ou tracer une fonction-|
+drawParam dessiner une fonction parametrique--------|
+prennent les parametres optionnels entre {}       <-|
+
+console renvoi une valeur ou du texte dans la console
+draw|drawParam|console
+pas de parenthése sur les conditions
+; en fin de ligne ;\n
+*/
