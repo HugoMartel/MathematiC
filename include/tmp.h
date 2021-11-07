@@ -5,6 +5,10 @@
 
 #include <stdio.h>
 
+
+/**
+ * @brief   Test function
+ */
 void printXD() {
     int i = 0;
 
