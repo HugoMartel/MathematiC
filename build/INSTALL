@@ -1,0 +1,10 @@
+# INSTALL INSTRUCTIONS
+```
+cmake ..
+cmake --build .
+../test
+```
+
+```
+cmake .. && cmake --build . && ../test
+```
