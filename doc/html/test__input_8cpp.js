@@ -1,5 +1,5 @@
 var test__input_8cpp =
 [
-    [ "TestWindow", "classTestWindow.html", "classTestWindow" ],
+    [ "MainWindow", "classMainWindow.html", "classMainWindow" ],
     [ "Fps", "classFps.html", null ]
 ];

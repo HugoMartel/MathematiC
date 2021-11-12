@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['testwindow_0',['TestWindow',['../classTestWindow.html',1,'']]]
+  ['curve_0',['Curve',['../classCurve.html',1,'']]]
 ];

@@ -10,7 +10,6 @@
 #include <SDL2/SDL_opengl.h>
 #include <GL/gl.h>
 
-#include "../include/tmp.h"
 
 typedef int32_t i32;
 typedef uint32_t u32;

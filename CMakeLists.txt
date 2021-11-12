@@ -92,6 +92,12 @@ elseif (APPLE)
     list(APPEND NNGUI_EXTRA_LIBS ${cocoa_library} ${opengl_library} ${corevideo_library} ${iokit_library})
     list(APPEND NNGUI_EXTRA_SOURCE darwin.mm)
 elseif(CMAKE_SYSTEM MATCHES "Linux")
+    find_program(zenity_BIN
+                 NAMES zenity
+                 HINTS
+                 PATHS usr/bin usr/local/bin $HOME/bin
+    )
+    message("zenity ${zenity_BIN}")
     list(APPEND NNGUI_EXTRA_LIBS GL Xxf86vm Xrandr Xinerama Xcursor Xi X11 pthread dl rt)
 endif()
 
@@ -133,6 +139,8 @@ list(APPEND NNGUI_BASIC_SOURCE
      lib/sdlgui/window.h
      lib/sdlgui/nanovg.h
      lib/sdlgui/nanovg_rt.h
+     include/curve.h
+     include/multibox.h
      
      lib/sdlgui/button.cpp
      lib/sdlgui/checkbox.cpp
@@ -164,26 +172,9 @@ list(APPEND NNGUI_BASIC_SOURCE
      lib/sdlgui/widget.cpp
      lib/sdlgui/window.cpp
      lib/sdlgui/nanovg.c
+     include/curve.cpp
+     include/multibox.cpp
 )
-     
-# option(NANOGUI_BUILD_EXAMPLE "Build example application" ON)
-# if (NANOGUI_BUILD_EXAMPLE)
-#     # Build example application if desired
-#     add_executable(example1 ${NNGUI_EXTRA_SOURCE} ${NNGUI_BASIC_SOURCE} example1.cpp )
-#     set_target_properties(
-#         example1 PROPERTIES
-#         VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build/debug")
-#     target_link_libraries(example1 ${NNGUI_EXTRA_LIBS} ${SDL2_LIBRARY} ${SDL2IMAGE_LIBRARY} ${SDL2TTF_LIBRARY})
-# 
-#     # Copy icons for example application
-#     if (WIN32) 
-#         file(COPY resources/icons DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/debug)
-#     else()
-#         file(COPY resources/icons DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-#     endif()
-# endif()
-
-#-----------------------------------------------------------------------------------------------------------
 
 # Compilation Defines
 set(EXECUTABLE_OUTPUT_PATH "../")
