@@ -97,6 +97,9 @@ public:
             graphWindow = &wdg<sdlgui::Window>("Graph");
             graphWindow->setPosition(sdlgui::Vector2i({475, 0}));
             graphWindow->setFixedSize(sdlgui::Vector2i(805, 720));
+            graphWindow->setDraggable(false);
+            graphWindow->setEnabled(true);
+            graphWindow->setVisible(true);
             graphWindow->setLayout(new sdlgui::GroupLayout());
 
             /* Init curve widget */
@@ -121,7 +124,10 @@ public:
             /* Init window */
             codeWindow = &wdg<sdlgui::Window>("Configuration");
             codeWindow->setPosition(sdlgui::Vector2i({0, 0}));
-            codeWindow->setSize(sdlgui::Vector2i(480, 720));
+            codeWindow->setFixedSize(sdlgui::Vector2i(480, 720));
+            codeWindow->setDraggable(false);
+            codeWindow->setEnabled(true);
+            codeWindow->setVisible(true);
 
             sdlgui::GridLayout *layout = new GridLayout(
                 sdlgui::Orientation::Vertical, 
@@ -162,7 +168,7 @@ public:
             codeWindow->add<Label>("Code :", "sans-bold");
             sdlgui::MultiBox &multiBox = codeWindow->wdg<sdlgui::MultiBox>();
             multiBox.setEditable(true);
-            multiBox.setSize(sdlgui::Vector2i(460, 600));
+            multiBox.setFixedSize(sdlgui::Vector2i(460, 600));
             multiBox.setValue("// test code\nconsole(\"Hello World!\");");//!\ \n not working
             multiBox.setFontSize(16);
             multiBox.setAlignment(sdlgui::MultiBox::Alignment::Left);
@@ -233,11 +239,15 @@ public:
      */
     void setWindowSize(const int& width, const int& height)
     {
+        std::cout << width << ", " << height << "\n";
         /* Change code's height since it will remain at 480 */
-        codeWindow->setSize(sdlgui::Vector2i(480, height));
+        codeWindow->setFixedSize(sdlgui::Vector2i(480, height));
+        std::cout << codeWindow->fixedSize()[0] << ", " << codeWindow->fixedSize()[1] << "\n";
 
         /* Change graph's size */
-        graphWindow->setSize(sdlgui::Vector2i(width-480, height));
+        graphWindow->setFixedSize(sdlgui::Vector2i(width-480, height));
+
+        sdlgui::Screen::draw(mSDL_Renderer);
 
     }
 };
@@ -314,7 +324,7 @@ int main(int /* argc */, char ** /* argv */)
         winHeight,                                                      //    int h: height, in pixels
         SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_RESIZABLE  //    Uint32 flags: window options, see docs
     );
-    SDL_SetWindowIcon(window, IMG_Load("./img/logo.svg"));
+    SDL_SetWindowIcon(window, IMG_Load("../img/logo.svg"));
     SDL_SetWindowMinimumSize(window, 480, 500);
 
     // Check that the window was successfully made
