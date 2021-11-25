@@ -2,23 +2,39 @@
 // (SDL is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
 // If you are new to Dear ImGui, read documentation from the docs/ folder + read the top of imgui.cpp.
 // Read online: https://github.com/ocornut/imgui/tree/master/docs
-
 #include "imgui.h"
-#include "backends/imgui_impl_sdl.h"
-#include "backends/imgui_impl_opengl3.h"
+#include "imgui_impl_sdl.h"
+#include "imgui_impl_opengl3.h"
 #include <stdio.h>
-/* SDL2 */
-#if defined(_WIN32)
 #include <SDL.h>
-#else
-#include <SDL2/SDL.h>
-#endif
-/* OpenGL */
 #if defined(IMGUI_IMPL_OPENGL_ES2)
 #include <SDL_opengles2.h>
 #else
-#include <SDL2/SDL_opengl.h>
+#include <SDL_opengl.h>
 #endif
+#define SIZE_X 1280
+#define SIZE_Y 720
+#define MAX(a, b) (((a) < (b)) ? (b) : (a))
+#include <string>
+
+struct MultilineScrollState
+{
+    // Input.
+    float scrollRegionX;
+    float scrollX;
+    ImGuiStorage *storage;
+
+    // Output.
+    bool newScrollPositionAvailable;
+    float newScrollX;
+};
+
+
+static int MultilineScrollCallback(ImGuiInputTextCallbackData *data);
+static bool ImGuiInputTextMultiline(const char* label, char* buf, size_t buf_size, float height, ImGuiInputTextFlags flags  );
+static void doStyle();
+static void ShowMainMenuBar();
+static void menuFile();
 
 // Main code
 int main(int, char**)
@@ -61,7 +77,7 @@ int main(int, char**)
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
     SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-    SDL_Window* window = SDL_CreateWindow("Dear ImGui SDL2+OpenGL3 example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
+    SDL_Window* window = SDL_CreateWindow("MathematiC", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SIZE_X, SIZE_Y, window_flags);
     SDL_GLContext gl_context = SDL_GL_CreateContext(window);
     SDL_GL_MakeCurrent(window, gl_context);
     SDL_GL_SetSwapInterval(1); // Enable vsync
@@ -85,7 +101,7 @@ int main(int, char**)
     // - If no fonts are loaded, dear imgui will use the default font. You can also load multiple fonts and use ImGui::PushFont()/PopFont() to select them.
     // - AddFontFromFileTTF() will return the ImFont* so you can store it if you need to select the font among multiple.
     // - If the file cannot be loaded, the function will return NULL. Please handle those errors in your application (e.g. use an assertion, or display an error and quit).
-    // - The fonts will be rasterized at a given size (w/ oversampling) and stored into a texture when calling ImFontAtlas::Build()/GetTexDataAsXXXX(), which ImGui_ImplXXXX_NewFrame below will call.
+    // -lThe fonts will be rasterized at a given size (w/ oversampling) and stored into a texture when calling ImFontAtlas::Build()/GetTexDataAsXXXX(), which ImGui_ImplXXXX_NewFrame below will call.
     // - Read 'docs/FONTS.md' for more instructions and details.
     // - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
     //io.Fonts->AddFontDefault();
@@ -97,22 +113,26 @@ int main(int, char**)
     //IM_ASSERT(font != NULL);
 
     // Our state
-    bool show_demo_window = true;
-    bool show_another_window = false;
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
+    bool show_code = true;
+    bool show_graph = true;
+    /*Some definitions*/
+    ImVec2 codeSize(SIZE_X/3, SIZE_Y);
+    ImVec2 codePos(0, 20);
+    ImVec2 graphSize(2*SIZE_X/3, SIZE_Y);
+    ImVec2 graphPos(SIZE_X/3, 20);
+    ImGuiWindowFlags windowFlags = (ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
+    char buf[1000];
+    std::string buff;
     // Main loop
     bool done = false;
-    while (!done)
-    {
+    while (!done) {
         // Poll and handle events (inputs, window resize, etc.)
         // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
         // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application.
         // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
         // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
         SDL_Event event;
-        while (SDL_PollEvent(&event))
-        {
+        while (SDL_PollEvent(&event)) {
             ImGui_ImplSDL2_ProcessEvent(&event);
             if (event.type == SDL_QUIT)
                 done = true;
@@ -124,48 +144,28 @@ int main(int, char**)
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
-
-        // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-        if (show_demo_window)
-            ImGui::ShowDemoWindow(&show_demo_window);
-
-        // 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
-        {
-            static float f = 0.0f;
-            static int counter = 0;
-
-            ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-            ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-            ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-            ImGui::Checkbox("Another Window", &show_another_window);
-
-            ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-            ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-            if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-                counter++;
-            ImGui::SameLine();
-            ImGui::Text("counter = %d", counter);
-
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        ShowMainMenuBar();
+        ImVec2 codeSize(SIZE_X/3, SIZE_Y);
+        /*setting windowsize and position*/
+        ImGui::SetNextWindowSize(codeSize, 0);
+        ImGui::SetNextWindowPos(codePos, 0);
+        if (show_code) { //code part
+            ImGui::Begin("code", NULL, windowFlags);
+            doStyle();
+            //ImGui::InputTextMultiline("code", buff);
+            ImGuiInputTextMultiline("chelou", buf, 1000, SIZE_Y, 0);
             ImGui::End();
         }
-
-        // 3. Show another simple window.
-        if (show_another_window)
-        {
-            ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-            ImGui::Text("Hello from another window!");
-            if (ImGui::Button("Close Me"))
-                show_another_window = false;
+        ImGui::SetNextWindowSize(graphSize, 0);
+        ImGui::SetNextWindowPos(graphPos, 0);
+        if (show_graph) { //graph part 
+            ImGui::Begin("graphe", NULL, windowFlags);
             ImGui::End();
         }
 
         // Rendering
         ImGui::Render();
         glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
-        glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         SDL_GL_SwapWindow(window);
@@ -181,4 +181,158 @@ int main(int, char**)
     SDL_Quit();
 
     return 0;
+}
+
+/****************************************************************
+***************************FUNCTIONS*****************************
+****************************************************************/
+
+static int MultilineScrollCallback(ImGuiInputTextCallbackData *data)
+{
+    MultilineScrollState *scrollState = (MultilineScrollState *)data->UserData;
+    ImGuiID cursorId = ImGui::GetID("cursor");
+    int oldCursorIndex = scrollState->storage->GetInt(cursorId, 0);
+    if (oldCursorIndex != data->CursorPos) {
+        int begin = data->CursorPos;
+        while ((begin > 0) && (data->Buf[begin - 1] != '\n')) {
+            --begin;
+        }
+        float cursorOffset = ImGui::CalcTextSize(data->Buf + begin, data->Buf + data->CursorPos).x;
+        float SCROLL_INCREMENT = scrollState->scrollRegionX * 0.25f;
+        if (cursorOffset < scrollState->scrollX) {
+            scrollState->newScrollPositionAvailable = true;
+            scrollState->newScrollX = MAX(0.0f, cursorOffset - SCROLL_INCREMENT);
+        }
+        else if ((cursorOffset - scrollState->scrollRegionX) >= scrollState->scrollX) {
+            scrollState->newScrollPositionAvailable = true;
+            scrollState->newScrollX = cursorOffset - scrollState->scrollRegionX + SCROLL_INCREMENT;
+        }
+    }
+    scrollState->storage->SetInt(cursorId, data->CursorPos);
+    return 0;
+}
+
+static bool ImGuiInputTextMultiline(const char* label, char* buf, size_t buf_size, float height, ImGuiInputTextFlags flags = 0)
+{
+    float scrollbarSize = ImGui::GetStyle().ScrollbarSize;
+    float labelWidth = ImGui::CalcTextSize(label).x + scrollbarSize;
+    float SCROLL_WIDTH = 2000.0f; // Very large scrolling width to allow for very long lines.
+    MultilineScrollState scrollState = {};
+    // Set up child region for horizontal scrolling of the text box.
+    ImGui::BeginChild(label, ImVec2(-labelWidth, height), false, ImGuiWindowFlags_HorizontalScrollbar);
+    scrollState.scrollRegionX = MAX(0.0f, ImGui::GetWindowWidth() - scrollbarSize);
+    scrollState.scrollX = ImGui::GetScrollX();
+    scrollState.storage = ImGui::GetStateStorage();
+    bool changed = ImGui::InputTextMultiline(label, buf, buf_size, ImVec2(SCROLL_WIDTH, MAX(0.0f, height - scrollbarSize)),
+                                             flags | ImGuiInputTextFlags_CallbackAlways, MultilineScrollCallback, &scrollState);
+
+    if (scrollState.newScrollPositionAvailable) {
+        ImGui::SetScrollX(scrollState.newScrollX);
+    }
+    ImGui::EndChild();
+    ImGui::SameLine();
+    ImGui::Text(label);
+    return changed;
+}
+
+
+/*Function to add bg color & style*/
+static void doStyle()
+{
+    ImGuiStyle &style = ImGui::GetStyle(); 
+    style.Colors[ImGuiCol_WindowBg] = ImColor(69, 71, 91, 255);
+}
+
+/*funtion to show main menu*/
+static void ShowMainMenuBar()
+{
+    if (ImGui::BeginMainMenuBar()) {
+        if (ImGui::BeginMenu("File")) {
+            menuFile();
+            ImGui::EndMenu();                    
+        }
+        if (ImGui::BeginMenu("Edit")) {
+            if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
+            if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
+            ImGui::Separator();
+            if (ImGui::MenuItem("Cut", "CTRL+X")) {}
+            if (ImGui::MenuItem("Copy", "CTRL+C")) {}
+            if (ImGui::MenuItem("Paste", "CTRL+V")) {}
+                ImGui::EndMenu();
+        }
+        ImGui::EndMainMenuBar();
+    }
+}
+
+/*show main file menu*/
+static void menuFile()
+{
+    ImGui::MenuItem("(demo menu)", NULL, false, false);
+    if (ImGui::MenuItem("New")) {
+        //TODO
+    }
+    if (ImGui::MenuItem("Open", "Ctrl+O")) {
+        //TODO
+    }
+    if (ImGui::BeginMenu("Open Recent")) {
+        ImGui::MenuItem("fish_hat.c");
+        ImGui::MenuItem("fish_hat.inl");
+        ImGui::MenuItem("fish_hat.h");
+        if (ImGui::BeginMenu("More..")) {
+            ImGui::MenuItem("Hello");
+            ImGui::MenuItem("Sailor");
+            if (ImGui::BeginMenu("Recurse..")) {
+                menuFile();
+                ImGui::EndMenu();
+            }
+            ImGui::EndMenu();
+        }
+        ImGui::EndMenu();
+    }
+    if (ImGui::MenuItem("Save", "Ctrl+S")) {}
+    if (ImGui::MenuItem("Save As..")) {}
+
+    ImGui::Separator();
+    if (ImGui::BeginMenu("Options")) {
+        static bool enabled = true;
+        ImGui::MenuItem("Enabled", "", &enabled);
+        ImGui::BeginChild("child", ImVec2(0, 60), true);
+        for (int i = 0; i < 10; i++)
+            ImGui::Text("Scrolling Text %d", i);
+        ImGui::EndChild();
+        static float f = 0.5f;
+        static int n = 0;
+        ImGui::SliderFloat("Value", &f, 0.0f, 1.0f);
+        ImGui::InputFloat("Input", &f, 0.1f);
+        ImGui::Combo("Combo", &n, "Yes\0No\0Maybe\0\0");
+        ImGui::EndMenu();
+    }
+
+    if (ImGui::BeginMenu("Colors")) {
+        float sz = ImGui::GetTextLineHeight();
+        for (int i = 0; i < ImGuiCol_COUNT; i++) {
+            const char* name = ImGui::GetStyleColorName((ImGuiCol)i);
+            ImVec2 p = ImGui::GetCursorScreenPos();
+            ImGui::GetWindowDrawList()->AddRectFilled(p, ImVec2(p.x + sz, p.y + sz), ImGui::GetColorU32((ImGuiCol)i));
+            ImGui::Dummy(ImVec2(sz, sz));
+            ImGui::SameLine();
+            ImGui::MenuItem(name);
+        }
+        ImGui::EndMenu();
+    }
+
+    // Here we demonstrate appending again to the "Options" menu (which we already created above)
+    // Of course in this demo it is a little bit silly that this function calls BeginMenu("Options") twice.
+    // In a real code-base using it would make senses to use this feature from very different code locations.
+    if (ImGui::BeginMenu("Options")) {// <-- Append!
+        static bool b = true;
+        ImGui::Checkbox("SomeOption", &b);
+        ImGui::EndMenu();
+    }
+
+    if (ImGui::BeginMenu("Disabled", false)) {// Disabled
+        IM_ASSERT(0);
+    }
+    if (ImGui::MenuItem("Checked", NULL, true)) {}
+    if (ImGui::MenuItem("Quit", "Alt+F4")) {}
 }
