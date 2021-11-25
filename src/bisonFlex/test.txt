@@ -1,0 +1,32 @@
+GoTo @la_bas
+
+@ici : 
+Imprime ce + bloc + ne + sera + pas + execute + a + cause + du + goto
+x = 0
+y = 1
+Imprime x
+Imprime y
+
+@la_bas: 
+
+Si (x)
+Alors
+	Si (y)
+	Alors
+		Imprime Une + Condition + Imbriquee
+		Imprime A + cause + du + goto + y + est + nul
+	Sinon
+		Imprime 1+2
+	FinSi
+Sinon
+	Imprime 6*7
+FinSi
+
+GoTo @fin
+
+	Imprime ce + bloc + ne + sera + pas + execute + a + cause + du + goto
+	Imprime EssayezLaBoucleInfinieAvecLeGoto
+	GoTo @ici
+	Imprime EtCodezUnPrintDigneDeCeNom
+	
+@fin:

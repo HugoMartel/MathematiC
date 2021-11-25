@@ -26,7 +26,7 @@ drawParam fonction2, fonction3{
     color: green
 }
 
-for x in range(2,8){
+for x [2:0.1:8]{
     draw x,7;
 }
 
@@ -42,14 +42,6 @@ if x<0 {
     draw x,1;
 }
 
-switch key {
-    case value:
-        
-        break;
-
-    default:
-        break;
-}
 
 /* 
 (tout le regex est à refaire)
@@ -67,11 +59,10 @@ for             for [^\{\}]+ in [^\{\}]+\{(.|\n)+\}
 while
 if
 else
-switch          switch [^;\{\} ]+ \{[^\{\}]+\}
 
 mot clé: return return [^;]+;
 
-for|while|if|else|switch|case|break|default|return
+for|while|if|else|default|return
 
 résumé des fonctions de base
 draw peut dessinner un point ou tracer une fonction-|
