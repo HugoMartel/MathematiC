@@ -34,8 +34,7 @@ for|FOR|For                                                 { return FOR; }
 draw|Draw|DRAW                                              { return DRAW; }
 while|While|WHILE                                           { return WHILE; }
 drawParam|DrawParam|drawparam|DRAWPARAM                     { return DRAWPARAM; }
-
-" "                                     {}
+" "                                     {  }
 [a-zA-Z_][a-zA-Z0-9_]*                  { strcpy(yylval.svalue, yytext); return VAR; }
 "+="                                    { return PLUS_EQUAL; }
 "-="                                    { return MIN_EQUAL; }
@@ -55,13 +54,13 @@ drawParam|DrawParam|drawparam|DRAWPARAM                     { return DRAWPARAM; 
 "*"                                     { return yytext[0]; }
 "/"                                     { return yytext[0]; }
 "%"                                     { return yytext[0]; }
-"("                                     { return '('; }
-")"                                     { return ')'; }
-"{"                                     { return '{'; }
-"}"                                     { return '}'; }
+\(                                      { return '('; }
+\)                                      { return ')'; }
+\{                                      { return '{'; }
+\}                                      { return '}'; }
 ","                                     { return ','; }
 ";"                                     { return ';'; }
-<<EOF>>                                 { printf("Test file contains a valid source code"); return EOF; }
+<<EOF>>                                 { printf("Test file contains a valid source code\n"); return EOF; }
 .                                       { printf("lex error : %s\n", yytext); return 0; }
 
 %%

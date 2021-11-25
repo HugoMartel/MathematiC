@@ -4,22 +4,60 @@
     #include <math.h>
     #include <string>
     #include <map>
+    #include <vector>
+    #include <iostream>
+    using namespace std;
     extern int yylex();
     extern FILE *yyin;
     extern char *yytext;
     int yyerror(char *s);
-    std::map<std::string,float> floatVars;
+    map<string,float> floatVars;
+    
 
     #define DOUBLE dvalue
     #define STRING svalue
     #define BOOL bvalue
+    #define ADDRESS adresse
+
+class instruction{
+    public:
+        instruction (const int &c, const double &v=0, const string &n="") {code = c; value = v; name = n;};  
+        int code; 
+        double value;     // éventuellement une valeur si besoin
+        string name;      // ou une référence pour la table des données 
+    };
+
+  // Structure pour accueillir le code généré 
+  // (sone de code ou code machine ou assembleur)
+    vector <instruction> code_genere;
+
+  // Déclaration de la map qui associe
+  // les noms des variables à leur valeur
+  // (La table de symboles)
+  map<string,double> variables;
+  int ic = 0;
+
+  // Remarquez les paramètres par défaut pour faciliter les appels depuis la grammaire
+  int add_instruction(const int &c, const double &v=0, const string &n="") {
+      code_genere.push_back(instruction(c,v,n)); 
+      ic++;
+      return 0; 
+   }; 
 %}
 
+%code requires
+  {
+    typedef struct adr {
+        int jmp;  // adresse du jmp
+        int jc;  // adrese  du jc
+    } type_adresse;
+  }
 
 %union {
     double dvalue;
     char svalue[50];
     bool bvalue;
+    type_adresse adresse;
 }
 
 %type <DOUBLE> expr
@@ -33,10 +71,10 @@
 %token <DOUBLE> POW
 %token <DOUBLE> EXP
 %token <STRING> VAR
-%token <BOOL> FOR
-%token <BOOL> IF
-%token <BOOL> ELSE
-%token <DOUBLE> WHILE
+%token <ADDRESS> FOR
+%token <ADDRESS> IF
+%token <ADDRESS> ELSE
+%token <ADDRESS> WHILE
 %token <DOUBLE> TAN
 %token <DOUBLE> ARCOS
 %token <DOUBLE> ARCSIN
@@ -51,6 +89,8 @@
 %token <DOUBLE> LOG
 %token DRAWPARAM
 %token DRAW
+%token <BOOL> JMP
+%token <BOOL> JMPCOND
 
 /* Operators */
 %token <DOUBLE> PLUS_EQUAL
@@ -84,45 +124,52 @@ lignes:  /* \epsilon */                 { /* deletes */ }
 
 instruction: /* \epsilon */             {}
            | expr                       { printf("= %g\n", $1);}  
-           | IF logic '{' '\n'
-                lignes
+           | IF logic '{' '\n'          { // Je sauvegarde l'endroit actuel pour revenir mofifier l'adresse 
+                                          // lorsqu'elle sera connue (celle du JC)
+                                          $1.jc = ic;
+                                          add_instruction(JMPCOND);  }
+                lignes                  { // Je sauvegarde l'endroit actuel pour revenir mofifier l'adresse 
+                                          // lorsqu'elle sera connue (celle du JMP)
+                                          $1.jmp = ic;
+                                          add_instruction(JMP);
+                                          // Je mets à jour l'adresse du saut conditionnel
+                                          code_genere[$1.jc].value = ic;
+                                        }
              '}' ELSE '{' '\n'
-                lignes
-             '}'                        { printf("if instruction with else\n"); }
-           | IF logic '{' '\n'
-                lignes
-             '}'                        { printf("if instruction\n"); }
+                lignes              
+             '}'                        { // Je mets à jour l'adresse du saut inconditionnel
+                                          code_genere[$1.jmp].value = ic; }
            | FOR expr '[' expr ':' expr ':' expr ']' '{' '\n'
                 lignes
-             '}'                        { printf("for instruction\n"); }
+             '}'                        { add_instruction(FOR); }
            | WHILE logic '{' '\n'
                 lignes
-             '}'                        { printf("while instruction\n"); }
+             '}'                        { add_instruction(WHILE); }
             
 
-logic: expr SUP expr        { $$ = $1 >= $3; printf("%g >= %g = %i\n", $1, $3, $$); }
-     | expr INF expr        { $$ = $1 >= $3; printf("%g <= %g = %i\n", $1, $3, $$); }
-     | expr SUP_STRICT expr { $$ = $1 >= $3; printf("%g > %g = %i\n", $1, $3, $$); }
-     | expr INF_STRICT expr { $$ = $1 >= $3; printf("%g < %g = %i\n", $1, $3, $$); }
-     | expr EQUAL expr      { $$ = $1 >= $3; printf("%g == %g = %i\n", $1, $3, $$); }
-     | expr NOT_EQ expr     { $$ = $1 >= $3; printf("%g != %g = %i\n", $1, $3, $$); }
-     | expr AND expr        { $$ = $1 >= $3; printf("%g && %g = %i\n", $1, $3, $$); }
-     | expr OR expr         { $$ = $1 || $3; printf("%g || %g = %i\n", $1, $3, $$); }
+logic: expr SUP expr        { add_instruction(SUP); }
+     | expr INF expr        { add_instruction(INF); }
+     | expr SUP_STRICT expr { add_instruction(SUP_STRICT); }
+     | expr INF_STRICT expr { add_instruction(INF_STRICT); }
+     | expr EQUAL expr      { add_instruction(EQUAL); }
+     | expr NOT_EQ expr     { add_instruction(NOT_EQ); }
+     | expr AND expr        { add_instruction(AND); }
+     | expr OR expr         { add_instruction(OR); }
 
 
-expr: NUM                   { $$ = $1; }
-    | SIN '(' expr ')'      { $$ = sin($3); printf("sin(%g) = %g\n", $3, $$); }
-    | COS '(' expr ')'      { $$ = cos($3); printf("cos(%g) = %g\n", $3, $$); }
-    | TAN '(' expr ')'      { $$ = tan($3); printf("tan(%g) = %g\n", $3, $$); }
-    | ARCOS '(' expr ')'    { $$ = acos($3); printf("acos(%g) = %g\n", $3, $$); }
-    | ARCSIN '(' expr ')'   { $$ = asin($3); printf("asin(%g) = %g\n", $3, $$); }
-    | ARCTAN '(' expr ')'   { $$ = atan($3); printf("atan(%g) = %g\n", $3, $$); }
-    | SINH '(' expr ')'     { $$ = sinh($3); printf("sinh(%g) = %g\n", $3, $$); }
-    | COSH '(' expr ')'     { $$ = cosh($3); printf("cosh(%g) = %g\n", $3, $$); }
-    | TANH '(' expr ')'     { $$ = tanh($3); printf("tanh(%g) = %g\n", $3, $$); }
-    | ARCOSH '(' expr ')'   { $$ = acosh($3); printf("acosh(%g) = %g\n", $3, $$); }
-    | ARCSINH '(' expr ')'  { $$ = asinh($3); printf("asinh(%g) = %g\n", $3, $$); }
-    | ARCTANH '(' expr ')'  { $$ = atanh($3); printf("atanh(%g) = %g\n", $3, $$); }
+expr: NUM                   { add_instruction(NUM, $1); }
+    | SIN '(' expr ')'      { add_instruction(SIN); }
+    | COS '(' expr ')'      { add_instruction(COS); }
+    | TAN '(' expr ')'      { add_instruction(TAN); }
+    | ARCOS '(' expr ')'    { add_instruction(ARCOS); }
+    | ARCSIN '(' expr ')'   { add_instruction(ARCSIN); }
+    | ARCTAN '(' expr ')'   { add_instruction(ARCTAN); }
+    | SINH '(' expr ')'     { add_instruction(SINH); }
+    | COSH '(' expr ')'     { add_instruction(COSH); }
+    | TANH '(' expr ')'     { add_instruction(TANH); }
+    | ARCOSH '(' expr ')'   { add_instruction(ARCOSH); }
+    | ARCSINH '(' expr ')'  { add_instruction(ARCSINH); }
+    | ARCTANH '(' expr ')'  { add_instruction(ARCTANH); }
     | '(' expr ')'          { $$ = $2; }
     | expr '+' expr         { $$ = $1 + $3; printf("%g + %g = %g\n", $1, $3, $$); }
     | expr '-' expr         { $$ = $1 - $3; printf("%g - %g = %g\n", $1, $3, $$); }
@@ -138,19 +185,11 @@ expr: NUM                   { $$ = $1; }
                               printf("%d | %d = %d\n", tmp1, tmp2, (int)$$); 
                             }
     | expr '^' expr         { $$ = pow($1,$3); printf("%g^%g = %g\n", $1, $3, $$); }
-    | POW '(' expr ',' expr ')'  { $$ = pow($1,$3); printf("%g^%g = %g\n", $1, $3, $$); }
-    | EXP '(' expr ')'      { $$ = exp($3); printf("exp(%g) = %g\n", $3, $$);  }
-    | LOG '(' expr ')'      { $$ = log($3); printf("log(%g) = %g\n", $3, $$);  }
-    | SQRT '(' expr ')'     { $$ = sqrt($3); printf("sqrt(%g) = %g\n", $3, $$);  }
-    | VAR                   {
-    if (floatVars.count($1)) {
-        $$ = floatVars.at($1);
-        printf("Retrieved %g from the variable %s\n", $$, $1);
-    } else {
-        $$ = 0;
-        printf("Using uninitialized variable %s...\n", $1);
-    }
-}
+    | POW '(' expr ',' expr ')'  { add_instruction(POW); }
+    | EXP '(' expr ')'      { add_instruction(EXP);  }
+    | LOG '(' expr ')'      { add_instruction(LOG);  }
+    | SQRT '(' expr ')'     { add_instruction(SQRT);  }
+    | VAR                   { add_instruction (VAR, 0, $1); }
     | VAR '=' expr               {
     $$ = $3;
 
@@ -236,6 +275,45 @@ int yyerror(char *s)
     return EXIT_SUCCESS;
 }
 
+// Fonction pour mieux voir le code généré 
+// (au lieu des nombres associés au tokens)
+string print_code(int ins) {
+  switch (ins) {
+    case IF      : return "IF";
+    case ELSE      : return "ELSE";
+    case FOR      : return "FOR";
+    case WHILE      : return "WHILE";
+    case SUP      : return "SUP";
+    case INF      : return "INF";
+    case SUP_STRICT    : return "SUP_STRICT";
+    case INF_STRICT     : return "INF_STRICT";
+    case EQUAL      : return "EQUAL";
+    case NOT_EQ      : return "NOT_EQ";
+    case AND      : return "AND";
+    case OR      : return "OR";
+    case NUM      : return "NUM";
+    case SIN      : return "SIN";
+    case COS      : return "COS";
+    case TAN      : return "TAN";
+    case ARCOS      : return "ARCOS";
+    case ARCSIN      : return "ARCSIN";
+    case ARCTAN      : return "ARCTAN";
+    case SINH      : return "SINH";
+    case COSH      : return "COSH";
+    case TANH      : return "TANH";
+    case ARCOSH      : return "ARCOSH";
+    case ARCSINH      : return "ARCSINH";
+    case ARCTANH      : return "ARCTANH";
+    case POW      : return "POW";
+    case EXP      : return "EXP";
+    case LOG      : return "LOG";
+    case SQRT      : return "SQRT";
+    case VAR      : return "VAR";
+    case JMP      : return "JMP";
+    case JMPCOND  : return "JC ";
+    default : return "";
+  }
+}
 
 /*
     MAIN
@@ -259,6 +337,21 @@ int main(int argc, char* argv[])
         yyin = stdin;
         yyparse();
     }
+
+    // boucle d'affichage du tableau contenant tout le programme
+    for (int i = 0; i < code_genere.size(); i++){
+    auto instruction = code_genere [i];
+    cout << i 
+         << '\t'
+         << print_code(instruction.code) 
+         << '\t'
+         << instruction.value 
+         << '\t' 
+         << instruction.name 
+         << endl;
+    }
+
+    
 
     yyparse();
 

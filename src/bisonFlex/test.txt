@@ -1,32 +1,32 @@
-GoTo @la_bas
 
-@ici : 
-Imprime ce + bloc + ne + sera + pas + execute + a + cause + du + goto
 x = 0
 y = 1
-Imprime x
-Imprime y
 
-@la_bas: 
 
-Si (x)
-Alors
-	Si (y)
-	Alors
-		Imprime Une + Condition + Imbriquee
-		Imprime A + cause + du + goto + y + est + nul
-	Sinon
-		Imprime 1+2
-	FinSi
-Sinon
-	Imprime 6*7
-FinSi
+if x<y {
+	if y > 0 {
+		y = sin(2)
+		x = x + y
+	} else {
+		x = cos(3)
+	}
+} else {
+	x =  6*7
+}
 
-GoTo @fin
+z = 4+5
+y = z + x
 
-	Imprime ce + bloc + ne + sera + pas + execute + a + cause + du + goto
-	Imprime EssayezLaBoucleInfinieAvecLeGoto
-	GoTo @ici
-	Imprime EtCodezUnPrintDigneDeCeNom
-	
-@fin:
+// Valid code 1
+var a = 1;
+var b = 2;
+var c = 3;
+
+def fonction1: (x) => {
+    return a*x^2 + b*x + b;
+}
+
+draw fonction1 in [-8..8] {
+    color: red,
+    label: "Fonction 1"
+}
