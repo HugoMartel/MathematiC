@@ -45,6 +45,10 @@
 # Cmake build files
 build/*
 
+# Executables
+test
+MathematiC
+
 # Kernel Module Compile Results
 *.mod*
 *.cmd
