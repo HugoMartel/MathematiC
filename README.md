@@ -5,10 +5,10 @@
 A small function visualizer langage to be able to quickly draw a Mathematical funtion.
 
 # Libraries used
-- cmake
+- make
 - flex/bison
-- SDL2 (coupled w/ SDL2-Image and SDL2-ttf)
-- [nanogui-sdl](https://github.com/dalerank/nanogui-sdl) (modified version to support multiline textbox and Graph drawing)
+- SDL2 & OpenGL3
+- [imgui](https://github.com/ocornut/imgui)
 
 # Interface
 
@@ -42,7 +42,7 @@ def g: (x) => {
     return sin(x);
 }
 
-drawParam f, g {
+draw f, g {
     color: green,
     ymin: 0,
     ymax: 4
@@ -63,8 +63,7 @@ draw sg in [-1..1];
 
 # Compile
 ```
-cd build
-cmake ..
-cmake --build .
-../test
+make clean all
+./test
 ```
+
