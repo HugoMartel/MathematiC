@@ -67,7 +67,7 @@
 
 
 /* First part of user prologue.  */
-#line 1 "calculette.y"
+#line 1 "language/parser.y"
 
     #include <cstdio>
     #include <math.h>
@@ -114,7 +114,7 @@ public:
         return 0;
     };
 
-#line 118 "calculette.bison.cpp"
+#line 118 "generated/parser.bison.cpp"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -137,7 +137,7 @@ public:
 #  endif
 # endif
 
-#include "calculette.bison.hpp"
+#include "parser.bison.hpp"
 /* Symbol kind.  */
 enum yysymbol_kind_t
 {
@@ -1314,19 +1314,19 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* code: declarations fonctions affichage  */
-#line 139 "calculette.y"
+#line 139 "language/parser.y"
                                                         { /* TODO: print start compiling */ }
-#line 1320 "calculette.bison.cpp"
+#line 1320 "generated/parser.bison.cpp"
     break;
 
   case 3: /* declarations: %empty  */
-#line 142 "calculette.y"
+#line 142 "language/parser.y"
                                                         { /* End of declarations */ }
-#line 1326 "calculette.bison.cpp"
+#line 1326 "generated/parser.bison.cpp"
     break;
 
   case 4: /* declarations: declarations var ' ' VAR '=' expr ';'  */
-#line 143 "calculette.y"
+#line 143 "language/parser.y"
                                                         { /* Init Vars */
                 if (!variables.count((yyvsp[-3].STRING))) {
                     variables[(yyvsp[-3].STRING)] = (yyvsp[-1].DOUBLE);
@@ -1334,327 +1334,327 @@ yyreduce:
                     yyerror("Variable already declared...");
                 }
 }
-#line 1338 "calculette.bison.cpp"
+#line 1338 "generated/parser.bison.cpp"
     break;
 
   case 5: /* fonctions: def ' ' VAR '(' args ')'  */
-#line 152 "calculette.y"
+#line 152 "language/parser.y"
                                                         { /* TODO */ }
-#line 1344 "calculette.bison.cpp"
+#line 1344 "generated/parser.bison.cpp"
     break;
 
   case 6: /* args: VAR  */
-#line 154 "calculette.y"
+#line 154 "language/parser.y"
                                                         { /* TODO */ }
-#line 1350 "calculette.bison.cpp"
+#line 1350 "generated/parser.bison.cpp"
     break;
 
   case 7: /* args: args ',' args  */
-#line 155 "calculette.y"
+#line 155 "language/parser.y"
                                                         { /* TODO */ }
-#line 1356 "calculette.bison.cpp"
+#line 1356 "generated/parser.bison.cpp"
     break;
 
   case 8: /* draw_func: VAR ' ' in ' ' '[' NUM '.' '.' NUM ']'  */
-#line 158 "calculette.y"
+#line 158 "language/parser.y"
                                                         { /* TODO */ }
-#line 1362 "calculette.bison.cpp"
+#line 1362 "generated/parser.bison.cpp"
     break;
 
   case 9: /* draw_func: VAR  */
-#line 159 "calculette.y"
+#line 159 "language/parser.y"
                                                         { /* TODO */ }
-#line 1368 "calculette.bison.cpp"
+#line 1368 "generated/parser.bison.cpp"
     break;
 
   case 10: /* draw_func: draw_func ',' draw_func  */
-#line 160 "calculette.y"
+#line 160 "language/parser.y"
                                                         { /* TODO */ }
-#line 1374 "calculette.bison.cpp"
+#line 1374 "generated/parser.bison.cpp"
     break;
 
   case 11: /* $@1: %empty  */
-#line 163 "calculette.y"
+#line 163 "language/parser.y"
                                     { /*TODO: load funcs*/ }
-#line 1380 "calculette.bison.cpp"
+#line 1380 "generated/parser.bison.cpp"
     break;
 
   case 13: /* affichage: DRAW ' ' draw_func ';'  */
-#line 166 "calculette.y"
+#line 166 "language/parser.y"
                                     { /* TODO: load default args */}
-#line 1386 "calculette.bison.cpp"
+#line 1386 "generated/parser.bison.cpp"
     break;
 
   case 14: /* draw_args: color ':' PARAM  */
-#line 169 "calculette.y"
+#line 169 "language/parser.y"
                                          { /*TODO: check PARAM values*/ }
-#line 1392 "calculette.bison.cpp"
+#line 1392 "generated/parser.bison.cpp"
     break;
 
   case 15: /* draw_args: style ':' PARAM  */
-#line 170 "calculette.y"
+#line 170 "language/parser.y"
                                          { /*TODO: check PARAM values*/ }
-#line 1398 "calculette.bison.cpp"
+#line 1398 "generated/parser.bison.cpp"
     break;
 
   case 16: /* draw_args: label ':' PARAM  */
-#line 171 "calculette.y"
+#line 171 "language/parser.y"
                                          { /*TODO: check PARAM values*/ }
-#line 1404 "calculette.bison.cpp"
+#line 1404 "generated/parser.bison.cpp"
     break;
 
   case 17: /* draw_args: xmin ':' NUM  */
-#line 172 "calculette.y"
+#line 172 "language/parser.y"
                                          { /*TODO*/ }
-#line 1410 "calculette.bison.cpp"
+#line 1410 "generated/parser.bison.cpp"
     break;
 
   case 18: /* draw_args: xmin ':' VAR  */
-#line 173 "calculette.y"
+#line 173 "language/parser.y"
                                          { /*TODO*/ }
-#line 1416 "calculette.bison.cpp"
+#line 1416 "generated/parser.bison.cpp"
     break;
 
   case 19: /* draw_args: xmax ':' NUM  */
-#line 174 "calculette.y"
+#line 174 "language/parser.y"
                                          { /*TODO*/ }
-#line 1422 "calculette.bison.cpp"
+#line 1422 "generated/parser.bison.cpp"
     break;
 
   case 20: /* draw_args: xmax ':' VAR  */
-#line 175 "calculette.y"
+#line 175 "language/parser.y"
                                          { /*TODO*/ }
-#line 1428 "calculette.bison.cpp"
+#line 1428 "generated/parser.bison.cpp"
     break;
 
   case 21: /* draw_args: ymin ':' NUM  */
-#line 176 "calculette.y"
+#line 176 "language/parser.y"
                                          { /*TODO*/ }
-#line 1434 "calculette.bison.cpp"
+#line 1434 "generated/parser.bison.cpp"
     break;
 
   case 22: /* draw_args: ymin ':' VAR  */
-#line 177 "calculette.y"
+#line 177 "language/parser.y"
                                          { /*TODO*/ }
-#line 1440 "calculette.bison.cpp"
+#line 1440 "generated/parser.bison.cpp"
     break;
 
   case 23: /* draw_args: ymax ':' NUM  */
-#line 178 "calculette.y"
+#line 178 "language/parser.y"
                                          { /*TODO*/ }
-#line 1446 "calculette.bison.cpp"
+#line 1446 "generated/parser.bison.cpp"
     break;
 
   case 24: /* draw_args: ymax ':' VAR  */
-#line 179 "calculette.y"
+#line 179 "language/parser.y"
                                          { /*TODO*/ }
-#line 1452 "calculette.bison.cpp"
+#line 1452 "generated/parser.bison.cpp"
     break;
 
   case 25: /* draw_args: draw_args ',' draw_args  */
-#line 180 "calculette.y"
+#line 180 "language/parser.y"
                                          { /*TODO*/ }
-#line 1458 "calculette.bison.cpp"
+#line 1458 "generated/parser.bison.cpp"
     break;
 
   case 26: /* expr: NUM  */
-#line 234 "calculette.y"
+#line 234 "language/parser.y"
                             { add_instruction(NUM, (yyvsp[0].DOUBLE)); }
-#line 1464 "calculette.bison.cpp"
+#line 1464 "generated/parser.bison.cpp"
     break;
 
   case 27: /* expr: SIN '(' expr ')'  */
-#line 235 "calculette.y"
+#line 235 "language/parser.y"
                             { add_instruction(SIN); }
-#line 1470 "calculette.bison.cpp"
+#line 1470 "generated/parser.bison.cpp"
     break;
 
   case 28: /* expr: COS '(' expr ')'  */
-#line 236 "calculette.y"
+#line 236 "language/parser.y"
                             { add_instruction(COS); }
-#line 1476 "calculette.bison.cpp"
+#line 1476 "generated/parser.bison.cpp"
     break;
 
   case 29: /* expr: TAN '(' expr ')'  */
-#line 237 "calculette.y"
+#line 237 "language/parser.y"
                             { add_instruction(TAN); }
-#line 1482 "calculette.bison.cpp"
+#line 1482 "generated/parser.bison.cpp"
     break;
 
   case 30: /* expr: ARCCOS '(' expr ')'  */
-#line 238 "calculette.y"
+#line 238 "language/parser.y"
                             { add_instruction(ARCCOS); }
-#line 1488 "calculette.bison.cpp"
+#line 1488 "generated/parser.bison.cpp"
     break;
 
   case 31: /* expr: ARCSIN '(' expr ')'  */
-#line 239 "calculette.y"
+#line 239 "language/parser.y"
                             { add_instruction(ARCSIN); }
-#line 1494 "calculette.bison.cpp"
+#line 1494 "generated/parser.bison.cpp"
     break;
 
   case 32: /* expr: ARCTAN '(' expr ')'  */
-#line 240 "calculette.y"
+#line 240 "language/parser.y"
                             { add_instruction(ARCTAN); }
-#line 1500 "calculette.bison.cpp"
+#line 1500 "generated/parser.bison.cpp"
     break;
 
   case 33: /* expr: SINH '(' expr ')'  */
-#line 241 "calculette.y"
+#line 241 "language/parser.y"
                             { add_instruction(SINH); }
-#line 1506 "calculette.bison.cpp"
+#line 1506 "generated/parser.bison.cpp"
     break;
 
   case 34: /* expr: COSH '(' expr ')'  */
-#line 242 "calculette.y"
+#line 242 "language/parser.y"
                             { add_instruction(COSH); }
-#line 1512 "calculette.bison.cpp"
+#line 1512 "generated/parser.bison.cpp"
     break;
 
   case 35: /* expr: TANH '(' expr ')'  */
-#line 243 "calculette.y"
+#line 243 "language/parser.y"
                             { add_instruction(TANH); }
-#line 1518 "calculette.bison.cpp"
+#line 1518 "generated/parser.bison.cpp"
     break;
 
   case 36: /* expr: ARCCOSH '(' expr ')'  */
-#line 244 "calculette.y"
+#line 244 "language/parser.y"
                             { add_instruction(ARCCOSH); }
-#line 1524 "calculette.bison.cpp"
+#line 1524 "generated/parser.bison.cpp"
     break;
 
   case 37: /* expr: ARCSINH '(' expr ')'  */
-#line 245 "calculette.y"
+#line 245 "language/parser.y"
                             { add_instruction(ARCSINH); }
-#line 1530 "calculette.bison.cpp"
+#line 1530 "generated/parser.bison.cpp"
     break;
 
   case 38: /* expr: ARCTANH '(' expr ')'  */
-#line 246 "calculette.y"
+#line 246 "language/parser.y"
                             { add_instruction(ARCTANH); }
-#line 1536 "calculette.bison.cpp"
+#line 1536 "generated/parser.bison.cpp"
     break;
 
   case 39: /* expr: '(' expr ')'  */
-#line 247 "calculette.y"
+#line 247 "language/parser.y"
                             { (yyval.DOUBLE) = (yyvsp[-1].DOUBLE); }
-#line 1542 "calculette.bison.cpp"
+#line 1542 "generated/parser.bison.cpp"
     break;
 
   case 40: /* expr: expr '+' expr  */
-#line 248 "calculette.y"
+#line 248 "language/parser.y"
                             { (yyval.DOUBLE) = (yyvsp[-2].DOUBLE) + (yyvsp[0].DOUBLE); printf("%g + %g = %g\n", (yyvsp[-2].DOUBLE), (yyvsp[0].DOUBLE), (yyval.DOUBLE)); }
-#line 1548 "calculette.bison.cpp"
+#line 1548 "generated/parser.bison.cpp"
     break;
 
   case 41: /* expr: expr '-' expr  */
-#line 249 "calculette.y"
+#line 249 "language/parser.y"
                             { (yyval.DOUBLE) = (yyvsp[-2].DOUBLE) - (yyvsp[0].DOUBLE); printf("%g - %g = %g\n", (yyvsp[-2].DOUBLE), (yyvsp[0].DOUBLE), (yyval.DOUBLE)); }
-#line 1554 "calculette.bison.cpp"
+#line 1554 "generated/parser.bison.cpp"
     break;
 
   case 42: /* expr: expr '*' expr  */
-#line 250 "calculette.y"
+#line 250 "language/parser.y"
                             { (yyval.DOUBLE) = (yyvsp[-2].DOUBLE) * (yyvsp[0].DOUBLE); printf("%g * %g = %g\n", (yyvsp[-2].DOUBLE), (yyvsp[0].DOUBLE), (yyval.DOUBLE)); }
-#line 1560 "calculette.bison.cpp"
+#line 1560 "generated/parser.bison.cpp"
     break;
 
   case 43: /* expr: expr '/' expr  */
-#line 251 "calculette.y"
+#line 251 "language/parser.y"
                             { (yyval.DOUBLE) = (yyvsp[-2].DOUBLE) / (yyvsp[0].DOUBLE); printf("%g / %g = %g\n", (yyvsp[-2].DOUBLE), (yyvsp[0].DOUBLE), (yyval.DOUBLE)); }
-#line 1566 "calculette.bison.cpp"
+#line 1566 "generated/parser.bison.cpp"
     break;
 
   case 44: /* expr: expr '&' expr  */
-#line 252 "calculette.y"
+#line 252 "language/parser.y"
                             {
         int tmp1 = (int)(yyvsp[-2].DOUBLE);
         int tmp2 = (int)(yyvsp[0].DOUBLE);
         (yyval.DOUBLE) = tmp1 & tmp2;
         printf("%d & %d = %d\n", tmp1, tmp2, (int)(yyval.DOUBLE));
 }
-#line 1577 "calculette.bison.cpp"
+#line 1577 "generated/parser.bison.cpp"
     break;
 
   case 45: /* expr: expr '|' expr  */
-#line 258 "calculette.y"
+#line 258 "language/parser.y"
                             {
         int tmp1 = (int)(yyvsp[-2].DOUBLE);
         int tmp2 = (int)(yyvsp[0].DOUBLE);
         (yyval.DOUBLE) = tmp1 | tmp2;
         printf("%d | %d = %d\n", tmp1, tmp2, (int)(yyval.DOUBLE));
 }
-#line 1588 "calculette.bison.cpp"
+#line 1588 "generated/parser.bison.cpp"
     break;
 
   case 46: /* expr: expr '^' expr  */
-#line 264 "calculette.y"
+#line 264 "language/parser.y"
                                     { (yyval.DOUBLE) = pow((yyvsp[-2].DOUBLE),(yyvsp[0].DOUBLE)); printf("%g^%g = %g\n", (yyvsp[-2].DOUBLE), (yyvsp[0].DOUBLE), (yyval.DOUBLE)); }
-#line 1594 "calculette.bison.cpp"
+#line 1594 "generated/parser.bison.cpp"
     break;
 
   case 47: /* expr: POW '(' expr ',' expr ')'  */
-#line 265 "calculette.y"
+#line 265 "language/parser.y"
                                     { add_instruction(POW); }
-#line 1600 "calculette.bison.cpp"
+#line 1600 "generated/parser.bison.cpp"
     break;
 
   case 48: /* expr: EXP '(' expr ')'  */
-#line 266 "calculette.y"
+#line 266 "language/parser.y"
                                     { add_instruction(EXP); }
-#line 1606 "calculette.bison.cpp"
+#line 1606 "generated/parser.bison.cpp"
     break;
 
   case 49: /* expr: LOG '(' expr ')'  */
-#line 267 "calculette.y"
+#line 267 "language/parser.y"
                                     { add_instruction(LOG); }
-#line 1612 "calculette.bison.cpp"
+#line 1612 "generated/parser.bison.cpp"
     break;
 
   case 50: /* expr: SQRT '(' expr ')'  */
-#line 268 "calculette.y"
+#line 268 "language/parser.y"
                                     { add_instruction(SQRT); }
-#line 1618 "calculette.bison.cpp"
+#line 1618 "generated/parser.bison.cpp"
     break;
 
   case 51: /* expr: VAR  */
-#line 269 "calculette.y"
+#line 269 "language/parser.y"
                                     { add_instruction(VAR, 0, (yyvsp[0].STRING)); }
-#line 1624 "calculette.bison.cpp"
+#line 1624 "generated/parser.bison.cpp"
     break;
 
   case 52: /* expr: VAR '=' expr  */
-#line 270 "calculette.y"
+#line 270 "language/parser.y"
                                     {  }
-#line 1630 "calculette.bison.cpp"
+#line 1630 "generated/parser.bison.cpp"
     break;
 
   case 53: /* expr: VAR PLUS_EQUAL expr  */
-#line 271 "calculette.y"
+#line 271 "language/parser.y"
                                     {  }
-#line 1636 "calculette.bison.cpp"
+#line 1636 "generated/parser.bison.cpp"
     break;
 
   case 54: /* expr: VAR MIN_EQUAL expr  */
-#line 272 "calculette.y"
+#line 272 "language/parser.y"
                                     {  }
-#line 1642 "calculette.bison.cpp"
+#line 1642 "generated/parser.bison.cpp"
     break;
 
   case 55: /* expr: VAR TIMES_EQUAL expr  */
-#line 273 "calculette.y"
+#line 273 "language/parser.y"
                                     {  }
-#line 1648 "calculette.bison.cpp"
+#line 1648 "generated/parser.bison.cpp"
     break;
 
   case 56: /* expr: VAR DIV_EQUAL expr  */
-#line 274 "calculette.y"
+#line 274 "language/parser.y"
                                     {  }
-#line 1654 "calculette.bison.cpp"
+#line 1654 "generated/parser.bison.cpp"
     break;
 
 
-#line 1658 "calculette.bison.cpp"
+#line 1658 "generated/parser.bison.cpp"
 
       default: break;
     }
@@ -1848,7 +1848,7 @@ yyreturn:
   return yyresult;
 }
 
-#line 276 "calculette.y"
+#line 276 "language/parser.y"
 
 
 int yyerror(char *s)

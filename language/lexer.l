@@ -1,9 +1,13 @@
 %{
     #include <stdio.h>
     #include <stdlib.h>
-    #include "calculette.bison.hpp"
+    #include "parser.bison.hpp"
 %}
 
+
+/*-----------------
+ -- Definitions --
+-----------------*/
 %option noyywrap
 
 variable        [a-zA-Z_][a-zA-Z0-9_]*
@@ -11,8 +15,13 @@ parameter       \"[a-z][a-z\-]*[a-z]\"
 number          [0-9]+(\.[0-9]*)?([Ee][+-]?[0-9]+)?
 toskip          \n|\r|\t|\/\/.*
 
+/* Used to track line information */
 %x    IN_COMMENT
 
+
+/*---------------
+ --   Rules   --
+---------------*/
 %%
         /* Multiline Comment */
 <INITIAL>"/*"                   BEGIN(IN_COMMENT);
@@ -23,7 +32,7 @@ toskip          \n|\r|\t|\/\/.*
 \n        /* eat newlines */
 }
 
-{number}                                                    { 
+{number}                                                    {
     char *endptr;
     yylval.dvalue = strtod(yytext, &endptr); return NUM; }
 " "                                                         { return ' '; }
@@ -88,4 +97,3 @@ ymax                                                        { return ymax; }
 .                                                           { printf("lex error : %s\n", yytext); return 0; }
 
 %%
-

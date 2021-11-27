@@ -35,17 +35,17 @@
    especially those whose name start with YY_ or yy_.  They are
    private implementation details that can be changed or removed.  */
 
-#ifndef YY_YY_CALCULETTE_BISON_HPP_INCLUDED
-# define YY_YY_CALCULETTE_BISON_HPP_INCLUDED
+#ifndef YY_YY_GENERATED_PARSER_BISON_HPP_INCLUDED
+# define YY_YY_GENERATED_PARSER_BISON_HPP_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 0
+# define YYDEBUG 1
 #endif
 #if YYDEBUG
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 49 "calculette.y"
+#line 49 "language/parser.y"
 
     typedef struct adr {
         int jmp;  // adresse du jmp
@@ -53,7 +53,7 @@ extern int yydebug;
     } type_adresse;
   
 
-#line 57 "calculette.bison.hpp"
+#line 57 "generated/parser.bison.hpp"
 
 /* Token kinds.  */
 #ifndef YYTOKENTYPE
@@ -121,14 +121,14 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 56 "calculette.y"
+#line 56 "language/parser.y"
 
     double dvalue;
     char svalue[50];
     bool bvalue;
     type_adresse adresse;
 
-#line 132 "calculette.bison.hpp"
+#line 132 "generated/parser.bison.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -141,4 +141,4 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 
-#endif /* !YY_YY_CALCULETTE_BISON_HPP_INCLUDED  */
+#endif /* !YY_YY_GENERATED_PARSER_BISON_HPP_INCLUDED  */

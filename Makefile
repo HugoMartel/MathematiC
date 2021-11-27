@@ -15,34 +15,46 @@
 #CXX = clang++
 
 EXE = test
-IMGUI_DIR = ./lib/imgui
 
+IMGUI_DIR = ./lib/imgui
 SRC := src
+INC := include
+LANG := language
+GEN := generated
 BUILD := build
 
-SOURCES = src/test.cpp
+# SRC
+SOURCES = $(SRC)/test.cpp
+# IMGUI_DIR
 SOURCES += $(IMGUI_DIR)/imgui.cpp $(IMGUI_DIR)/imgui_draw.cpp $(IMGUI_DIR)/imgui_tables.cpp $(IMGUI_DIR)/imgui_widgets.cpp
+# IMGUI_DIR/backends
 SOURCES += $(IMGUI_DIR)/backends/imgui_impl_sdl.cpp $(IMGUI_DIR)/backends/imgui_impl_opengl3.cpp
-SOURCES += $(IMGUI_DIR)/imgui_demo.cpp# tmp
-OBJS = $(addprefix $(BUILD)/, $(addsuffix .o, $(basename $(notdir $(SOURCES)))))
-UNAME_S := $(shell uname -s)
-LINUX_GL_LIBS = -lGL
+# INCLUDE
+SOURCES += $(IMGUI_DIR)/imgui_demo.cpp# /!\ TO CHANGE
 
-## IMGUI HEASERS && OURS
+
+# Get generated objects names
+OBJS = $(addprefix $(BUILD)/, $(addsuffix .o, $(basename $(notdir $(SOURCES)))))
+CLEANABLE = $(EXE) $(OBJS) $(BUILD)/lexer.flex.o $(BUILD)/parser.bison.o $(BUILD)/lang
+
+# Get current config
+UNAME_S := $(shell uname -s)
+
+
+## IMGUI HEADERS && OURS
 CXXFLAGS = -I $(IMGUI_DIR) -I $(IMGUI_DIR)/backends -I ./include
-CXXFLAGS += -g -Wall -Wextra -Wformat
+CXXFLAGS += -Wall -Wextra -Wformat --std=c++17
+# Linker
+LDFLAGS := -g
+#LDFLAGS := -O3
+# Flex
+LFLAGS = -v
+LFLAGS += -d -p
+# Bison
+BFLAGS = --warnings=all --color=yes --defines -v
+BFLAGS += -t
 LIBS =
 
-##---------------------------------------------------------------------
-## OPENGL ES
-##---------------------------------------------------------------------
-
-## This assumes a GL ES library available in the system, e.g. libGLESv2.so
-# CXXFLAGS += -DIMGUI_IMPL_OPENGL_ES2
-# LINUX_GL_LIBS = -lGLESv2
-## If you're on a Raspberry Pi and want to use the legacy drivers,
-## use the following instead:
-# LINUX_GL_LIBS = -L/opt/vc/lib -lbrcmGLESv2
 
 ##---------------------------------------------------------------------
 ## BUILD FLAGS PER PLATFORM
@@ -50,6 +62,18 @@ LIBS =
 
 ifeq ($(UNAME_S), Linux) #LINUX
 	ECHO_MESSAGE = "Linux"
+
+##----------##
+##  OPENGL  ##
+##----------##
+	LINUX_GL_LIBS = -lGL
+## This assumes a GL ES library available in the system, e.g. libGLESv2.so
+# CXXFLAGS += -DIMGUI_IMPL_OPENGL_ES2
+# LINUX_GL_LIBS = -lGLESv2
+## If you're on a Raspberry Pi and want to use the legacy drivers,
+## use the following instead:
+# LINUX_GL_LIBS = -L/opt/vc/lib -lbrcmGLESv2
+
 	LIBS += $(LINUX_GL_LIBS) -ldl `sdl2-config --libs`
 
 	CXXFLAGS += `sdl2-config --cflags`
@@ -92,6 +116,17 @@ $(BUILD)/test.o: $(SRC)/test.cpp
 # Unit tests File
 
 
+# Bison/Flex Files
+$(GEN)/parser.bison.cpp: $(LANG)/parser.y
+	bison $(BFLAGS) -o $@ $<
+
+$(GEN)/lexer.flex.cpp: $(LANG)/lexer.l
+	flex $(LFLAGS) -o $@ $<
+
+$(BUILD)/%.o: $(GEN)/%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+
 # Imgui Files
 $(BUILD)/%.o: $(IMGUI_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
@@ -102,7 +137,13 @@ $(BUILD)/%.o: $(IMGUI_DIR)/backends/%.cpp
 # Build Executable File
 $(EXE): $(OBJS)
 	@echo $(OBJS)
-	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBS)
+	$(CXX) -o $@ $^ $(LDFLAGS) $(LIBS)
+
+# Build Bison/Flex exe
+lang: $(BUILD)/parser.bison.o $(BUILD)/lexer.flex.o
+	@echo Building Bison/Flex
+	$(CXX) -o $(BUILD)/lang $^
+	$(BUILD)/$@ $(LANG)/test.txt
 
 clean:
-	rm -f $(EXE) $(OBJS)
+	rm -vf $(CLEANABLE)
