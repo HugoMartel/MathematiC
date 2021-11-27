@@ -12,8 +12,9 @@
 
 variable        [a-zA-Z_][a-zA-Z0-9_]*
 parameter       \"[a-z][a-z\-]*[a-z]\"
-number          [0-9]+(\.[0-9]*)?([Ee][+-]?[0-9]+)?
-toskip          \n|\r|\t|\/\/.*
+string          \"[a-zA-Z0-9\-\+\/\*\(\)\[\]\{\}\ \&\~\#\^\@\=\$\%\!\,\.\:\>\<]+\"
+number          [+-]?[0-9]+(\.[0-9]*)?([Ee][+-]?[0-9]+)?
+toskip          \n|\r|\t|\ |\/\/.*
 
 /* Used to track line information */
 %x    IN_COMMENT
@@ -34,8 +35,8 @@ toskip          \n|\r|\t|\/\/.*
 
 {number}                                                    {
     char *endptr;
-    yylval.dvalue = strtod(yytext, &endptr); return NUM; }
-" "                                                         { return ' '; }
+    yylval.dvalue = std::strtod(yytext, &endptr); return NUM;
+}
 {toskip}                                                    {  }
 sin                                                         { return SIN; }
 cos                                                         { return COS; }
@@ -59,15 +60,22 @@ else                                                        { return ELSE; }
 for                                                         { return FOR; }
 draw                                                        { return DRAW; }
 while                                                       { return WHILE; }
+    /* Reserved Words */
 in                                                          { return in; }
 var                                                         { return var; }
+def                                                         { return def; }
+"=>"                                                        { return arrow; }
+return                                                      { return RETURN; }
+    /* Draw args */
 color                                                       { return color; }
 label                                                       { return label; }
 style                                                       { return style; }
 ymin                                                        { return ymin; }
 ymax                                                        { return ymax; }
 {parameter}                                                 { return PARAM; }
+{string}                                                    { return STRING; }
 {variable}                                                  { strcpy(yylval.svalue, yytext); return VAR; }
+    /* Operators */
 "+="                                                        { return PLUS_EQUAL; }
 "-="                                                        { return MIN_EQUAL; }
 "*="                                                        { return TIMES_EQUAL; }
@@ -90,10 +98,12 @@ ymax                                                        { return ymax; }
 \)                                                          { return ')'; }
 \{                                                          { return '{'; }
 \}                                                          { return '}'; }
+\[                                                          { return '['; }
+\]                                                          { return ']'; }
 ","                                                         { return ','; }
 ";"                                                         { return ';'; }
-"."                                                         { return '.'; }
-<<EOF>>                                                     { printf("Test file contains a valid source code\n"); return EOF; }
+":"                                                         { return ':'; }
+<<EOF>>                                                     { printf("File contains a valid source code\n"); return EOF; }
 .                                                           { printf("lex error : %s\n", yytext); return 0; }
 
 %%

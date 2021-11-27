@@ -10,7 +10,7 @@
     extern FILE *yyin;
     extern char *yytext;
     extern size_t yylineno;
-    int yyerror(char *s);
+    int yyerror(const char *s);
     map<string,float> floatVars;
 
 
@@ -68,6 +68,9 @@ public:
 %token var /* Variable definition */
 %token def /* Function definition */
 %token in  /* param interval for a given function */
+%token arrow /* => */
+%token RETURN /* return function keyword */
+
 /* Parameters for draw */
 %token color
 %token style
@@ -77,6 +80,7 @@ public:
 %token ymin
 %token ymax
 %token PARAM /* "value" */
+%token STRING /* "text" */
 
 /* Functions & instructions*/
 %token <DOUBLE> NUM
@@ -127,7 +131,7 @@ public:
 %left '+' '-'
 %left '*' '/'
 %right '^'
-%right '='
+
 
 %%
 
@@ -140,35 +144,37 @@ code: declarations fonctions affichage                  { /* TODO: print start c
 
 
 declarations: /* \epsilon */                            { /* End of declarations */ }
-            | declarations var ' ' VAR '=' expr ';'     { /* Init Vars */
-                if (!variables.count($4)) {
-                    variables[$4] = $6;
+            | declarations var VAR '=' expr ';'     { /* Init Vars */
+                if (!variables.count($3)) {
+                    variables[$3] = $5;
                 } else {
                     yyerror("Variable already declared...");
                 }
 }
 
 
-fonctions: def ' ' VAR '(' args ')'                     { /* TODO */ }
+fonctions: def VAR ':' '(' args ')' arrow '{'                    { /* TODO */ }
+                instruction
+          '}'
 
 args: VAR                                               { /* TODO */ }
     | args ',' args                                     { /* TODO */ }
 
 
-draw_func: VAR ' ' in ' ' '[' NUM '.''.' NUM ']'        { /* TODO */ }
+draw_func: VAR in '[' NUM ',' NUM ']'                   { /* TODO */ }
          | VAR                                          { /* TODO */ }
          | draw_func ',' draw_func                      { /* TODO */ }
 
 
-affichage: DRAW ' ' draw_func '{'   { /*TODO: load funcs*/ }
+affichage: DRAW draw_func '{'   { /*TODO: load funcs*/ }
                 draw_args
            '}'
-         | DRAW ' ' draw_func ';'   { /* TODO: load default args */}
+         | DRAW draw_func ';'   { /* TODO: load default args */}
 
 
 draw_args: color ':' PARAM               { /*TODO: check PARAM values*/ }
          | style ':' PARAM               { /*TODO: check PARAM values*/ }
-         | label ':' PARAM               { /*TODO: check PARAM values*/ }
+         | label ':' STRING              { /*TODO: check PARAM values*/ }
          | xmin ':' NUM                  { /*TODO*/ }
          | xmin ':' VAR                  { /*TODO*/ }
          | xmax ':' NUM                  { /*TODO*/ }
@@ -187,8 +193,9 @@ draw_args: color ':' PARAM               { /*TODO: check PARAM values*/ }
 */
 
 
-instruction: /* \epsilon */             {}
+instruction: /* \epsilon */             { /* No instructions left */ }
            | expr ';'                   { printf("= %g\n", $1); }
+           | RETURN expr ';'            { printf("Returning: %g\n", $2); }
            | IF logic '{'               {
 
                 // Je sauvegarde l'endroit actuel pour revenir mofifier l'adresse
@@ -213,7 +220,7 @@ instruction: /* \epsilon */             {}
                 // Je mets à jour l'adresse du saut inconditionnel
                  code_genere[$1.jmp].value = ic;
 }
-           | FOR VAR ' ' in ' ' '[' expr ':' expr ':' expr ']' '{'
+           | FOR VAR in '[' expr ':' expr ':' expr ']' '{'
                 instruction
              '}'                        { add_instruction(FOR); }
            | WHILE logic '{'
@@ -275,9 +282,9 @@ expr: NUM                   { add_instruction(NUM, $1); }
 
 %%
 
-int yyerror(char *s)
+int yyerror(const char *s)
 {
-    printf("%i - %s : %s\n", yylineno, s, yytext);
+    printf("%zu - %s : %s\n", yylineno, s, yytext);
     return EXIT_SUCCESS;
 }
 
@@ -348,7 +355,7 @@ int main(int argc, char* argv[])
     }
 
     // boucle d'affichage du tableau contenant tout le programme
-    for (int i = 0; i < code_genere.size(); i++){
+    for (size_t i = 0; i < code_genere.size(); i++){
     auto instruction = code_genere [i];
     std::cout << i 
          << '\t'

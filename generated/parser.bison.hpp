@@ -67,52 +67,55 @@ extern int yydebug;
     var = 258,                     /* var  */
     def = 259,                     /* def  */
     in = 260,                      /* in  */
-    color = 261,                   /* color  */
-    style = 262,                   /* style  */
-    label = 263,                   /* label  */
-    xmin = 264,                    /* xmin  */
-    xmax = 265,                    /* xmax  */
-    ymin = 266,                    /* ymin  */
-    ymax = 267,                    /* ymax  */
-    PARAM = 268,                   /* PARAM  */
-    NUM = 269,                     /* NUM  */
-    SIN = 270,                     /* SIN  */
-    COS = 271,                     /* COS  */
-    POW = 272,                     /* POW  */
-    EXP = 273,                     /* EXP  */
-    VAR = 274,                     /* VAR  */
-    FOR = 275,                     /* FOR  */
-    IF = 276,                      /* IF  */
-    ELSE = 277,                    /* ELSE  */
-    WHILE = 278,                   /* WHILE  */
-    TAN = 279,                     /* TAN  */
-    ARCCOS = 280,                  /* ARCCOS  */
-    ARCSIN = 281,                  /* ARCSIN  */
-    ARCTAN = 282,                  /* ARCTAN  */
-    COSH = 283,                    /* COSH  */
-    SINH = 284,                    /* SINH  */
-    TANH = 285,                    /* TANH  */
-    ARCSINH = 286,                 /* ARCSINH  */
-    ARCCOSH = 287,                 /* ARCCOSH  */
-    ARCTANH = 288,                 /* ARCTANH  */
-    SQRT = 289,                    /* SQRT  */
-    LOG = 290,                     /* LOG  */
-    DRAW = 291,                    /* DRAW  */
-    JMP = 292,                     /* JMP  */
-    JMPCOND = 293,                 /* JMPCOND  */
-    PLUS_EQUAL = 294,              /* PLUS_EQUAL  */
-    MIN_EQUAL = 295,               /* MIN_EQUAL  */
-    TIMES_EQUAL = 296,             /* TIMES_EQUAL  */
-    DIV_EQUAL = 297,               /* DIV_EQUAL  */
-    EQUAL = 298,                   /* EQUAL  */
-    NOT_EQ = 299,                  /* NOT_EQ  */
-    INF_STRICT = 300,              /* INF_STRICT  */
-    SUP_STRICT = 301,              /* SUP_STRICT  */
-    INF = 302,                     /* INF  */
-    SUP = 303,                     /* SUP  */
-    AND = 304,                     /* AND  */
-    OR = 305,                      /* OR  */
-    NOT = 306                      /* NOT  */
+    arrow = 261,                   /* arrow  */
+    RETURN = 262,                  /* RETURN  */
+    color = 263,                   /* color  */
+    style = 264,                   /* style  */
+    label = 265,                   /* label  */
+    xmin = 266,                    /* xmin  */
+    xmax = 267,                    /* xmax  */
+    ymin = 268,                    /* ymin  */
+    ymax = 269,                    /* ymax  */
+    PARAM = 270,                   /* PARAM  */
+    STRING = 271,                  /* STRING  */
+    NUM = 272,                     /* NUM  */
+    SIN = 273,                     /* SIN  */
+    COS = 274,                     /* COS  */
+    POW = 275,                     /* POW  */
+    EXP = 276,                     /* EXP  */
+    VAR = 277,                     /* VAR  */
+    FOR = 278,                     /* FOR  */
+    IF = 279,                      /* IF  */
+    ELSE = 280,                    /* ELSE  */
+    WHILE = 281,                   /* WHILE  */
+    TAN = 282,                     /* TAN  */
+    ARCCOS = 283,                  /* ARCCOS  */
+    ARCSIN = 284,                  /* ARCSIN  */
+    ARCTAN = 285,                  /* ARCTAN  */
+    COSH = 286,                    /* COSH  */
+    SINH = 287,                    /* SINH  */
+    TANH = 288,                    /* TANH  */
+    ARCSINH = 289,                 /* ARCSINH  */
+    ARCCOSH = 290,                 /* ARCCOSH  */
+    ARCTANH = 291,                 /* ARCTANH  */
+    SQRT = 292,                    /* SQRT  */
+    LOG = 293,                     /* LOG  */
+    DRAW = 294,                    /* DRAW  */
+    JMP = 295,                     /* JMP  */
+    JMPCOND = 296,                 /* JMPCOND  */
+    PLUS_EQUAL = 297,              /* PLUS_EQUAL  */
+    MIN_EQUAL = 298,               /* MIN_EQUAL  */
+    TIMES_EQUAL = 299,             /* TIMES_EQUAL  */
+    DIV_EQUAL = 300,               /* DIV_EQUAL  */
+    EQUAL = 301,                   /* EQUAL  */
+    NOT_EQ = 302,                  /* NOT_EQ  */
+    INF_STRICT = 303,              /* INF_STRICT  */
+    SUP_STRICT = 304,              /* SUP_STRICT  */
+    INF = 305,                     /* INF  */
+    SUP = 306,                     /* SUP  */
+    AND = 307,                     /* AND  */
+    OR = 308,                      /* OR  */
+    NOT = 309                      /* NOT  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -128,7 +131,7 @@ union YYSTYPE
     bool bvalue;
     type_adresse adresse;
 
-#line 132 "generated/parser.bison.hpp"
+#line 135 "generated/parser.bison.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

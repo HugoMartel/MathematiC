@@ -24,10 +24,11 @@ var b = 2;
 var c = 3;
 
 def fonction1: (x) => {
-    return a*x^2 + b*x + b;
+	// Function Instructions
+    return a*x^2 + b*x + b;/* simple polynomial */
 }
 
-draw fonction1 in [-8..8] {
-    color: red,
+draw fonction1 in [-8,8] {
+    color: "red",
     label: "Fonction 1"
 }

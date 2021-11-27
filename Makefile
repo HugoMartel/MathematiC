@@ -35,15 +35,15 @@ SOURCES += $(IMGUI_DIR)/imgui_demo.cpp# /!\ TO CHANGE
 
 # Get generated objects names
 OBJS = $(addprefix $(BUILD)/, $(addsuffix .o, $(basename $(notdir $(SOURCES)))))
-CLEANABLE = $(EXE) $(OBJS) $(BUILD)/lexer.flex.o $(BUILD)/parser.bison.o $(BUILD)/lang
+CLEANABLE = $(EXE) $(OBJS) $(BUILD)/lexer.flex.o $(BUILD)/parser.bison.o $(BUILD)/lang $(GEN)/*.cpp $(GEN)/*.hpp
 
-# Get current config
+# Get current config-d -p
 UNAME_S := $(shell uname -s)
 
 
 ## IMGUI HEADERS && OURS
-CXXFLAGS = -I $(IMGUI_DIR) -I $(IMGUI_DIR)/backends -I ./include
-CXXFLAGS += -Wall -Wextra -Wformat --std=c++17
+CXXFLAGS = -Wall -Wextra -Wformat --std=c++17
+LIBFLAGS = -I $(IMGUI_DIR) -I $(IMGUI_DIR)/backends -I ./include
 # Linker
 LDFLAGS := -g
 #LDFLAGS := -O3
@@ -76,8 +76,8 @@ ifeq ($(UNAME_S), Linux) #LINUX
 
 	LIBS += $(LINUX_GL_LIBS) -ldl `sdl2-config --libs`
 
-	CXXFLAGS += `sdl2-config --cflags`
-	CFLAGS = $(CXXFLAGS)
+	LIBFLAGS += `sdl2-config --cflags`
+	CFLAGS = -W -Wextra -Wformat $(LIBFLAGS)
 endif
 
 ifeq ($(UNAME_S), Darwin) #APPLE
@@ -85,17 +85,17 @@ ifeq ($(UNAME_S), Darwin) #APPLE
 	LIBS += -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo `sdl2-config --libs`
 	LIBS += -L/usr/local/lib -L/opt/local/lib
 
-	CXXFLAGS += `sdl2-config --cflags`
-	CXXFLAGS += -I/usr/local/include -I/opt/local/include
-	CFLAGS = $(CXXFLAGS)
+	LIBFLAGS += `sdl2-config --cflags`
+	LIBFLAGS += -I/usr/local/include -I/opt/local/include
+	CFLAGS = -W -Wextra -Wformat $(LIBFLAGS)
 endif
 
 ifeq ($(OS), Windows_NT)
 	ECHO_MESSAGE = "MinGW"
 	LIBS += -lgdi32 -lopengl32 -limm32 `pkg-config --static --libs sdl2`
 
-	CXXFLAGS += `pkg-config --cflags sdl2`
-	CFLAGS = $(CXXFLAGS)
+	LIBFLAGS += `pkg-config --cflags sdl2`
+	CFLAGS = -W -Wextra -Wformat $(LIBFLAGS)
 endif
 
 
@@ -107,9 +107,12 @@ endif
 all: $(EXE)
 	@echo Build complete for $(ECHO_MESSAGE)
 
+run: $(EXE)
+	./$(EXE)
+
 # Test File
 $(BUILD)/test.o: $(SRC)/test.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(LIBFLAGS) -c $< -o $@
 
 # Main File
 
@@ -129,10 +132,10 @@ $(BUILD)/%.o: $(GEN)/%.cpp
 
 # Imgui Files
 $(BUILD)/%.o: $(IMGUI_DIR)/%.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(LIBFLAGS) -c $< -o $@
 
 $(BUILD)/%.o: $(IMGUI_DIR)/backends/%.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(LIBFLAGS) -c $< -o $@
 
 # Build Executable File
 $(EXE): $(OBJS)
