@@ -132,6 +132,7 @@ int main(int, char**)
     ImVec2 graphPos(*(width)/3, 20);
     ImGuiWindowFlags windowFlags = (ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
     char *buf = (char *) malloc(BUFF_SIZE * sizeof(char) + 1);
+    if(buf == NULL) exit(1);
     buf[0] = '\0';
     //char buf[BUFF_SIZE] = "//enter your code here\n";
     std::string buff;
@@ -294,6 +295,7 @@ static void menuFile(char *buff, SDL_Window *window)
     if (ImGui::MenuItem("New")) {
         free(buff);
         buff = (char *) malloc(BUFF_SIZE * sizeof(char));
+        if(buff == NULL) exit(1);
         buff[0] = '\0';
     }
     if (ImGui::MenuItem("Open", "Ctrl+O")) {
@@ -314,7 +316,8 @@ static void menuFile(char *buff, SDL_Window *window)
     }
 
     ImGui::Separator();
-    if (ImGui::BeginMenu("Options")) {
+    //TODO add some options maybe ??
+    /*if (ImGui::BeginMenu("Options")) {
         static bool enabled = true;
         ImGui::MenuItem("Enabled", "", &enabled);
         ImGui::BeginChild("child", ImVec2(0, 60), true);
@@ -327,7 +330,7 @@ static void menuFile(char *buff, SDL_Window *window)
         ImGui::InputFloat("Input", &f, 0.1f);
         ImGui::Combo("Combo", &n, "Yes\0No\0Maybe\0\0");
         ImGui::EndMenu();
-    }
+    }*/
     // Of course in this demo it is a little bit silly that this function calls BeginMenu("Options") twice.
     // In a real code-base using it would make senses to use this feature from very different code locations.
     /*if (ImGui::BeginMenu("Options")) {// <-- Append!
@@ -335,7 +338,6 @@ static void menuFile(char *buff, SDL_Window *window)
         ImGui::Checkbox("SomeOption", &b);
         ImGui::EndMenu();
     }*/
-    if (ImGui::MenuItem("Checked", NULL, true)) {}
     if (ImGui::MenuItem("Quit", "")) {
         SDL_Quit();
     }
