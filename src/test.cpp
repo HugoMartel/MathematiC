@@ -38,6 +38,7 @@ struct MultilineScrollState
 static int MultilineScrollCallback(ImGuiInputTextCallbackData *data);
 static bool ImGuiInputTextMultiline(const char* label, char*, size_t buf_size, float height, ImGuiInputTextFlags flags  );
 static void doStyle();
+static void doGraph();
 static void ShowMainMenuBar();
 static void menuFile();
 static void save(char *);
@@ -164,8 +165,9 @@ int main(int, char**)
         }
         ImGui::SetNextWindowSize(graphSize, 0);
         ImGui::SetNextWindowPos(graphPos, 0);
-        if (show_graph) { //graph part 
+        if (show_graph) { //graph part
             ImGui::Begin("graphe", NULL, windowFlags);
+            doGraph();
             ImGui::End();
         }
 
@@ -247,8 +249,21 @@ static bool ImGuiInputTextMultiline(const char* label, char* buf, size_t buf_siz
 /*Function to add bg color & style*/
 static void doStyle()
 {
-    ImGuiStyle &style = ImGui::GetStyle(); 
+    ImGuiStyle &style = ImGui::GetStyle();
     style.Colors[ImGuiCol_WindowBg] = ImColor(40, 43, 55, 255);
+}
+
+/*Function draw Graph*/
+static void doGraph() {
+    const int sizeN = 800;
+    static float arr[sizeN];
+    float step1 = (1.0f/(sizeN))*10;
+    float xPos = 0;
+    for (int i = 0; i < sizeN; i++) {
+        arr[i] = 10*(tan(xPos)*exp(-1*xPos));
+        xPos += step1;
+    }
+    ImGui::PlotLines("", arr, IM_ARRAYSIZE(arr), 0, NULL, -10.0f, 10.0f, ImVec2(800.0f, 600.0f));
 }
 
 /*funtion to show main menu*/
@@ -257,7 +272,7 @@ static void ShowMainMenuBar()
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
             menuFile();
-            ImGui::EndMenu();                    
+            ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Edit")) {
             if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
@@ -350,7 +365,7 @@ static void save(char *buff)
 {
     /*getting current date/time based on OS*/
     time_t t = time(0);
-    /*convert now to string*/ 
+    /*convert now to string*/
     std::tm* now = localtime(&t);
     std::stringstream fileNameStream;
     std::string fileName;
@@ -365,6 +380,5 @@ static void save(char *buff)
         file << buff[i];
     }
     /*closing the file*/
-    file.close();    
+    file.close();
 }
-
