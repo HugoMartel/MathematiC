@@ -6,6 +6,10 @@
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_opengl3.h"
 #include <stdio.h>
+#include <ctime>
+#include <sstream>
+#include <fstream>
+#include <filesystem>
 #include <SDL.h>
 #if defined(IMGUI_IMPL_OPENGL_ES2)
 #include <SDL_opengles2.h>
@@ -14,6 +18,7 @@
 #endif
 #define SIZE_X 1280
 #define SIZE_Y 720
+#define BUFF_SIZE 1000
 #define MAX(a, b) (((a) < (b)) ? (b) : (a))
 #include <string>
 
@@ -31,10 +36,11 @@ struct MultilineScrollState
 
 
 static int MultilineScrollCallback(ImGuiInputTextCallbackData *data);
-static bool ImGuiInputTextMultiline(const char* label, char* buf, size_t buf_size, float height, ImGuiInputTextFlags flags  );
+static bool ImGuiInputTextMultiline(const char* label, char*, size_t buf_size, float height, ImGuiInputTextFlags flags  );
 static void doStyle();
 static void ShowMainMenuBar();
 static void menuFile();
+static void save(char *);
 
 // Main code
 int main(int, char**)
@@ -42,7 +48,7 @@ int main(int, char**)
     // Setup SDL
     // (Some versions of SDL before <2.0.10 appears to have performance/stalling issues on a minority of Windows systems,
     // depending on whether SDL_INIT_GAMECONTROLLER is enabled or disabled.. updating to latest version of SDL is recommended!)
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0)
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0)
     {
         printf("Error: %s\n", SDL_GetError());
         return -1;
@@ -153,7 +159,7 @@ int main(int, char**)
             ImGui::Begin("code", NULL, windowFlags);
             doStyle();
             //ImGui::InputTextMultiline("code", buff);
-            ImGuiInputTextMultiline("chelou", buf, 1000, SIZE_Y, 0);
+            ImGuiInputTextMultiline("", buf, 1000, SIZE_Y, 0);
             ImGui::End();
         }
         ImGui::SetNextWindowSize(graphSize, 0);
@@ -223,6 +229,8 @@ static bool ImGuiInputTextMultiline(const char* label, char* buf, size_t buf_siz
     scrollState.scrollRegionX = MAX(0.0f, ImGui::GetWindowWidth() - scrollbarSize);
     scrollState.scrollX = ImGui::GetScrollX();
     scrollState.storage = ImGui::GetStateStorage();
+    ImGuiStyle &style = ImGui::GetStyle();
+    style.Colors[ImGuiCol_FrameBg] = ImColor(69, 71, 91, 255);
     bool changed = ImGui::InputTextMultiline(label, buf, buf_size, ImVec2(SCROLL_WIDTH, MAX(0.0f, height - scrollbarSize)),
                                              flags | ImGuiInputTextFlags_CallbackAlways, MultilineScrollCallback, &scrollState);
 
@@ -240,7 +248,7 @@ static bool ImGuiInputTextMultiline(const char* label, char* buf, size_t buf_siz
 static void doStyle()
 {
     ImGuiStyle &style = ImGui::GetStyle(); 
-    style.Colors[ImGuiCol_WindowBg] = ImColor(69, 71, 91, 255);
+    style.Colors[ImGuiCol_WindowBg] = ImColor(40, 43, 55, 255);
 }
 
 /*funtion to show main menu*/
@@ -336,3 +344,27 @@ static void menuFile()
     if (ImGui::MenuItem("Checked", NULL, true)) {}
     if (ImGui::MenuItem("Quit", "Alt+F4")) {}
 }
+
+/*TODO: add a way to change the filename*/
+static void save(char *buff)
+{
+    /*getting current date/time based on OS*/
+    time_t t = time(0);
+    /*convert now to string*/ 
+    std::tm* now = localtime(&t);
+    std::stringstream fileNameStream;
+    std::string fileName;
+    /*filename : DD_MM_YYYY.dat*/
+    fileNameStream << now->tm_mday << '_' << now->tm_mon << '_' << now->tm_year << ".dat";
+    /*convert stringstream to string*/
+    fileNameStream >> fileName;
+    /*creating the file*/
+    std::ofstream file(fileName);
+    /*Writing the file*/
+    for(int i = 0; i < BUFF_SIZE; ++i){
+        file << buff[i];
+    }
+    /*closing the file*/
+    file.close();    
+}
+
