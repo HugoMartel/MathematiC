@@ -16,6 +16,7 @@
 
 EXE = test
 IMGUI_DIR = ./lib/imgui
+IMPLOT_DIR = ./lib/implot
 
 SRC := src
 BUILD := build
@@ -23,13 +24,14 @@ BUILD := build
 SOURCES = src/test.cpp
 SOURCES += $(IMGUI_DIR)/imgui.cpp $(IMGUI_DIR)/imgui_draw.cpp $(IMGUI_DIR)/imgui_tables.cpp $(IMGUI_DIR)/imgui_widgets.cpp
 SOURCES += $(IMGUI_DIR)/backends/imgui_impl_sdl.cpp $(IMGUI_DIR)/backends/imgui_impl_opengl3.cpp
+SOURCES += $(IMPLOT_DIR)/implot.cpp $(IMPLOT_DIR)/implot_items.cpp
 SOURCES += $(IMGUI_DIR)/imgui_demo.cpp# tmp
 OBJS = $(addprefix $(BUILD)/, $(addsuffix .o, $(basename $(notdir $(SOURCES)))))
 UNAME_S := $(shell uname -s)
 LINUX_GL_LIBS = -lGL
 
 ## IMGUI HEASERS && OURS
-CXXFLAGS = -I $(IMGUI_DIR) -I $(IMGUI_DIR)/backends -I ./include
+CXXFLAGS = -I $(IMGUI_DIR) -I $(IMGUI_DIR)/backends -I $(IMPLOT_DIR) -I ./include
 CXXFLAGS += -g -Wall -Wextra -Wformat
 LIBS =
 
@@ -97,6 +99,10 @@ $(BUILD)/%.o: $(IMGUI_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(BUILD)/%.o: $(IMGUI_DIR)/backends/%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Implot Files
+$(BUILD)/%.o: $(IMPLOT_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Build Executable File
