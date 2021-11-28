@@ -11,7 +11,6 @@
     extern char *yytext;
     extern size_t yylineno;
     int yyerror(const char *s);
-    map<string,float> floatVars;
 
 
     #define DOUBLE dvalue
@@ -19,22 +18,74 @@
     #define BOOL bvalue
     #define ADDRESS adresse
 
-class instruction{
-public:
-    instruction (const int &c, const double &v=0, const string &n="") {code = c; value = v; name = n;};
-    int code;
-    double value;     // eventuellement une valeur si besoin
-    std::string name; // ou une référence pour la table des données
-};
+    /**
+     * 
+     */
+    class instruction {
+    public:
+        instruction (const int &c, const double &v=0, const string &n="") { code = c; value = v; name = n; };
+        int code;
+        double value;     // eventuellement une valeur si besoin
+        std::string name; // ou une référence pour la table des données
+    };
+
+    /**
+     * 
+     */
+    class function {
+    public:
+        /** Function code */
+        std::vector<instruction> code;
+        /** Instruction counter */
+        int ic;
+        /** Function params */
+        std::map<std::string,double> parameters;
+        /** Hex color code */
+        std::string color;
+        /** Display style */
+        std::string style;
+        /** Default Constructor */
+        function() { color = "#FF0000"; style = "solid"; ic = 0; }
+        /**
+         * Color setter
+         * @param[in]   c   new color
+         */
+        void setColor(const std::string& c) { color = c; }
+        /**
+         * Style setter
+         * @param[in]   s   new style
+         */
+        void setStyle(const std::string& s) { style = s; }
+        /**
+         * Add instruction method
+         * @param[in]   c   Instruction's code
+         * @param[in]   v   Instruction value used in some cases
+         * @param[in]   n   Instruction string value like a var name
+         * @return      Error code
+         */
+        int add_instruction(const int &c, const double &v=0, const string &n="") {
+            code.push_back(instruction(c,v,n));
+            ic++;
+        return 0;
+        }
+    };
 
     // Structure pour accueillir le code généré
     // (sone de code ou code machine ou assembleur)
     vector <instruction> code_genere;
 
+    /**
+     * String storing the current code to write to.
+     * 0 -> main code, otherwise write to the associated function
+     */
+    std::string current_code = "";
+
     // Déclaration de la map qui associe
     // les noms des variables à leur valeur
     // (La table de symboles)
-    map<std::string,double> variables;
+    std::map<std::string,double> variables;
+    //  Map storing functions instructions, access them by their name (string)
+    std::map<std::string, function> functions;
     int ic = 0;
 
     // Remarquez les paramètres par défaut pour faciliter les appels depuis la grammaire
@@ -42,7 +93,7 @@ public:
         code_genere.push_back(instruction(c,v,n));
         ic++;
         return 0;
-    };
+    }
 %}
 
 %code requires
@@ -79,7 +130,8 @@ public:
 %token xmax
 %token ymin
 %token ymax
-%token PARAM /* "value" */
+%token COLOR_PARAM /* "#F0F0F0" or "blue" */
+%token STYLE_PARAM /* "solid", "dashed", "dotted" */
 %token STRING /* "text" */
 
 /* Functions & instructions*/
@@ -106,10 +158,18 @@ public:
 %token <DOUBLE> SQRT
 %token <DOUBLE> LOG
 %token DRAW
-%token <BOOL> JMP
-%token <BOOL> JMPCOND
+
+/* Instruction vector defines */
+%token JMP
+%token JMPCOND
+%token ASSIGN
+%token DECLARE
 
 /* Operators */
+%token <DOUBLE> PLUS
+%token <DOUBLE> MIN
+%token <DOUBLE> TIMES
+%token <DOUBLE> DIV
 %token <DOUBLE> PLUS_EQUAL
 %token <DOUBLE> MIN_EQUAL
 %token <DOUBLE> TIMES_EQUAL
@@ -128,8 +188,9 @@ public:
 
 
 /* Define operators priority */
-%left '+' '-'
-%left '*' '/'
+%left PLUS MIN
+%left TIMES DIV
+%left '|' '&'
 %right '^'
 
 
@@ -143,19 +204,31 @@ public:
 code: declarations fonctions affichage                  { /* TODO: print start compiling */ }
 
 
-declarations: /* \epsilon */                            { /* End of declarations */ }
+declarations: %empty /* \epsilon */                 { /* End of declarations */
+                    std::cout << "-- End of declarations --\n";
+ }
             | declarations var VAR '=' expr ';'     { /* Init Vars */
                 if (!variables.count($3)) {
                     variables[$3] = $5;
+                    add_instruction(DECLARE, 0, $3);
+                    add_instruction(ASSIGN, 0, $3);
                 } else {
                     yyerror("Variable already declared...");
                 }
 }
+            | declarations var VAR ';'              {
+                if (!variables.count($3)) {
+                    variables[$3] = 0;
+                    add_instruction(DECLARE, 0, $3);
+                    add_instruction(ASSIGN, 0, $3);
+                }
+            }
 
 
-fonctions: def VAR ':' '(' args ')' arrow '{'                    { /* TODO */ }
+fonctions: def VAR ':' '(' args ')' arrow '{'           { /* TODO */ }
                 instruction
           '}'
+         | fonctions fonctions                          { /* TODO */ }
 
 args: VAR                                               { /* TODO */ }
     | args ',' args                                     { /* TODO */ }
@@ -172,8 +245,8 @@ affichage: DRAW draw_func '{'   { /*TODO: load funcs*/ }
          | DRAW draw_func ';'   { /* TODO: load default args */}
 
 
-draw_args: color ':' PARAM               { /*TODO: check PARAM values*/ }
-         | style ':' PARAM               { /*TODO: check PARAM values*/ }
+draw_args: color ':' '[' color_args ']'  { /*TODO: check PARAM values*/ }
+         | style ':' '[' style_args ']'  { /*TODO: check PARAM values*/ }
          | label ':' STRING              { /*TODO: check PARAM values*/ }
          | xmin ':' NUM                  { /*TODO*/ }
          | xmin ':' VAR                  { /*TODO*/ }
@@ -185,16 +258,16 @@ draw_args: color ':' PARAM               { /*TODO: check PARAM values*/ }
          | ymax ':' VAR                  { /*TODO*/ }
          | draw_args ',' draw_args       { /*TODO*/ }
 
-/* Example
-{
-    color: "red",
-    style: "dashed"
-}
-*/
+style_args: STYLE_PARAM                  { /*TODO*/ }
+          | style_args ',' style_args    { /*TODO*/ }
 
 
-instruction: /* \epsilon */             { /* No instructions left */ }
-           | expr ';'                   { printf("= %g\n", $1); }
+color_args: COLOR_PARAM                  { /*TODO*/ }
+          | color_args ',' color_args    { /*TODO*/ }
+
+
+instruction: %empty /* \epsilon */      { /* No instructions left */ }
+           | expr ';'                   { /* End of instruction */ }
            | RETURN expr ';'            { printf("Returning: %g\n", $2); }
            | IF logic '{'               {
 
@@ -236,6 +309,7 @@ logic: expr SUP expr        { add_instruction(SUP); }
      | expr NOT_EQ expr     { add_instruction(NOT_EQ); }
      | expr AND expr        { add_instruction(AND); }
      | expr OR expr         { add_instruction(OR); }
+     | NOT logic            { add_instruction(NOT); }
 
 
 expr: NUM                   { add_instruction(NUM, $1); }
@@ -252,10 +326,10 @@ expr: NUM                   { add_instruction(NUM, $1); }
     | ARCSINH '(' expr ')'  { add_instruction(ARCSINH); }
     | ARCTANH '(' expr ')'  { add_instruction(ARCTANH); }
     | '(' expr ')'          { $$ = $2; }
-    | expr '+' expr         { $$ = $1 + $3; printf("%g + %g = %g\n", $1, $3, $$); }
-    | expr '-' expr         { $$ = $1 - $3; printf("%g - %g = %g\n", $1, $3, $$); }
-    | expr '*' expr         { $$ = $1 * $3; printf("%g * %g = %g\n", $1, $3, $$); }
-    | expr '/' expr         { $$ = $1 / $3; printf("%g / %g = %g\n", $1, $3, $$); }
+    | expr PLUS expr        { add_instruction(PLUS); }
+    | expr MIN expr         { add_instruction(MIN); }
+    | expr TIMES expr       { add_instruction(TIMES); }
+    | expr DIV expr         { add_instruction(DIV); }
     | expr '&' expr         {
         int tmp1 = (int)$1;
         int tmp2 = (int)$3;
@@ -268,17 +342,17 @@ expr: NUM                   { add_instruction(NUM, $1); }
         $$ = tmp1 | tmp2;
         printf("%d | %d = %d\n", tmp1, tmp2, (int)$$);
 }
-    | expr '^' expr                 { $$ = pow($1,$3); printf("%g^%g = %g\n", $1, $3, $$); }
+    | expr '^' expr                 { add_instruction(POW); }
     | POW '(' expr ',' expr ')'     { add_instruction(POW); }
     | EXP '(' expr ')'              { add_instruction(EXP); }
     | LOG '(' expr ')'              { add_instruction(LOG); }
     | SQRT '(' expr ')'             { add_instruction(SQRT); }
     | VAR                           { add_instruction(VAR, 0, $1); }
-    | VAR '=' expr                  {  }
-    | VAR PLUS_EQUAL expr           {  }
-    | VAR MIN_EQUAL expr            {  }
-    | VAR TIMES_EQUAL expr          {  }
-    | VAR DIV_EQUAL expr            {  }
+    | VAR '=' expr                  { add_instruction(ASSIGN,0,$1); }
+    | VAR PLUS_EQUAL expr           { add_instruction(VAR,0,$1); add_instruction(PLUS); add_instruction(ASSIGN,0,$1); }
+    | VAR MIN_EQUAL expr            { add_instruction(VAR,0,$1); add_instruction(MIN); add_instruction(ASSIGN,0,$1); }
+    | VAR TIMES_EQUAL expr          { add_instruction(VAR,0,$1); add_instruction(TIMES); add_instruction(ASSIGN,0,$1); }
+    | VAR DIV_EQUAL expr            { add_instruction(VAR,0,$1); add_instruction(DIV); add_instruction(ASSIGN,0,$1); }
 
 %%
 
@@ -288,43 +362,61 @@ int yyerror(const char *s)
     return EXIT_SUCCESS;
 }
 
-// Fonction pour mieux voir le code généré
-// (au lieu des nombres associés au tokens)
-string print_code(int ins) {
+/**
+ * Convert int code to string value
+ * @param[in]   ins     Instruction code
+ */
+string print_code(const int &ins) {
     switch (ins) {
-        case IF         : return "IF";
-        case ELSE       : return "ELSE";
-        case FOR        : return "FOR";
-        case WHILE      : return "WHILE";
-        case SUP        : return "SUP";
-        case INF        : return "INF";
-        case SUP_STRICT : return "SUP_STRICT";
-        case INF_STRICT : return "INF_STRICT";
-        case EQUAL      : return "EQUAL";
-        case NOT_EQ     : return "NOT_EQ";
-        case AND        : return "AND";
-        case OR         : return "OR";
-        case NUM        : return "NUM";
-        case SIN        : return "SIN";
-        case COS        : return "COS";
-        case TAN        : return "TAN";
-        case ARCCOS     : return "ARCCOS";
-        case ARCSIN     : return "ARCSIN";
-        case ARCTAN     : return "ARCTAN";
-        case SINH       : return "SINH";
-        case COSH       : return "COSH";
-        case TANH       : return "TANH";
-        case ARCCOSH    : return "ARCCOSH";
-        case ARCSINH    : return "ARCSINH";
-        case ARCTANH    : return "ARCTANH";
-        case POW        : return "POW";
-        case EXP        : return "EXP";
-        case LOG        : return "LOG";
-        case SQRT       : return "SQRT";
-        case VAR        : return "VAR";
-        case JMP        : return "JMP";
-        case JMPCOND    : return "JC ";
-        case DRAW       : return "DRAW";
+        /* Blocks */
+        case IF             : return "IF";
+        case ELSE           : return "ELSE";
+        case FOR            : return "FOR";
+        case WHILE          : return "WHILE";
+        /* Operators */
+        case PLUS           : return "+";
+        case MIN            : return "-";
+        case TIMES          : return "*";
+        case DIV            : return "/";
+        /* Logic */
+        case SUP            : return "SUP";
+        case INF            : return "INF";
+        case SUP_STRICT     : return "SUP_STRICT";
+        case INF_STRICT     : return "INF_STRICT";
+        case EQUAL          : return "EQUAL";
+        case NOT_EQ         : return "NOT_EQ";
+        case AND            : return "AND";
+        case OR             : return "OR";
+        case NOT            : return "NOT";
+        /* Literal */
+        case NUM            : return "NUM";
+        /* Functions */
+        case SIN            : return "SIN";
+        case COS            : return "COS";
+        case TAN            : return "TAN";
+        case ARCCOS         : return "ARCCOS";
+        case ARCSIN         : return "ARCSIN";
+        case ARCTAN         : return "ARCTAN";
+        case SINH           : return "SINH";
+        case COSH           : return "COSH";
+        case TANH           : return "TANH";
+        case ARCCOSH        : return "ARCCOSH";
+        case ARCSINH        : return "ARCSINH";
+        case ARCTANH        : return "ARCTANH";
+        case POW            : return "POW";
+        case EXP            : return "EXP";
+        case LOG            : return "LOG";
+        case SQRT           : return "SQRT";
+        case VAR            : return "VAR";
+        /* Adress Instructions */
+        case JMP            : return "JMP";
+        case JMPCOND        : return "JC ";
+        /* Variables Instructions */
+        case ASSIGN         : return "ASSIGN";
+        case DECLARE        : return "DECLARE";
+        /* Draw Instructions */
+        case DRAW           : return "DRAW";
+        /*---------------------------------*/
         default : return "";
     }
 }
@@ -343,6 +435,7 @@ int main(int argc, char* argv[])
             return 1;
         }
 
+        /* Analyse the code */
         yyparse();
 
         if (fclose(yyin)) {
@@ -354,7 +447,8 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    // boucle d'affichage du tableau contenant tout le programme
+    /* Print the generated code */
+    std::cout << "i\tCode\tValue\tName\n";
     for (size_t i = 0; i < code_genere.size(); i++){
     auto instruction = code_genere [i];
     std::cout << i 
@@ -366,9 +460,6 @@ int main(int argc, char* argv[])
          << instruction.name 
          << std::endl;
     }
-
-
-    yyparse();
 
     return EXIT_SUCCESS;
 }

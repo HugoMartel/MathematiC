@@ -11,7 +11,8 @@
 %option noyywrap
 
 variable        [a-zA-Z_][a-zA-Z0-9_]*
-parameter       \"[a-z][a-z\-]*[a-z]\"
+color_arg       \"(blue|red|green|black|white|magenta|cyan|yellow|\#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3}))\"
+style_arg       \"(dashed|dotted|solid)\"
 string          \"[a-zA-Z0-9\-\+\/\*\(\)\[\]\{\}\ \&\~\#\^\@\=\$\%\!\,\.\:\>\<]+\"
 number          [+-]?[0-9]+(\.[0-9]*)?([Ee][+-]?[0-9]+)?
 toskip          \n|\r|\t|\ |\/\/.*
@@ -72,7 +73,8 @@ label                                                       { return label; }
 style                                                       { return style; }
 ymin                                                        { return ymin; }
 ymax                                                        { return ymax; }
-{parameter}                                                 { return PARAM; }
+{color_arg}                                                 { return COLOR_PARAM; }
+{style_arg}                                                 { return STYLE_PARAM; }
 {string}                                                    { return STRING; }
 {variable}                                                  { strcpy(yylval.svalue, yytext); return VAR; }
     /* Operators */
@@ -89,10 +91,10 @@ ymax                                                        { return ymax; }
 "&&"                                                        { return AND; }
 "||"                                                        { return OR; }
 "="                                                         { return yytext[0]; }
-"+"                                                         { return yytext[0]; }
-"-"                                                         { return yytext[0]; }
-"*"                                                         { return yytext[0]; }
-"/"                                                         { return yytext[0]; }
+"+"                                                         { return PLUS; }
+"-"                                                         { return MIN; }
+"*"                                                         { return TIMES; }
+"/"                                                         { return DIV; }
 "%"                                                         { return yytext[0]; }
 \(                                                          { return '('; }
 \)                                                          { return ')'; }

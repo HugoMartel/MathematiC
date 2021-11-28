@@ -1,8 +1,4 @@
 /*
-x = 0
-y = 1
-
-
 if x<y {
 	if y > 0 {
 		y = sin(2)
@@ -13,9 +9,6 @@ if x<y {
 } else {
 	x =  6*7
 }
-
-z = 4+5
-y = z + x
 */
 
 // Valid code 1
@@ -25,10 +18,16 @@ var c = 3;
 
 def fonction1: (x) => {
 	// Function Instructions
-    return a*x^2 + b*x + b;/* simple polynomial */
+    return a*x^2 + b*x + c;/* simple polynomial */
 }
 
-draw fonction1 in [-8,8] {
-    color: "red",
+def g: (x) => {
+	x += 2;
+	return 2*sin(x);
+}
+
+draw fonction1 in [-8,8], g {
+    color: ["red", "#00FF00"],
+	style: ["dashed", "solid"],
     label: "Fonction 1"
 }
