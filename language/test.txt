@@ -1,23 +1,29 @@
-/*
-if x<y {
-	if y > 0 {
-		y = sin(2)
-		x = x + y
-	} else {
-		x = cos(3)
-	}
-} else {
-	x =  6*7
-}
-*/
+/**
+ * @file  	test.matc
+ * @version 1.0.0
+ */
 
 // Valid code 1
 var a = 1;
 var b = 2;
 var c = 3;
+var z = 5;
+var y = 4;
+
+
 
 def fonction1: (x) => {
 	// Function Instructions
+	if z<y {
+		if y > 0 {
+			y = sin(2);
+			z = x + y + pi;
+		} else {
+			z = cos(3);
+		}
+	} else {
+		z =  6*7;
+	}
     return a*x^2 + b*x + c;/* simple polynomial */
 }
 

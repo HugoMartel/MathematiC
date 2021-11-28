@@ -1,8 +1,9 @@
 %{
     #include <cstdio>
-    #include <math.h>
+    #include <cmath>
     #include <string>
     #include <map>
+    #include <stack>
     #include <vector>
     #include <iostream>
     using namespace std;
@@ -63,10 +64,27 @@
          * @param[in]   n   Instruction string value like a var name
          * @return      Error code
          */
-        int add_instruction(const int &c, const double &v=0, const string &n="") {
+        int add_instruction(const int &c, const double &v=0, const std::string &n="") {
             code.push_back(instruction(c,v,n));
             ic++;
-        return 0;
+            return 0;
+        }
+        /**
+         * Define a parameter used in a function declaration
+         * @param[in]   s   Name of the parameter
+         * @param[in]   c   Code of the DECLARE instruction (since it is not known by cpp)
+         * @return      Error Code
+         */
+        int add_param(const std::string &s, const int &c) {
+            if (!parameters.count(s)) {
+                    parameters[s] = 0;
+                    /* c is the code number for DECLARE */
+                    add_instruction(c, 0, s);
+                    return EXIT_SUCCESS;
+            } else {
+                yyerror("Parameter already declared...");
+                return -1;
+            }
         }
     };
 
@@ -75,17 +93,23 @@
     vector <instruction> code_genere;
 
     /**
-     * String storing the current code to write to.
+     * String storing the current code (main or function) to write to.
      * 0 -> main code, otherwise write to the associated function
      */
-    std::string current_code = "";
+    std::stack<std::string> current_code;
 
     // Déclaration de la map qui associe
     // les noms des variables à leur valeur
     // (La table de symboles)
     std::map<std::string,double> variables;
+
     //  Map storing functions instructions, access them by their name (string)
-    std::map<std::string, function> functions;
+    std::map<std::string, function *> functions;
+
+    /* Map storing functions to draw */
+    std::map</*name*/std::string, std::pair</*xbegin*/double, /*xend*/double>> funcsToDraw;
+
+    /* Main Code Instruction Counter */
     int ic = 0;
 
     // Remarquez les paramètres par défaut pour faciliter les appels depuis la grammaire
@@ -116,8 +140,11 @@
 %type <BOOL> logic
 
 /* Reserved words */
+%token <DOUBLE> PI
+%token <DOUBLE> E
+%token <DOUBLE> PHI
 %token var /* Variable definition */
-%token def /* Function definition */
+%token DEF /* Function definition */
 %token in  /* param interval for a given function */
 %token arrow /* => */
 %token RETURN /* return function keyword */
@@ -164,6 +191,7 @@
 %token JMPCOND
 %token ASSIGN
 %token DECLARE
+%token LOAD
 
 /* Operators */
 %token <DOUBLE> PLUS
@@ -225,18 +253,54 @@ declarations: %empty /* \epsilon */                 { /* End of declarations */
             }
 
 
-fonctions: def VAR ':' '(' args ')' arrow '{'           { /* TODO */ }
+fonctions: DEF VAR ':' '(' parameters ')' arrow '{'           {
+                    if(!functions.count($2)) {
+                        functions[$2] = new function();
+                        current_code.push($2);
+                        add_instruction(DEF, 0, $2);
+                    } else {
+                        yyerror("Function already declared...");
+                    }
+                    
+}
                 instruction
-          '}'
-         | fonctions fonctions                          { /* TODO */ }
+          '}'                                               {
+                    current_code.pop();
+}
+         | fonctions fonctions                              { /* Support multiple functions */ }
 
-args: VAR                                               { /* TODO */ }
-    | args ',' args                                     { /* TODO */ }
+parameters: VAR                                         {
+                    add_instruction(DECLARE, 0, $1);
+                    /*
+                    if (function.count(current_code.top())) {
+                        if (!functions[current_code.top()].parameters.count($1)) {
+                            functions[current_code.top()].parameters[$1] = 0;
+                        } else {
+                            yyerror("Parameter already declared...");
+                        }
+                    } else {
+                        yyerror("Function not registered...");
+                    }
+                    */
+}
+          | parameters ',' parameters                   { /* Support multiple parameters */ }
 
 
-draw_func: VAR in '[' NUM ',' NUM ']'                   { /* TODO */ }
+draw_func: VAR in '[' NUM ',' NUM ']'                   {
+                    /* Load function names to send to the front-end */
+                    add_instruction(LOAD, 0, $1);
+                    /* Check if the function is already drawn */
+                    if (!functions.count($1)){
+                        funcsToDraw[$1] = std::pair<double,double>($4,$6);
+
+                    } else {
+                        yyerror("Function already drawn...");
+                    }
+                    
+
+}
          | VAR                                          { /* TODO */ }
-         | draw_func ',' draw_func                      { /* TODO */ }
+         | draw_func ',' draw_func                      { /* Support multiple ??? */ }
 
 
 affichage: DRAW draw_func '{'   { /*TODO: load funcs*/ }
@@ -258,6 +322,7 @@ draw_args: color ':' '[' color_args ']'  { /*TODO: check PARAM values*/ }
          | ymax ':' VAR                  { /*TODO*/ }
          | draw_args ',' draw_args       { /*TODO*/ }
 
+
 style_args: STYLE_PARAM                  { /*TODO*/ }
           | style_args ',' style_args    { /*TODO*/ }
 
@@ -266,10 +331,13 @@ color_args: COLOR_PARAM                  { /*TODO*/ }
           | color_args ',' color_args    { /*TODO*/ }
 
 
-instruction: %empty /* \epsilon */      { /* No instructions left */ }
-           | expr ';'                   { /* End of instruction */ }
-           | RETURN expr ';'            { printf("Returning: %g\n", $2); }
-           | IF logic '{'               {
+instruction: %empty /* \epsilon */       { /* No instructions left */ }
+           | instruction expr ';'        { /* new line */ }
+           | instruction RETURN expr ';' {
+               /* The return instruction will jump to the main instruction (out of function) */
+               add_instruction(JMP, -1);
+            }
+           | IF logic '{'                {
 
                 // Je sauvegarde l'endroit actuel pour revenir mofifier l'adresse
                 // lorsqu'elle sera connue (celle du JC)
@@ -313,6 +381,9 @@ logic: expr SUP expr        { add_instruction(SUP); }
 
 
 expr: NUM                   { add_instruction(NUM, $1); }
+    | PI                    { add_instruction(NUM, 3.14159265358979323846); }
+    | E                     { add_instruction(NUM, 2.71828182845904523536); }
+    | PHI                   { add_instruction(NUM, 1.61803398874989484820); }
     | SIN '(' expr ')'      { add_instruction(SIN); }
     | COS '(' expr ')'      { add_instruction(COS); }
     | TAN '(' expr ')'      { add_instruction(TAN); }
@@ -449,16 +520,29 @@ int main(int argc, char* argv[])
 
     /* Print the generated code */
     std::cout << "i\tCode\tValue\tName\n";
-    for (size_t i = 0; i < code_genere.size(); i++){
-    auto instruction = code_genere [i];
-    std::cout << i 
-         << '\t'
-         << print_code(instruction.code) 
-         << '\t'
-         << instruction.value 
-         << '\t' 
-         << instruction.name 
-         << std::endl;
+    for (size_t i = 0; i < code_genere.size(); i++) {
+        auto instruction = code_genere [i];
+        std::cout << i 
+             << '\t'
+             << print_code(instruction.code) 
+             << '\t'
+             << instruction.value 
+             << '\t' 
+             << instruction.name 
+             << std::endl;
+    }
+
+    /* Print function map */
+    std::cout << "\nFunctions:\n";
+    for (auto it = functions.begin(); it != functions.end(); ++it) {
+        std::cout << it->first << ": ( ";
+        for (auto it2 = it->second->parameters.begin(); it2 != it->second->parameters.end(); ++it) {
+            std::cout << it2->first << " ";
+        }
+        std::cout << ") => {" <<
+            "\n\tcolor: " << it->second->color <<
+            "\n\tstyle: " << it->second->style <<
+            "\n}\n";
     }
 
     return EXIT_SUCCESS;

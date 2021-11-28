@@ -62,9 +62,12 @@ for                                                         { return FOR; }
 draw                                                        { return DRAW; }
 while                                                       { return WHILE; }
     /* Reserved Words */
+pi                                                          { return PI; }
+e                                                           { return E; }
+phi                                                         { return PHI; }
 in                                                          { return in; }
 var                                                         { return var; }
-def                                                         { return def; }
+def                                                         { return DEF; }
 "=>"                                                        { return arrow; }
 return                                                      { return RETURN; }
     /* Draw args */
