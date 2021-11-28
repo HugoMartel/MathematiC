@@ -5,6 +5,7 @@
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_opengl3.h"
+#include <cstdint>
 #include <stdio.h>
 #include <ctime>
 #include <sstream>
@@ -16,7 +17,7 @@
 #else
 #include <SDL_opengl.h>
 #endif
-#define BUFF_SIZE 1000
+#define BUFF_SIZE 500
 #define MAX(a, b) (((a) < (b)) ? (b) : (a))
 #include <string>
 
@@ -36,9 +37,9 @@ struct MultilineScrollState
 static int MultilineScrollCallback(ImGuiInputTextCallbackData *data);
 static bool ImGuiInputTextMultiline(const char* label, char*, size_t buf_size, float height, ImGuiInputTextFlags flags  );
 static void doStyle();
-static void ShowMainMenuBar();
-static void menuFile();
-static void save(char *);
+static void ShowMainMenuBar(char *, SDL_Window *);
+static void menuFile(char *, SDL_Window *);
+static void save(char *, std::string);
 
 // Main code
 int main(int, char**)
@@ -84,6 +85,7 @@ int main(int, char**)
     SDL_Window* window = SDL_CreateWindow("MathematiC", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
     SDL_GLContext gl_context = SDL_GL_CreateContext(window);
     SDL_GL_MakeCurrent(window, gl_context);
+    SDL_SetWindowTitle(window, "MathematiC - new file");
     SDL_GL_SetSwapInterval(1); // Enable vsync
 
     // Setup Dear ImGui context
@@ -129,7 +131,9 @@ int main(int, char**)
     ImVec2 graphSize(2*(*width)/3, *(height) - 20);
     ImVec2 graphPos(*(width)/3, 20);
     ImGuiWindowFlags windowFlags = (ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
-    char buf[1000];
+    char *buf = (char *) malloc(BUFF_SIZE * sizeof(char) + 1);
+    buf[0] = '\0';
+    //char buf[BUFF_SIZE] = "//enter your code here\n";
     std::string buff;
     // Main loop
     bool done = false;
@@ -152,7 +156,7 @@ int main(int, char**)
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
-        ShowMainMenuBar();
+        ShowMainMenuBar(buf, window);
         ImVec2 codeSize(*(width)/3, *(height));
         /*setting windowsize and position*/
         ImGui::SetNextWindowSize(codeSize, 0);
@@ -161,15 +165,15 @@ int main(int, char**)
             ImGui::Begin("code", NULL, windowFlags);
             doStyle();
             //ImGui::InputTextMultiline("code", buff);
-            ImGuiInputTextMultiline("", buf, 1000, *height - 150, 0);
+            ImGuiInputTextMultiline("", buf, BUFF_SIZE, *height - 150, 0);
             static int clicked = 0;
             if (ImGui::Button("Run"))
                 clicked++;
-                if (clicked & 1) {
-                    /*TODO: add calls to the run function; lex & show*/
-                    ImGui::SameLine();
-                    ImGui::Text("Calling the lex func");
-                } 
+            if (clicked & 1) {
+                /*TODO: add calls to the run function; lex & show*/
+                ImGui::SameLine();
+                ImGui::Text("Calling the lex func");
+            } 
             ImGui::End();
         }
         ImGui::SetNextWindowSize(graphSize, 0);
@@ -262,14 +266,14 @@ static void doStyle()
 }
 
 /*funtion to show main menu*/
-static void ShowMainMenuBar()
+static void ShowMainMenuBar(char *buff, SDL_Window *window)
 {
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
-            menuFile();
+            menuFile(buff, window);
             ImGui::EndMenu();                    
         }
-        if (ImGui::BeginMenu("Edit")) {
+        /*if (ImGui::BeginMenu("Edit")) {
             if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
             if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
             ImGui::Separator();
@@ -277,34 +281,37 @@ static void ShowMainMenuBar()
             if (ImGui::MenuItem("Copy", "CTRL+C")) {}
             if (ImGui::MenuItem("Paste", "CTRL+V")) {}
                 ImGui::EndMenu();
-        }
+        }*/
         ImGui::EndMainMenuBar();
     }
 }
 
 /*show main file menu*/
-static void menuFile()
+static void menuFile(char *buff, SDL_Window *window)
 {
-    ImGui::MenuItem("(demo menu)", NULL, false, false);
+    std::string filename("");
+    ImGui::MenuItem("(MathematiC)", NULL, false, false);
     if (ImGui::MenuItem("New")) {
-        //TODO
+        free(buff);
+        buff = (char *) malloc(BUFF_SIZE * sizeof(char));
+        buff[0] = '\0';
     }
     if (ImGui::MenuItem("Open", "Ctrl+O")) {
         //TODO
     }
-    if (ImGui::BeginMenu("Open Recent")) {
-        ImGui::MenuItem("fish_hat.c");
-        ImGui::MenuItem("fish_hat.inl");
-        ImGui::MenuItem("fish_hat.h");
-        if (ImGui::BeginMenu("More..")) {
-            ImGui::MenuItem("Hello");
-            ImGui::MenuItem("Sailor");
-            ImGui::EndMenu();
+    if (ImGui::MenuItem("Save", "Ctrl+S")) {
+        //TODO
+        if(filename == ""){
+            goto SAVEAS;         
         }
-        ImGui::EndMenu();
+        else{
+            save(buff, filename); 
+        }
+        SDL_SetWindowTitle(window, ("MathematiC - " + filename + ".dat").c_str());
     }
-    if (ImGui::MenuItem("Save", "Ctrl+S")) {}
-    if (ImGui::MenuItem("Save As..")) {}
+    if (ImGui::MenuItem("Save As..")) {
+        SAVEAS: printf("guihfduigh");
+    }
 
     ImGui::Separator();
     if (ImGui::BeginMenu("Options")) {
@@ -321,54 +328,29 @@ static void menuFile()
         ImGui::Combo("Combo", &n, "Yes\0No\0Maybe\0\0");
         ImGui::EndMenu();
     }
-
-    if (ImGui::BeginMenu("Colors")) {
-        float sz = ImGui::GetTextLineHeight();
-        for (int i = 0; i < ImGuiCol_COUNT; i++) {
-            const char* name = ImGui::GetStyleColorName((ImGuiCol)i);
-            ImVec2 p = ImGui::GetCursorScreenPos();
-            ImGui::GetWindowDrawList()->AddRectFilled(p, ImVec2(p.x + sz, p.y + sz), ImGui::GetColorU32((ImGuiCol)i));
-            ImGui::Dummy(ImVec2(sz, sz));
-            ImGui::SameLine();
-            ImGui::MenuItem(name);
-        }
-        ImGui::EndMenu();
-    }
-
-    // Here we demonstrate appending again to the "Options" menu (which we already created above)
     // Of course in this demo it is a little bit silly that this function calls BeginMenu("Options") twice.
     // In a real code-base using it would make senses to use this feature from very different code locations.
-    if (ImGui::BeginMenu("Options")) {// <-- Append!
+    /*if (ImGui::BeginMenu("Options")) {// <-- Append!
         static bool b = true;
         ImGui::Checkbox("SomeOption", &b);
         ImGui::EndMenu();
-    }
-
-    if (ImGui::BeginMenu("Disabled", false)) {// Disabled
-        IM_ASSERT(0);
-    }
+    }*/
     if (ImGui::MenuItem("Checked", NULL, true)) {}
-    if (ImGui::MenuItem("Quit", "Alt+F4")) {}
+    if (ImGui::MenuItem("Quit", "")) {
+        SDL_Quit();
+    }
 }
 
-/*TODO: add a way to change the filename*/
-static void save(char *buff)
+static void save(char *buff, std::string filename)
 {
-    /*getting current date/time based on OS*/
-    time_t t = time(0);
-    /*convert now to string*/ 
-    std::tm* now = localtime(&t);
-    std::stringstream fileNameStream;
-    std::string fileName;
-    /*filename : DD_MM_YYYY.dat*/
-    fileNameStream << now->tm_mday << '_' << now->tm_mon << '_' << now->tm_year << ".dat";
-    /*convert stringstream to string*/
-    fileNameStream >> fileName;
+    filename += ".dat";
     /*creating the file*/
-    std::ofstream file(fileName);
+    std::ofstream file(filename);
     /*Writing the file*/
-    for(int i = 0; i < BUFF_SIZE; ++i){
+    int i = 0;
+    while (i < BUFF_SIZE && buff[i] != '\0') {
         file << buff[i];
+        ++i;
     }
     /*closing the file*/
     file.close();    
