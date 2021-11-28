@@ -1,24 +1,46 @@
-// Dear ImGui: standalone example application for SDL2 + OpenGL
-// (SDL is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
-// If you are new to Dear ImGui, read documentation from the docs/ folder + read the top of imgui.cpp.
-// Read online: https://github.com/ocornut/imgui/tree/master/docs
+/**
+ * @file    test.cpp
+ */
+
+/* Imgui includes */
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_opengl3.h"
-#include <stdio.h>
+
+/* SDL2 includes */
+#if defined(_WIN32)
+#include <SDL.h>
+#else
+#include <SDL2/SDL.h>
+#endif
+
+/* OpenGL includes */
+#if defined(IMGUI_IMPL_OPENGL_ES2)
+#include <SDL_opengles2.h>
+#elif defined(_WIN32)
+#include <SDL_opengl.h>
+#else
+#include <SDL2/SDL_opengl.h>
+#endif
+#include <GL/gl.h>
+
+/* Custom includes */
+
+/* STD includes */
+#if defined(_WIN32)
+#include <windows.h>
+#endif
+#include <cstdio>
+#include <cstdlib>
 #include <ctime>
 #include <sstream>
 #include <fstream>
 #include <filesystem>
-#include <SDL.h>
-#if defined(IMGUI_IMPL_OPENGL_ES2)
-#include <SDL_opengles2.h>
-#else
-#include <SDL_opengl.h>
-#endif
+#include <string>
+
 #define BUFF_SIZE 1000
 #define MAX(a, b) (((a) < (b)) ? (b) : (a))
-#include <string>
+
 
 struct MultilineScrollState
 {
@@ -33,12 +55,17 @@ struct MultilineScrollState
 };
 
 
+/*------------------*/
+/* -- PROTOTYPES -- */
+/*------------------*/
 static int MultilineScrollCallback(ImGuiInputTextCallbackData *data);
 static bool ImGuiInputTextMultiline(const char* label, char*, size_t buf_size, float height, ImGuiInputTextFlags flags  );
 static void doStyle();
 static void ShowMainMenuBar();
 static void menuFile();
 static void save(char *);
+void exitSDL(SDL_GLContext ctx, SDL_Window *win, SDL_Surface *logo);
+
 
 // Main code
 int main(int, char**)
@@ -80,10 +107,18 @@ int main(int, char**)
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-    SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-    SDL_Window* window = SDL_CreateWindow("MathematiC", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
+    SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_SHOWN);
+    SDL_Window* window = SDL_CreateWindow("MathematiC", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1280, 720, window_flags);
+    if (!window) {
+        fprintf(stderr, "Could not create window: %s\n", SDL_GetError());
+        return -1;
+    }
+
     SDL_GLContext gl_context = SDL_GL_CreateContext(window);
     SDL_GL_MakeCurrent(window, gl_context);
+    SDL_Surface *logo = SDL_LoadBMP("./img/logo.bmp");
+    SDL_SetWindowIcon(window, logo);
+    SDL_SetWindowMinimumSize(window, 480, 500);
     SDL_GL_SetSwapInterval(1); // Enable vsync
 
     // Setup Dear ImGui context
@@ -116,23 +151,23 @@ int main(int, char**)
     //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
     //IM_ASSERT(font != NULL);
 
-    // Our state
-    bool show_code = true;
-    bool show_graph = true;
-    /*getting window size*/
+    /* Define Window size */
     int *width = (int *) malloc(sizeof(int));
     int *height = (int *) malloc(sizeof(int));
     SDL_GetWindowSize(window, width, height);
-    /*Some definitions*/
-    ImVec2 codeSize(*(width)/3, *(height) - 20);
-    ImVec2 codePos(0, 20);
-    ImVec2 graphSize(2*(*width)/3, *(height) - 20);
-    ImVec2 graphPos(*(width)/3, 20);
+
+    /* Imgui definitions */
     ImGuiWindowFlags windowFlags = (ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
-    char buf[1000];
+    char buf[1000];//! Multiline input max length
     std::string buff;
-    // Main loop
+
+
+
+    /*-----------------*/
+    /* -- Main loop -- */
+    /*-----------------*/
     bool done = false;
+
     while (!done) {
         // Poll and handle events (inputs, window resize, etc.)
         // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
@@ -142,42 +177,64 @@ int main(int, char**)
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
             ImGui_ImplSDL2_ProcessEvent(&event);
-            if (event.type == SDL_QUIT)
+            switch (event.type) {
+            case SDL_WINDOWEVENT:
+                /* Window Event */
+
+                if (event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window)) {
+                    /* Window Close Handler */
+                    done = true;
+                } else if (event.window.event == SDL_WINDOWEVENT_RESIZED && event.window.windowID == SDL_GetWindowID(window)) {
+                    /* Window Resize Handler */
+                    *width = event.window.data1;
+                    *height = event.window.data2;
+                    //TODO change widgets sizes using  x: event.window.data1, y: event.window.data2
+                }
+
+                break;
+            case SDL_QUIT:
+                /* Quit Event */
                 done = true;
-            if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window))
-                done = true;
+                break;
+            default: break;
+            }
+
         }
+
 
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
+
+        /* Main Menu Bar */
         ShowMainMenuBar();
-        ImVec2 codeSize(*(width)/3, *(height));
-        /*setting windowsize and position*/
-        ImGui::SetNextWindowSize(codeSize, 0);
-        ImGui::SetNextWindowPos(codePos, 0);
-        if (show_code) { //code part
-            ImGui::Begin("code", NULL, windowFlags);
-            doStyle();
-            //ImGui::InputTextMultiline("code", buff);
-            ImGuiInputTextMultiline("", buf, 1000, *height - 150, 0);
-            static int clicked = 0;
-            if (ImGui::Button("Run"))
-                clicked++;
-                if (clicked & 1) {
-                    /*TODO: add calls to the run function; lex & show*/
-                    ImGui::SameLine();
-                    ImGui::Text("Calling the lex func");
-                } 
-            ImGui::End();
+
+        /* Code widget */
+        ImGui::SetNextWindowSize(ImVec2(480, *height - 20), 0);
+        ImGui::SetNextWindowPos(ImVec2(0, 20), 0);
+
+        ImGui::Begin("code", NULL, windowFlags);
+        doStyle();
+        //ImGui::InputTextMultiline("code", buff);
+        ImGuiInputTextMultiline("", buf, 1000, *height - 150, 0);
+        static int clicked = 0;
+        if (ImGui::Button("Run"))
+            clicked++;
+        if (clicked & 1) {
+            /*TODO: add calls to the run function; lex & show*/
+            ImGui::SameLine();
+            ImGui::Text("Calling the lex func");
         }
-        ImGui::SetNextWindowSize(graphSize, 0);
-        ImGui::SetNextWindowPos(graphPos, 0);
-        if (show_graph) { //graph part 
-            ImGui::Begin("graphe", NULL, windowFlags);
-            ImGui::End();
-        }
+        ImGui::End();
+
+        /* Graph widget */
+        ImGui::SetNextWindowSize(ImVec2(*width - 480, *height - 20), 0);
+        ImGui::SetNextWindowPos(ImVec2(480, 20), 0);
+
+        ImGui::Begin("graphe", NULL, windowFlags);
+        ImGui::End();
+
 
         // Rendering
         ImGui::Render();
@@ -188,15 +245,9 @@ int main(int, char**)
     }
 
     // Cleanup
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplSDL2_Shutdown();
-    ImGui::DestroyContext();
+    exitSDL(gl_context, window, logo);
 
-    SDL_GL_DeleteContext(gl_context);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
-
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 /****************************************************************
@@ -257,7 +308,7 @@ static bool ImGuiInputTextMultiline(const char* label, char* buf, size_t buf_siz
 /*Function to add bg color & style*/
 static void doStyle()
 {
-    ImGuiStyle &style = ImGui::GetStyle(); 
+    ImGuiStyle &style = ImGui::GetStyle();
     style.Colors[ImGuiCol_WindowBg] = ImColor(40, 43, 55, 255);
 }
 
@@ -267,7 +318,7 @@ static void ShowMainMenuBar()
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
             menuFile();
-            ImGui::EndMenu();                    
+            ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Edit")) {
             if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
@@ -374,3 +425,20 @@ static void save(char *buff)
     file.close();    
 }
 
+/**
+ * Function to call when exiting the programm
+ * @param[in]   ctx     OpenGL context
+ * @param[in]   win     Pointer to the main Window
+ */
+void exitSDL(SDL_GLContext ctx, SDL_Window *win, SDL_Surface *logo)
+{
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplSDL2_Shutdown();
+    ImGui::DestroyContext();
+
+    SDL_FreeSurface(logo);
+
+    SDL_GL_DeleteContext(ctx);
+    SDL_DestroyWindow(win);
+    SDL_Quit();
+}

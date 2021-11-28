@@ -14,7 +14,7 @@
 #CXX = g++
 #CXX = clang++
 
-EXE = test
+EXE = MathematiC
 IMGUI_DIR = ./lib/imgui
 
 SRC := src
