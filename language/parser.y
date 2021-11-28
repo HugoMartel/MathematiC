@@ -150,16 +150,16 @@
 %token RETURN /* return function keyword */
 
 /* Parameters for draw */
-%token color
-%token style
-%token label
-%token xmin
-%token xmax
-%token ymin
-%token ymax
-%token COLOR_PARAM /* "#F0F0F0" or "blue" */
-%token STYLE_PARAM /* "solid", "dashed", "dotted" */
-%token STRING /* "text" */
+%token <STRING> color
+%token <STRING> style
+%token <STRING> label
+%token <DOUBLE> xmin
+%token <DOUBLE> xmax
+%token <DOUBLE> ymin
+%token <DOUBLE> ymax
+%token <STRING> COLOR_PARAM /* "#F0F0F0" or "blue" */
+%token <STRING> STYLE_PARAM /* "solid", "dashed", "dotted" */
+%token <STRING> STRING /* "text" */
 
 /* Functions & instructions*/
 %token <DOUBLE> NUM
@@ -289,6 +289,7 @@ parameters: VAR                                         {
 draw_func: VAR in '[' NUM ',' NUM ']'                   {
                     /* Load function names to send to the front-end */
                     add_instruction(LOAD, 0, $1);
+                    
                     /* Check if the function is already drawn */
                     if (!functions.count($1)){
                         funcsToDraw[$1] = std::pair<double,double>($4,$6);
@@ -309,26 +310,26 @@ affichage: DRAW draw_func '{'   { /*TODO: load funcs*/ }
          | DRAW draw_func ';'   { /* TODO: load default args */}
 
 
-draw_args: color ':' '[' color_args ']'  { /*TODO: check PARAM values*/ }
-         | style ':' '[' style_args ']'  { /*TODO: check PARAM values*/ }
-         | label ':' STRING              { /*TODO: check PARAM values*/ }
-         | xmin ':' NUM                  { /*TODO*/ }
-         | xmin ':' VAR                  { /*TODO*/ }
-         | xmax ':' NUM                  { /*TODO*/ }
-         | xmax ':' VAR                  { /*TODO*/ }
-         | ymin ':' NUM                  { /*TODO*/ }
-         | ymin ':' VAR                  { /*TODO*/ }
-         | ymax ':' NUM                  { /*TODO*/ }
-         | ymax ':' VAR                  { /*TODO*/ }
-         | draw_args ',' draw_args       { /*TODO*/ }
+draw_args: color ':' '[' color_args ']'  { /* getting the multiples color args (or not) */ }
+         | style ':' '[' style_args ']'  { /* getting the multiples style args (or not) */ }
+         | label ':' STRING              { add_instruction(label, 0, $3); /* TODO Pq il renvoie g ? */}
+         | xmin ':' NUM                  { add_instruction(xmin, $3); }/* TODO Pq il ne lie pas le denier arg ? */
+         | xmin ':' VAR                  { add_instruction(xmin, 0, $3); }
+         | xmax ':' NUM                  { add_instruction(xmax, $3); }
+         | xmax ':' VAR                  { add_instruction(xmax, 0, $3); }
+         | ymin ':' NUM                  { add_instruction(ymin, $3); }
+         | ymin ':' VAR                  { add_instruction(ymin, 0, $3); }
+         | ymax ':' NUM                  { add_instruction(ymax, $3); }
+         | ymax ':' VAR                  { add_instruction(ymax, 0, $3); }
+         | draw_args ',' draw_args       { /* Support multiple args */ }
 
 
-style_args: STYLE_PARAM                  { /*TODO*/ }
-          | style_args ',' style_args    { /*TODO*/ }
+style_args: STYLE_PARAM                  { add_instruction(STYLE_PARAM, 0, $1); /* TODO Pq il renvoie g ? */ }
+          | style_args ',' style_args    { /* Support multiple style_args */}
 
 
-color_args: COLOR_PARAM                  { /*TODO*/ }
-          | color_args ',' color_args    { /*TODO*/ }
+color_args: COLOR_PARAM                  { add_instruction(COLOR_PARAM, 0, $1); /* TODO Pq il renvoie g ? */ }
+          | color_args ',' color_args    { /* Support multiple color_args */}
 
 
 instruction: %empty /* \epsilon */       { /* No instructions left */ }
@@ -488,6 +489,11 @@ string print_code(const int &ins) {
         case DECLARE        : return "DECLARE";
         /* Draw Instructions */
         case DRAW           : return "DRAW";
+        /* Draw Arguments */
+        case STYLE_PARAM           : return "STYLE_PARAM";
+        case COLOR_PARAM           : return "COLOR_PARAM";
+        case label                 : return "label";
+        case xmin                 : return "xmin";
         /*---------------------------------*/
         default : return "";
     }

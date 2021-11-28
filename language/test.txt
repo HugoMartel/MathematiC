@@ -35,5 +35,6 @@ def g: (x) => {
 draw fonction1 in [-8,8], g {
     color: ["red", "#00FF00"],
 	style: ["dashed", "solid"],
-    label: "Fonction 1"
+    label: "Fonction 1",
+	xmin: -8
 }
