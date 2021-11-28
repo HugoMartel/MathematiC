@@ -1242,7 +1242,7 @@ void ShowDemo_DragLines() {
     static double y2 = 0.75;
     static double f = 0.1;
     static ImPlotDragToolFlags flags = ImPlotDragToolFlags_None;
-    ImGui::CheckboxFlags("NoCursors", (unsigned int*)&flags, ImPlotDragToolFlags_NoCursors); ImGui::SameLine();
+Main    ImGui::CheckboxFlags("NoCursors", (unsigned int*)&flags, ImPlotDragToolFlags_NoCursors); ImGui::SameLine();
     ImGui::CheckboxFlags("NoFit", (unsigned int*)&flags, ImPlotDragToolFlags_NoFit); ImGui::SameLine();
     ImGui::CheckboxFlags("NoInput", (unsigned int*)&flags, ImPlotDragToolFlags_NoInputs);
     if (ImPlot::BeginPlot("##lines",ImVec2(-1,0))) {

@@ -5,7 +5,12 @@
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_opengl3.h"
+#include "implot.h"
 #include <stdio.h>
+
+#include <vector>
+#include <iostream>
+
 #include <ctime>
 #include <sstream>
 #include <fstream>
@@ -38,7 +43,7 @@ struct MultilineScrollState
 static int MultilineScrollCallback(ImGuiInputTextCallbackData *data);
 static bool ImGuiInputTextMultiline(const char* label, char*, size_t buf_size, float height, ImGuiInputTextFlags flags  );
 static void doStyle();
-static void doGraph();
+static void doGraph(int winX, int winY, float interXmin, float interXmax, float affYmin, float affYmax, float affXmin, float affXmax);
 static void ShowMainMenuBar();
 static void menuFile();
 static void save(char *);
@@ -167,7 +172,9 @@ int main(int, char**)
         ImGui::SetNextWindowPos(graphPos, 0);
         if (show_graph) { //graph part
             ImGui::Begin("graphe", NULL, windowFlags);
-            doGraph();
+            ImPlot::CreateContext();
+            doGraph(SIZE_X, SIZE_Y, -2.0f, 12.5f, -10.0f, 10.0f, -2.0f, 12.5f);
+            ImPlot::DestroyContext();
             ImGui::End();
         }
 
@@ -254,16 +261,26 @@ static void doStyle()
 }
 
 /*Function draw Graph*/
-static void doGraph() {
-    const int sizeN = 800;
-    static float arr[sizeN];
-    float step1 = (1.0f/(sizeN))*10;
-    float xPos = 0;
+//TODO   add the function as parameters
+static void doGraph(int winX, int winY, float interXmin, float interXmax, float affYmin, float affYmax, float affXmin, float affXmax) {
+    int sizeN = 2*winX/3;
+    float arrX[sizeN];
+    float arrY[sizeN];
+    float step1 = (1.0f/(sizeN))*(interXmax-interXmin);
     for (int i = 0; i < sizeN; i++) {
-        arr[i] = 10*(tan(xPos)*exp(-1*xPos));
-        xPos += step1;
+        arrY[i] = 10*(cos(interXmin)*exp(-0.5f*interXmin));
+        arrX[i] = interXmin;
+        interXmin += step1;
     }
-    ImGui::PlotLines("", arr, IM_ARRAYSIZE(arr), 0, NULL, -10.0f, 10.0f, ImVec2(800.0f, 600.0f));
+
+    if (ImPlot::BeginPlot("Line Plot", ImVec2(2*SIZE_X/3-25,SIZE_Y-25))) {
+        ImPlot::SetupAxes("x", "y");
+        ImPlot::SetupAxesLimits(affXmin, affXmax, affYmin, affYmax, ImGuiCond_Always);
+        ImPlot::PlotLine("y=10*cos(20*x)*e^(-0.5*x)", arrX, arrY, sizeN);
+        ImPlot::PlotLine("y=x", arrX, arrX, sizeN);
+        ImPlot::EndPlot();
+    }
+    //ImGui::PlotLines("", arr, &sizeN, 0, NULL, interYmin, interYmax, ImVec2((float)sizeN, (float)winY));
 }
 
 /*funtion to show main menu*/
