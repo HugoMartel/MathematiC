@@ -452,8 +452,8 @@ string print_code(const int &ins) {
         /* Logic */
         case SUP            : return "SUP";
         case INF            : return "INF";
-        case SUP_STRICT     : return "SUP_STRICT";
-        case INF_STRICT     : return "INF_STRICT";
+        case SUP_STRICT     : return "SUP_ST";
+        case INF_STRICT     : return "INF_ST";
         case EQUAL          : return "EQUAL";
         case NOT_EQ         : return "NOT_EQ";
         case AND            : return "AND";
@@ -482,6 +482,7 @@ string print_code(const int &ins) {
         /* Adress Instructions */
         case JMP            : return "JMP";
         case JMPCOND        : return "JC ";
+        case LOAD           : return "LOAD";
         /* Variables Instructions */
         case ASSIGN         : return "ASSIGN";
         case DECLARE        : return "DECLARE";
