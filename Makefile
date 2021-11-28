@@ -17,13 +17,14 @@
 EXE = MathematiC
 IMGUI_DIR = ./lib/imgui
 
+INC := include
 SRC := src
 BUILD := build
 
 SOURCES = src/test.cpp
 SOURCES += $(IMGUI_DIR)/imgui.cpp $(IMGUI_DIR)/imgui_draw.cpp $(IMGUI_DIR)/imgui_tables.cpp $(IMGUI_DIR)/imgui_widgets.cpp
 SOURCES += $(IMGUI_DIR)/backends/imgui_impl_sdl.cpp $(IMGUI_DIR)/backends/imgui_impl_opengl3.cpp
-SOURCES += $(IMGUI_DIR)/imgui_demo.cpp# tmp
+SOURCES += $(INC)/zenity.cpp
 OBJS = $(addprefix $(BUILD)/, $(addsuffix .o, $(basename $(notdir $(SOURCES)))))
 UNAME_S := $(shell uname -s)
 LINUX_GL_LIBS = -lGL
@@ -32,6 +33,7 @@ LINUX_GL_LIBS = -lGL
 CXXFLAGS = -I $(IMGUI_DIR) -I $(IMGUI_DIR)/backends -I ./include
 CXXFLAGS += -g -Wall -Wextra -Wformat
 LIBS =
+ZENITY =
 
 ##---------------------------------------------------------------------
 ## OPENGL ES
@@ -51,6 +53,10 @@ LIBS =
 ifeq ($(UNAME_S), Linux) #LINUX
 	ECHO_MESSAGE = "Linux"
 	LIBS += $(LINUX_GL_LIBS) -ldl `sdl2-config --libs`
+
+# Check for zenity
+	ZENITY = Zenity version :
+	ZENITY += $(shell zenity --version)
 
 	CXXFLAGS += `sdl2-config --cflags`
 	CFLAGS = $(CXXFLAGS)
@@ -91,6 +97,11 @@ $(BUILD)/test.o: $(SRC)/test.cpp
 
 # Unit tests File
 
+
+# Include Files
+$(BUILD)/%.o: $(INC)/%.cpp
+	@echo $(ZENITY)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Imgui Files
 $(BUILD)/%.o: $(IMGUI_DIR)/%.cpp
