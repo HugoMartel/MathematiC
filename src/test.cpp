@@ -6,6 +6,7 @@
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_opengl3.h"
+#include "implot.h"
 
 /* SDL2 includes */
 #if defined(_WIN32)
@@ -79,6 +80,18 @@ static bool ImGuiInputTextMultiline(const char* label, char* buf, size_t buf_siz
  * Function to add background color & style to the window and Imgui elements
  */
 static void doStyle();
+/**
+ * Function used to draw a Graph
+ * @param[in]       width       Window width
+ * @param[in]       height      Window height
+ * @param[in]       interXmin   Min x value of the drawn functions, will become a table of values
+ * @param[in]       interXmax   Max x value of the drawn functions
+ * @param[in]       displayYmin Min y value of the function display
+ * @param[in]       displayYmax Max y value of the function display
+ * @param[in]       displayXmin Min x value of the function display
+ * @param[in]       displayXmax Max x value of the function display
+ */
+static void doGraph(int *width, int *height, double interXmin, double interXmax, const double &displayYmin, const double &displayYmax, const double &displayXmin, const double &displayXmax);
 /**
  * Function to display the menu bar
  * @param[in]       buff        buffer containing the code written
@@ -199,8 +212,8 @@ int main(int, char**)
     //IM_ASSERT(font != NULL);
 
     /* Define Window size */
-    int *width = (int *) malloc(sizeof(int));
-    int *height = (int *) malloc(sizeof(int));
+    int *width = new int;
+    int *height = new int;
     SDL_GetWindowSize(window, width, height);
 
     /* Imgui definitions */
@@ -218,6 +231,7 @@ int main(int, char**)
     /* -- Main loop -- */
     /*-----------------*/
     bool done = false;
+    unsigned int clicked = 0;
 
     while (!done) {
         // Poll and handle events (inputs, window resize, etc.)
@@ -266,13 +280,15 @@ int main(int, char**)
 
         ImGui::Begin("code", NULL, windowFlags);
         doStyle();
+        /* Multiline Input */
         if (ImGuiInputTextMultiline("", buf, BUFF_SIZE, *height - 75, 0) && SDL_GetWindowTitle(window)[0] != '~') {
             /* Check if something changed in the input, if yes, then change the title */
             std::string newTitle("~ ") ;
             newTitle +=  SDL_GetWindowTitle(window);
             SDL_SetWindowTitle(window, newTitle.c_str());
         }
-        static int clicked = 0;
+
+        /* Run Button */
         if (ImGui::Button("Run", ImVec2(50, 25)))
             clicked++;
         if (clicked & 1) {
@@ -286,7 +302,10 @@ int main(int, char**)
         ImGui::SetNextWindowSize(ImVec2(*width - 480, *height - 20), 0);
         ImGui::SetNextWindowPos(ImVec2(480, 20), 0);
 
-        ImGui::Begin("graph", NULL, windowFlags);
+        ImGui::Begin("graphe", NULL, windowFlags);
+        ImPlot::CreateContext();
+        doGraph(width, height, -2.0, 12.5, -10.0, 10.0, -2.0, 12.5);
+        ImPlot::DestroyContext();
         ImGui::End();
 
 
@@ -364,6 +383,40 @@ static void doStyle()
 {
     ImGuiStyle &style = ImGui::GetStyle();
     style.Colors[ImGuiCol_WindowBg] = ImColor(40, 43, 55, 255);
+}
+
+/*=======================================================================================*/
+//TODO   add the function as parameters
+static void doGraph(int *width, int *height, double interXmin, double interXmax, const double &displayYmin, const double &displayYmax, const double &displayXmin, const double &displayXmax)
+{
+    /* Get widget's width */
+    const unsigned int sizeN = *width - 480;
+    /* Points to plot coords (x,y) */
+    double arrX[sizeN];
+    double arrY[sizeN];
+
+    /* step between two points plotted */
+    double step1 = (1.0/sizeN) * (interXmax - interXmin);
+    /* Compute coords on the interval [interXmin, interXmax] */
+    for (unsigned int i = 0; i < sizeN; ++i) {
+        arrY[i] = 10 * (cos(interXmin)*exp(-0.5 * interXmin));//! will change
+        arrX[i] = interXmin;
+        interXmin += step1;/* Corresponds to 1px *///? to check
+    }
+
+    if (ImPlot::BeginPlot("Line Plot", ImVec2(*width - 480 - 15,*height - 37))) {//! will change (label)
+        /* Init Axis */
+        ImPlot::SetupAxes("x", "y");
+        /*Always prevents movable axis*/
+        ImPlot::SetupAxesLimits(displayXmin, displayXmax, displayYmin, displayYmax, ImGuiCond_Always);
+
+        /* PlotLine(label, x values, y values, arrays length = # of points to draw) */
+        //! will change to be able to plot n functions from lexer/parser
+        ImPlot::PlotLine("y=10*cos(20*x)*e^(-0.5*x)", arrX, arrY, sizeN);// First func
+        ImPlot::PlotLine("y=x", arrX, arrX, sizeN);// Second func
+        ImPlot::EndPlot();
+    }
+
 }
 
 /*=======================================================================================*/
