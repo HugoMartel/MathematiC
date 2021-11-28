@@ -16,8 +16,6 @@
 #else
 #include <SDL_opengl.h>
 #endif
-#define SIZE_X 1280
-#define SIZE_Y 720
 #define BUFF_SIZE 1000
 #define MAX(a, b) (((a) < (b)) ? (b) : (a))
 #include <string>
@@ -83,7 +81,7 @@ int main(int, char**)
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
     SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-    SDL_Window* window = SDL_CreateWindow("MathematiC", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SIZE_X, SIZE_Y, window_flags);
+    SDL_Window* window = SDL_CreateWindow("MathematiC", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
     SDL_GLContext gl_context = SDL_GL_CreateContext(window);
     SDL_GL_MakeCurrent(window, gl_context);
     SDL_GL_SetSwapInterval(1); // Enable vsync
@@ -121,11 +119,15 @@ int main(int, char**)
     // Our state
     bool show_code = true;
     bool show_graph = true;
+    /*getting window size*/
+    int *width = (int *) malloc(sizeof(int));
+    int *height = (int *) malloc(sizeof(int));
+    SDL_GetWindowSize(window, width, height);
     /*Some definitions*/
-    ImVec2 codeSize(SIZE_X/3, SIZE_Y);
+    ImVec2 codeSize(*(width)/3, *(height) - 20);
     ImVec2 codePos(0, 20);
-    ImVec2 graphSize(2*SIZE_X/3, SIZE_Y);
-    ImVec2 graphPos(SIZE_X/3, 20);
+    ImVec2 graphSize(2*(*width)/3, *(height) - 20);
+    ImVec2 graphPos(*(width)/3, 20);
     ImGuiWindowFlags windowFlags = (ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
     char buf[1000];
     std::string buff;
@@ -151,7 +153,7 @@ int main(int, char**)
         ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
         ShowMainMenuBar();
-        ImVec2 codeSize(SIZE_X/3, SIZE_Y);
+        ImVec2 codeSize(*(width)/3, *(height));
         /*setting windowsize and position*/
         ImGui::SetNextWindowSize(codeSize, 0);
         ImGui::SetNextWindowPos(codePos, 0);
@@ -159,7 +161,15 @@ int main(int, char**)
             ImGui::Begin("code", NULL, windowFlags);
             doStyle();
             //ImGui::InputTextMultiline("code", buff);
-            ImGuiInputTextMultiline("", buf, 1000, SIZE_Y, 0);
+            ImGuiInputTextMultiline("", buf, 1000, *height - 150, 0);
+            static int clicked = 0;
+            if (ImGui::Button("Run"))
+                clicked++;
+                if (clicked & 1) {
+                    /*TODO: add calls to the run function; lex & show*/
+                    ImGui::SameLine();
+                    ImGui::Text("Calling the lex func");
+                } 
             ImGui::End();
         }
         ImGui::SetNextWindowSize(graphSize, 0);
@@ -289,10 +299,6 @@ static void menuFile()
         if (ImGui::BeginMenu("More..")) {
             ImGui::MenuItem("Hello");
             ImGui::MenuItem("Sailor");
-            if (ImGui::BeginMenu("Recurse..")) {
-                menuFile();
-                ImGui::EndMenu();
-            }
             ImGui::EndMenu();
         }
         ImGui::EndMenu();
