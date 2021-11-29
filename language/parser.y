@@ -289,7 +289,8 @@ parameters: VAR                                         {
 draw_func: VAR in '[' NUM ',' NUM ']'                   {
                     /* Load function names to send to the front-end */
                     add_instruction(LOAD, 0, $1);
-                    
+                    add_instruction(NUM, $4);
+                    add_instruction(NUM, $6);
                     /* Check if the function is already drawn */
                     if (!functions.count($1)){
                         funcsToDraw[$1] = std::pair<double,double>($4,$6);
@@ -300,7 +301,7 @@ draw_func: VAR in '[' NUM ',' NUM ']'                   {
                     
 
 }
-         | VAR                                          { /* TODO */ }
+         | VAR                                          { add_instruction(LOAD, 0, $1);}
          | draw_func ',' draw_func                      { /* Support multiple ??? */ }
 
 
@@ -497,6 +498,190 @@ string print_code(const int &ins) {
         /*---------------------------------*/
         default : return "";
     }
+}
+
+// Fonction qui exécute le code généré sur un petit émulateur
+void execution ( const vector <instruction> &code_genere, 
+                 map<string,double> &variables )
+{
+printf("\n------- Exécution du programme ---------\n");
+stack<int> pile;
+
+long unsigned int ic = 0;  // compteur instruction
+double r1, r2;  // des registres
+
+while (ic < code_genere.size()){   // tant que nous ne sommes pas à la fin du programme
+      auto ins = code_genere[ic];
+      switch (ins.code){
+        case PLUS:
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            r2 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            pile.push(r1+r2);
+            ic++;
+          break;
+
+        case DIV:
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            r2 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            pile.push(r1/r2);
+            ic++;
+          break;
+
+        case MIN:
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            r2 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            pile.push(r1-r2);
+            ic++;
+          break;
+
+        case TIMES:
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            r2 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            pile.push(r1*r2);
+            ic++;
+          break;
+
+        case ASSIGN:
+            r1 = pile.top();    // Récupérer la tête de pile;
+            pile.pop();
+            variables[ins.name] = r1;
+            ic++;
+          break;
+
+        case NUM:   // pour un nombre, on empile
+            pile.push(ins.value);
+            ic++;
+          break;
+
+        case COS: // pour un cos
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+            pile.push(cos(r1));
+            ic++;
+          break;
+
+        case SIN: // pour un cos
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+            pile.push(sin(r1));
+            ic++;
+          break;
+
+        case TAN: // pour un cos
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+            pile.push(tan(r1));
+            ic++;
+          break;
+
+        case COSH: // pour un cos
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+            pile.push(cosh(r1));
+            ic++;
+          break;
+
+        case SINH: // pour un cos
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+            pile.push(sinh(r1));
+            ic++;
+          break;
+
+        case TANH: // pour un cos
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+            pile.push(tanh(r1));
+            ic++;
+          break;
+
+        case ARCCOS: // pour un cos
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+            pile.push(acos(r1));
+            ic++;
+          break;
+
+        case ARCSIN: // pour un cos
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+            pile.push(asin(r1));
+            ic++;
+          break;
+
+        case ARCTAN: // pour un cos
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+            pile.push(atan(r1));
+            ic++;
+          break;
+
+        case ARCCOSH: // pour un cos
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+            pile.push(acosh(r1));
+            ic++;
+          break;
+
+        case ARCSINH: // pour un cos
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+            pile.push(asinh(r1));
+            ic++;
+          break;
+
+        case ARCTANH: // pour un cos
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+            pile.push(atanh(r1));
+            ic++;
+          break;
+/*
+        case JMP:
+            // je récupère l'adresse à partir de la table
+              ic = adresses[ins.name];
+          break;
+*/
+
+        case JMPCOND: 
+             r1 = pile.top();    // Rrécupérer la tête de pile;
+             pile.pop();
+             if ( r1 != 0 ) 
+                ic++;
+             else 
+                ic = (int)ins.value;             
+          break;
+        
+        case VAR:    // je consulte la table de symbole et j'empile la valeur de la variable
+             // Si elle existe bien sur... 
+            try {
+                pile.push(variables.at(ins.name));
+                ic++;
+            }
+          catch(...) {
+                variables[ins.name] = 0;
+                pile.push(variables.at(ins.name));
+                ic++;
+            }
+          break;
+      }
+  }
 }
 
 /*
