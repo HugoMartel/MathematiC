@@ -39,6 +39,7 @@
 #include <fstream>
 #include <filesystem>
 #include <string>
+#include <algorithm>
 
 #define BUFF_SIZE 2000
 #define MAX(a, b) (((a) < (b)) ? (b) : (a))
@@ -457,6 +458,7 @@ static void menuFile(char *buff, SDL_Window *window, std::string &filename)
         printf("To open: %s\n", filename.c_str());
         if (filename != "") {
             //TODO
+            open(buff, filename);
             title += filename;
             title.resize(100);
             SDL_SetWindowTitle(window, title.c_str());
@@ -496,12 +498,43 @@ static void menuFile(char *buff, SDL_Window *window, std::string &filename)
 /*=======================================================================================*/
 static void open(char *buff, std::string &filename)
 {
-    //TODO
+    std::string input("");
+    std::fstream file;
+    file.open(filename);
+    if (!file) {
+        printf("error, cannot open the file");
+        return;
+    } else {
+        std::string line;
+        while (getline(file, line)) {
+            input += line;
+            input += '\n';
+        }
+        if(input.size() < BUFF_SIZE){
+            for(unsigned long int i = 0; i < input.size(); ++i){
+                buff[i] = input[i];
+            }
+            buff[input.size()] = '\0';
+        } else {
+            buff[0] = '\0';
+            printf("cannot open this file, it's too large");
+        }
+    }
 }
 
 /*=======================================================================================*/
 static void save(char *buff, std::string &filename)
 {
+    /*removing all the '.' in the filename*/
+    filename.erase(std::remove(filename.begin(), filename.end(), '.'), filename.end());
+    /*if the last 4 chars are matc*/
+    if (std::string("matc") !=  filename.substr(filename.size() - 4)) {
+        /*then we insert the . in the filename*/
+        filename += ".matc";
+    } else {
+        /*else we're adding the file extension*/
+        filename.insert(filename.size() - 4, ".");
+    }
     /*creating the file*/
     std::ofstream file(filename);
     /*Writing the file*/
