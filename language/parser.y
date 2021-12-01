@@ -100,7 +100,7 @@
      * @param[in]   code_genere     Main instruction stacks
      * @param[in]   variables       Variable map
      */
-    void execution ( const vector <instruction> &code_genere, map<string,double> &variables);
+    void execution(const vector <instruction> &code_genere, map<string,double> &variables);
 
     /* Main code stack */
     std::vector<instruction> code_genere;
@@ -299,7 +299,8 @@ fonctions: DEF VAR ':' '(' parameters ')' arrow '{'           {
                 instruction
           '}'                                               {
                     /* Dequeue since we left the function scope */
-                    current_scope.pop();
+                    if (!current_scope.empty())
+                        current_scope.pop();
                     /*Clear the queue in case it is not empty*/
                     while (!paramToAdd.empty())
                         paramToAdd.pop();
@@ -321,12 +322,12 @@ draw_func: VAR in '[' NUM ',' NUM ']'                   {
                     add_instruction(NUM, $6);
                     add_instruction(INTERV, 0, $1);
 
-                    /* Check if the function is already drawn */
-                    if (!functions.count($1)){
+                    /* Check if the function is already drawn or missing */
+                    if (functions.count($1)){
                         funcsToDraw[$1] = std::pair<double,double>($4,$6);
 
                     } else {
-                        yyerror("Function already drawn...");
+                        yyerror("Function already drawn or missing...");
                     }
 
 
@@ -512,6 +513,7 @@ string print_code(const int &ins) {
         case SQRT           : return "SQRT";
         case VAR            : return "VAR";
         /* Adress Instructions */
+        case DEF            : return "DEF";
         case JMP            : return "JMP";
         case JMPCOND        : return "JC ";
         case LOAD           : return "LOAD";
@@ -722,12 +724,8 @@ void execution ( const vector <instruction> &code_genere, map<string,double> &va
                 /* check if r1 < r2 */
                 if (r1 < r2) {
                     /* add the interval to the appropriate function */
-                    if (!current_scope.empty()) {
-                        functions[current_scope.front()]->xInterval.first = r1;
-                        functions[current_scope.front()]->xInterval.second = r2;
-                    } else {
-                        yyerror("No function to set an interval to...");
-                    }
+                    functions[ins.name]->xInterval.first = r1;
+                    functions[ins.name]->xInterval.second = r2;
                 } else {
                     yyerror("Bad interval values...");
                 }
@@ -773,13 +771,13 @@ int main(int argc, char* argv[])
     std::cout << "i\tCode\tValue\tName\n";
     for (size_t i = 0; i < code_genere.size(); i++) {
         auto instruction = code_genere [i];
-        std::cout << i 
+        std::cout << i
              << '\t'
-             << print_code(instruction.code) 
+             << print_code(instruction.code)
              << '\t'
-             << instruction.value 
-             << '\t' 
-             << instruction.name 
+             << instruction.value
+             << '\t'
+             << instruction.name
              << std::endl;
     }
 
@@ -793,23 +791,27 @@ int main(int argc, char* argv[])
         std::cout << ") => {" <<
             "\n\tcolor: " << it->second->color <<
             "\n\tstyle: " << it->second->style <<
-            "\n[ " << it->second->xInterval.first << ", " << it->second->xInterval.second << " ]" <<
+            "\n\t[ " << it->second->xInterval.first << ", " << it->second->xInterval.second << " ]" <<
             "\n}\n";
 
         std::cout << "CODE:\n";
         /* Print the generated code */
         std::cout << "i\tCode\tValue\tName\n";
-        for (size_t i = 0; i < it->second->code.size(); i++) {
-            instruction instruction = it->second->code [i];
-            std::cout << i 
+        for (size_t i = 0; i < it->second->code.size(); ++i) {
+            instruction ins = it->second->code[i];
+            std::cout << i
              << '\t'
-             << print_code(instruction.code) 
+             << print_code(ins.code)
              << '\t'
-             << instruction.value 
-             << '\t' 
-             << instruction.name 
+             << ins.value
+             << '\t'
+             << ins.name
              << std::endl;
         }
+    }
+
+    for (auto it = functions.begin(); it != functions.end(); ++it) {
+        delete it->second;
     }
 
     return EXIT_SUCCESS;

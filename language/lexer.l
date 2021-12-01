@@ -74,6 +74,8 @@ return                                                      { return RETURN; }
 color                                                       { return color; }
 label                                                       { return label; }
 style                                                       { return style; }
+xmin                                                        { return xmin; }
+xmax                                                        { return xmax; }
 ymin                                                        { return ymin; }
 ymax                                                        { return ymax; }
 {color_arg}                                                 { return COLOR_PARAM; }
