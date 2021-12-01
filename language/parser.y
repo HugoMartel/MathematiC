@@ -531,216 +531,403 @@ string print_code(const int &ins) {
     }
 }
 
-// Fonction qui exécute le code généré sur un petit émulateur
-void execution ( const vector <instruction> &code_genere, map<string,double> &variables )
+/**
+ *Function to run when the programm starts
+ * @param[in]   code_genere     Main instruction stacks
+ * @param[in]   variables       Variable map
+ * @param[in]   functions       Functions map
+*/
+void execution ( const vector <instruction> &code_genere, 
+                 map<std::string,double> &variables, 
+                 map<std::string, function *> &functions )
 {
-    printf("\n------- Exécution du programme ---------\n");
-    stack<int> pile;
+printf("\n------- Exécution du programme ---------\n");
+stack<int> pile;
 
-    long unsigned int ic = 0;  // compteur instruction
-    double r1, r2;  // des registres
+long unsigned int ic = 0;  // compteur instruction
+double r1, r2;  // des registres
+std::string r3; // un string
 
-    while (ic < code_genere.size()) {   // tant que nous ne sommes pas à la fin du programme
-          instruction ins = code_genere[ic];
+while (ic < code_genere.size()){   // tant que nous ne sommes pas à la fin du programme
+      instruction ins = code_genere[ic];
+      std::vector <std::string> actual_functions;
+      switch (ins.code){
+        case PLUS:
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
 
-        switch (ins.code) {
-            case PLUS:
-                r1 = pile.top();    // Récupère la tête de pile;
-                pile.pop();
+            r2 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
 
-                r2 = pile.top();    // Récupère la tête de pile;
-                pile.pop();
+            pile.push(r1+r2);
+            ++ic;
+          break;
 
-                pile.push(r1+r2);
+        case DIV:
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            r2 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            pile.push(r1/r2);
+            ++ic;
+          break;
+
+        case MIN:
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            r2 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            pile.push(r1-r2);
+            ++ic;
+          break;
+
+        case TIMES:
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            r2 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            pile.push(r1*r2);
+            ++ic;
+          break;
+
+        case SUP:
+             r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            r2 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            pile.push(r1>r2);
+            ++ic;
+          break;
+
+        case INF:
+             r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            r2 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            pile.push(r1<r2);
+            ++ic;
+          break;
+
+        case SUP_STRICT:
+             r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            r2 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            pile.push(r1>=r2);
+            ++ic;
+          break;
+
+        case INF_STRICT:
+             r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            r2 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            pile.push(r1<=r2);
+            ++ic;
+          break;
+
+        case EQUAL:
+             r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            r2 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            pile.push(r1==r2);
+            ++ic;
+          break;
+
+        case NOT_EQ:
+             r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            r2 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            pile.push(r1!=r2);
+            ++ic;
+          break;
+
+        case AND:
+             r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            r2 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            pile.push(r1 && r2);
+            ++ic;
+          break;
+
+        case OR:
+             r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            r2 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            pile.push(r1 || r2);
+            ++ic;
+          break;
+
+        case NOT:
+             r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            pile.push(!r1);
+            ++ic;
+          break;
+
+        case NUM:   // pour un nombre, on empile
+            pile.push(ins.value);
+            ++ic;
+          break;
+
+        case COS: // pour un cos
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+            pile.push(std::cos(r1));
+            ++ic;
+          break;
+
+        case SIN: // pour un cos
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+            pile.push(std::sin(r1));
+            ++ic;
+          break;
+
+        case TAN: // pour un cos
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+            pile.push(std::tan(r1));
+            ++ic;
+          break;
+
+        case COSH: // pour un cos
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+            pile.push(std::cosh(r1));
+            ++ic;
+          break;
+
+        case SINH: // pour un cos
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+            pile.push(std::sinh(r1));
+            ++ic;
+          break;
+
+        case TANH: // pour un cos
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+            pile.push(std::tanh(r1));
+            ++ic;
+          break;
+
+        case ARCCOS: // pour un cos
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+            pile.push(std::acos(r1));
+            ++ic;
+          break;
+
+        case ARCSIN: // pour un cos
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+            pile.push(std::asin(r1));
+            ++ic;
+          break;
+
+        case ARCTAN: // pour un cos
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+            pile.push(std::atan(r1));
+            ++ic;
+          break;
+
+        case ARCCOSH: // pour un cos
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+            pile.push(std::acosh(r1));
+            ++ic;
+          break;
+
+        case ARCSINH: // pour un cos
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+            pile.push(std::asinh(r1));
+            ++ic;
+          break;
+
+        case ARCTANH: // pour un cos
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+            pile.push(std::atanh(r1));
+            ++ic;
+          break;
+
+        case POW: // pour un cos
+             r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            r2 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+
+            pile.push(std::pow(r1, r2));
+            ++ic;
+          break;
+
+        case EXP: // pour un cos
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+            pile.push(std::exp(r1));
+            ++ic;
+          break;
+
+        case LOG: // pour un cos
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+            pile.push(std::log(r1));
+            ++ic;
+          break;
+
+        case SQRT: // pour un cos
+            r1 = pile.top();    // Rrécupérer la tête de pile;
+            pile.pop();
+            pile.push(std::sqrt(r1));
+            ++ic;
+          break;
+
+        case JMP:
+            // je récupère l'adresse à partir de la table
+            //  ic = adresses[ins.name];
+            ++ic;
+          break;
+
+        case JMPCOND: 
+             r1 = pile.top();    // Rrécupérer la tête de pile;
+             pile.pop();
+             if ( r1 != 0 ) 
                 ++ic;
-                break;
+             else 
+                ic = (int)ins.value;             
+          break;
 
-            case DIV:
-                r1 = pile.top();    // Récupère la tête de pile;
-                pile.pop();
+        case LOAD: 
+             actual_functions.push_back(ins.name);
+             ++ic;           
+          break;
 
-                r2 = pile.top();    // Récupère la tête de pile;
-                pile.pop();
+        case INTERV:
+            /* TODO */
+            ++ic;
+         break;
 
-                pile.push(r1/r2);
+        case ASSIGN:
+            r1 = pile.top();    // Récupérer la tête de pile;
+            pile.pop();
+            variables[ins.name] = r1;
+            ++ic;
+          break;
+
+        case DECLARE:
+            // je consulte la table de symbole et j'empile la valeur de la variable
+             // Si elle existe bien sur... 
+            try {
+                pile.push(variables.at(ins.name));
                 ++ic;
-                break;
-
-            case MIN:
-                r1 = pile.top();    // Récupère la tête de pile;
-                pile.pop();
-
-                r2 = pile.top();    // Récupère la tête de pile;
-                pile.pop();
-
-                pile.push(r1-r2);
+            }
+            catch(...) {
+                variables[ins.name] = 0;
+                pile.push(variables.at(ins.name));
                 ++ic;
-                break;
-
-            case TIMES:
-                r1 = pile.top();    // Récupère la tête de pile;
-                pile.pop();
-
-                r2 = pile.top();    // Récupère la tête de pile;
-                pile.pop();
-
-                pile.push(r1*r2);
+            }
+          break;
+        
+        case VAR:    // je consulte la table de symbole et j'empile la valeur de la variable
+             // Si elle existe bien sur... 
+            try {
+                pile.push(variables.at(ins.name));
                 ++ic;
-                break;
-
-            case ASSIGN:
-                r1 = pile.top();    // Récupère la tête de pile;
-                pile.pop();
-                variables[ins.name] = r1;
+            }
+          catch(...) {
+                variables[ins.name] = 0;
+                pile.push(variables.at(ins.name));
                 ++ic;
-                break;
+            }
+          break;
 
-            case NUM:   // pour un nombre, on empile
-                pile.push(ins.value);
-                ++ic;
-                break;
+        case DRAW:
+            /* TODO */
+            ++ic;
+         break;
 
-            case COS: // pour un cos
-                r1 = pile.top();    // Récupère la tête de pile;
-                pile.pop();
-                pile.push(std::cos(r1));
-                ++ic;
-                break;
+        case STYLE_PARAM:
+            for(long unsigned int i = 0; i < actual_functions.size(); i++){
+                functions[actual_functions[i]]->style = ins.name;
+            }
+            ++ic;
+         break;
+         
+        case COLOR_PARAM:
+            for(long unsigned int i = 0; i < actual_functions.size(); i++){
+                functions[actual_functions[i]]->style = ins.name;
+            }
+            ++ic;
+         break;
+         
+        case label:
+            for(long unsigned int i = 0; i < actual_functions.size(); i++){
+                functions[actual_functions[i]]->style = ins.name;
+            }
+            ++ic;
+         break;
+         
+        case xmin:
+            for(long unsigned int i = 0; i < actual_functions.size(); i++){
+                functions[actual_functions[i]]->style = ins.name;
+            }
+            ++ic;
+         break;
 
-            case SIN: // pour un cos
-                r1 = pile.top();    // Récupère la tête de pile;
-                pile.pop();
-                pile.push(std::sin(r1));
-                ++ic;
-                break;
+        case xmax:
+            for(long unsigned int i = 0; i < actual_functions.size(); i++){
+                functions[actual_functions[i]]->style = ins.name;
+            }
+            ++ic;
+         break;
 
-            case TAN: // pour un cos
-                r1 = pile.top();    // Récupère la tête de pile;
-                pile.pop();
-                pile.push(std::tan(r1));
-                ++ic;
-                break;
+        case ymin:
+            for(long unsigned int i = 0; i < actual_functions.size(); i++){
+                functions[actual_functions[i]]->style = ins.name;
+            }
+            ++ic;
+         break;
 
-            case COSH: // pour un cos
-                r1 = pile.top();    // Récupère la tête de pile;
-                pile.pop();
-                pile.push(std::cosh(r1));
-                ++ic;
-                break;
-
-            case SINH: // pour un cos
-                r1 = pile.top();    // Récupère la tête de pile;
-                pile.pop();
-                pile.push(std::sinh(r1));
-                ++ic;
-                break;
-
-            case TANH: // pour un cos
-                r1 = pile.top();    // Récupère la tête de pile;
-                pile.pop();
-                pile.push(std::tanh(r1));
-                ++ic;
-                break;
-
-            case ARCCOS: // pour un cos
-                r1 = pile.top();    // Récupère la tête de pile;
-                pile.pop();
-                pile.push(std::acos(r1));
-                ++ic;
-                break;
-
-            case ARCSIN: // pour un cos
-                r1 = pile.top();    // Récupère la tête de pile;
-                pile.pop();
-                pile.push(std::asin(r1));
-                ++ic;
-                break;
-
-            case ARCTAN: // pour un cos
-                r1 = pile.top();    // Récupère la tête de pile;
-                pile.pop();
-                pile.push(std::atan(r1));
-                ++ic;
-                break;
-
-            case ARCCOSH: // pour un cos
-                r1 = pile.top();    // Récupère la tête de pile;
-                pile.pop();
-                pile.push(std::acosh(r1));
-                ++ic;
-                break;
-
-            case ARCSINH: // pour un cos
-                r1 = pile.top();    // Récupère la tête de pile;
-                pile.pop();
-                pile.push(std::asinh(r1));
-                ++ic;
-                break;
-
-            case ARCTANH: // pour un cos
-                r1 = pile.top();    // Récupère la tête de pile;
-                pile.pop();
-                pile.push(std::atanh(r1));
-                ++ic;
-                break;
-    /*
-            case JMP:
-                // je récupère l'adresse à partir de la table
-                // TODO: CHECK WHICH STACK TO WRITE TO
-                  ic = adresses[ins.name];
-              break;
-    */
-
-            case JMPCOND:
-                r1 = pile.top();    // Récupère la tête de pile;
-                pile.pop();
-
-                /* TODO: CHECK WHICH STACK TO WRITE TO */
-                if ( r1 != 0 )
-                    ++ic;
-                else
-                    ic = (int)ins.value;
-                break;
-
-            case VAR:    // Get the variable from the memory and load it onto the pile
-                /* Check if the variable exists */
-                if (variables.count(ins.name)) {
-                    pile.push(variables.at(ins.name));
-                } else {
-                    yyerror("Using uninitialized variable...");
-                }
-                ++ic;
-
-                break;
-
-            case INTERV:    // Load the interval into the loaded function
-                r1 = pile.top();
-                pile.pop();
-                r2 = pile.top();
-                pile.pop();
-
-                /* check if r1 < r2 */
-                if (r1 < r2) {
-                    /* add the interval to the appropriate function */
-                    if (!current_scope.empty()) {
-                        functions[current_scope.front()]->xInterval.first = r1;
-                        functions[current_scope.front()]->xInterval.second = r2;
-                    } else {
-                        yyerror("No function to set an interval to...");
-                    }
-                } else {
-                    yyerror("Bad interval values...");
-                }
-
-                ++ic;
-
-                break;
-
-            default:
-                yyerror("Unkown instruction provided...");
-                break;
-        }
-    }
+        case ymax:
+            for(long unsigned int i = 0; i < actual_functions.size(); i++){
+                functions[actual_functions[i]]->style = ins.name;
+            }
+            ++ic;
+         break;
+        
+      }
+  }
 }
 
 /*
@@ -811,6 +998,8 @@ int main(int argc, char* argv[])
              << std::endl;
         }
     }
+    
+    execution(code_genere, variables, functions);
 
     return EXIT_SUCCESS;
 }
