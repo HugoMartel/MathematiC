@@ -41,9 +41,10 @@
 #include <string>
 #include <algorithm>
 
+#include "interface.hpp"
+
 #define BUFF_SIZE 2000
 #define MAX(a, b) (((a) < (b)) ? (b) : (a))
-
 
 struct MultilineScrollState
 {
@@ -223,17 +224,19 @@ int main(int, char**)
     char *buf = (char *) malloc((BUFF_SIZE+1) * sizeof(char));//! Multiline input max length
     if(buf == NULL) exit(1);
     buf[0] = '\0';
-    //char buf[BUFF_SIZE] = "//enter your code here\n";
     strcat(buf, "/**\n * @file      example.matc\n * @version 1.0.0\n */\n\n// Declarations\nvar a = 1;\nvar b = 2;\nvar c = 3;\nvar z = 5;\nvar y = 4;\n\n\n// Functions\ndef fonction1: (x) => {\n    // Function Instructions\n    if z<y {\n        if y > 0 {\n            y = sin(2);\n            z = x + y + pi;\n        } else {\n            z = cos(3);\n        }\n    } else {\n        z =  6*7;\n    }\n    return a*x^2 + b*x + c;/* simple polynomial */\n}\n\ndef g: (x) => {\n    x += 2;\n    return 2*sin(x);\n}\n\n// Draw Functions\ndraw fonction1 in [-8,8], g {\n    color: [\"red\", \"#00FF00\"],\n    style: [\"dashed\", \"solid\"],\n    label: \"Fonction 1\"\n}\n");
-
-
-
+    /* definitions used in main loop */
+    /* if true then the prog quit  */
+    bool done = false;
+    /* used to change the color in the output console  */
+    bool isError = false;
+    /* used to check the button  */
+    unsigned int clicked = 0;
+    /* the string shown in the console output  */
+    std::string output("");
     /*-----------------*/
     /* -- Main loop -- */
     /*-----------------*/
-    bool done = false;
-    unsigned int clicked = 0;
-
     while (!done) {
         // Poll and handle events (inputs, window resize, etc.)
         // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
@@ -288,34 +291,50 @@ int main(int, char**)
             newTitle +=  SDL_GetWindowTitle(window);
             SDL_SetWindowTitle(window, newTitle.c_str());
         }
+
         /* Run Button */
-        if (ImGui::Button("Run", ImVec2(50, 25)))
-            clicked++;
+        if (ImGui::Button("Run", ImVec2(50, 25))) {
+            /* if pressed then we save our file  */
+            if (opened_file == "") {
+                /* if the file has no name then we save it  */
+                opened_file = file_dialog({ {"matc", "MathematiC File"} }, true);
+            }
+            /* saving the file  */
+            save(buf, opened_file);
+            /* calling the yy parse function (still needs to be coded under includes/interface.hpp  */
+            callingYYParse(opened_file);
+            /* the button is clicked  */
+            clicked = 1;
+        }
 
         /* Output Console  */
         ImDrawList* draw_list = ImGui::GetWindowDrawList();
-        ImGui::Text("Output Console:");
-        std::string output("");
+        ImGui::Text("Output Console:"); 
         if (clicked & 1) {
-            /*TODO: add calls to the lex, and the lex call the console func*/
-            /*TODO: fix colors, fix border size and add call to the actual lex func*/
-            bool isError = false;
-            output = "fsd";
+            /* if we have error & output, text red and showing the lex error message  */
             if (isError && output != ""){
                 ImGui::TextColored((ImVec4)ImColor::HSV(0, 0.8f, 0.8f), ("ERROR ...\n" + output).c_str());
-                draw_list->AddRect(ImGui::GetItemRectMin(), ImVec2(ImGui::GetWindowSize().x -15, ImGui::GetItemRectMax().y), IM_COL32(255, 255, 255, 255));
-            } else if (!isError && output != "") {
-                ImGui::TextColored((ImVec4)ImColor::HSV(2 / 7.0f, 0.8f, 0.8f), ("Running ...\n" + output).c_str()); 
+                /* drawing the rectangle  */
                 draw_list->AddRect(ImVec2(ImGui::GetItemRectMin().x - 2, ImGui::GetItemRectMin().y - 2), ImVec2(ImGui::GetWindowSize().x -15, ImGui::GetItemRectMax().y + 2), IM_COL32(255, 255, 255, 255));
+            /* if not an error and we have output, so the code runned successfully  */
+            } else if (!isError && output != "") {
+                /* green text */
+                ImGui::TextColored((ImVec4)ImColor::HSV(2 / 7.0f, 0.8f, 0.8f), ("Running ...\n" + output).c_str()); 
+                /* rectangle arround the output */
+                draw_list->AddRect(ImVec2(ImGui::GetItemRectMin().x - 2, ImGui::GetItemRectMin().y - 2), ImVec2(ImGui::GetWindowSize().x -15, ImGui::GetItemRectMax().y + 2), IM_COL32(255, 255, 255, 255));
+            /* strange case: no output  */
             } else if (output == "") {
+                /* red text and explanation  */
                 ImGui::TextColored((ImVec4)ImColor::HSV(0, 0.8f, 0.8f), "Whoops...\nThe code did not retrieve anything...\n that\'s a strange error case...");
-                draw_list->AddRect(ImVec2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight()), ImGui::GetItemRectMax(), IM_COL32(255, 255, 255, 255));
+                /* rectangle arround it again  */
+                draw_list->AddRect(ImVec2(ImGui::GetItemRectMin().x - 2, ImGui::GetItemRectMin().y - 2), ImVec2(ImGui::GetWindowSize().x -15, ImGui::GetItemRectMax().y + 2), IM_COL32(255, 255, 255, 255));
             }
         }
         /* console output */
         ImGui::End();
 
         /* Graph widget */
+        /* setting it's position  */
         ImGui::SetNextWindowSize(ImVec2(*width - 480, *height - 20), 0);
         ImGui::SetNextWindowPos(ImVec2(480, 20), 0);
 
@@ -467,6 +486,7 @@ static void menuFile(char *buff, SDL_Window *window, std::string &filename)
     if (ImGui::MenuItem("New")) {
         /* Empty buffer */
         buff[0] = '\0';
+        filename = "";
         SDL_SetWindowTitle(window, "MathematiC - new file");
     } else if (ImGui::MenuItem("Open", "Ctrl+O")) {
         /* OPEN FILE */
