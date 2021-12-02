@@ -92,7 +92,12 @@ static void doStyle();
  * @param[in]       displayXmin Min x value of the function display
  * @param[in]       displayXmax Max x value of the function display
  */
-static void doGraph(int *width, int *height, double interXmin, double interXmax, const double &displayYmin, const double &displayYmax, const double &displayXmin, const double &displayXmax);
+static void doGraph(int *width, int *height, double interXmin, double interXmax, const double &displayYmin, const double &displayYmax, const double &displayXmin, const double &displayXmax, ImVec4 testColors[], int testColorsLen);
+/**
+* Convert hexadecimal string to RGBA ImVec4
+* @param[in]       inputHex    string of the hexadecimal value format #FFFFFF (equal white)
+*/
+ImVec4 convertHexToRGBA(std::string& inputHex);
 /**
  * Function to display the menu bar
  * @param[in]       buff        buffer containing the code written
@@ -226,7 +231,13 @@ int main(int, char**)
     //char buf[BUFF_SIZE] = "//enter your code here\n";
     strcat(buf, "/**\n * @file      example.matc\n * @version 1.0.0\n */\n\n// Declarations\nvar a = 1;\nvar b = 2;\nvar c = 3;\nvar z = 5;\nvar y = 4;\n\n\n// Functions\ndef fonction1: (x) => {\n    // Function Instructions\n    if z<y {\n        if y > 0 {\n            y = sin(2);\n            z = x + y + pi;\n        } else {\n            z = cos(3);\n        }\n    } else {\n        z =  6*7;\n    }\n    return a*x^2 + b*x + c;/* simple polynomial */\n}\n\ndef g: (x) => {\n    x += 2;\n    return 2*sin(x);\n}\n\n// Draw Functions\ndraw fonction1 in [-8,8], g {\n    color: [\"red\", \"#00FF00\"],\n    style: [\"dashed\", \"solid\"],\n    label: \"Fonction 1\"\n}\n");
 
-
+    std::string testHex = "#FF2020";
+    ImVec4 testRGB = convertHexToRGBA(testHex);
+    std::string testHex1 = "#20FF20";
+    ImVec4 testRGB1 = convertHexToRGBA(testHex1);
+    std::string testHex2 = "#2020FF";
+    ImVec4 testRGB2 = convertHexToRGBA(testHex2);
+    ImVec4 testColorsV[3] = {testRGB, testRGB1, testRGB2};
 
     /*-----------------*/
     /* -- Main loop -- */
@@ -305,7 +316,7 @@ int main(int, char**)
                 ImGui::TextColored((ImVec4)ImColor::HSV(0, 0.8f, 0.8f), ("ERROR ...\n" + output).c_str());
                 draw_list->AddRect(ImGui::GetItemRectMin(), ImVec2(ImGui::GetWindowSize().x -15, ImGui::GetItemRectMax().y), IM_COL32(255, 255, 255, 255));
             } else if (!isError && output != "") {
-                ImGui::TextColored((ImVec4)ImColor::HSV(2 / 7.0f, 0.8f, 0.8f), ("Running ...\n" + output).c_str()); 
+                ImGui::TextColored((ImVec4)ImColor::HSV(2 / 7.0f, 0.8f, 0.8f), ("Running ...\n" + output).c_str());
                 draw_list->AddRect(ImVec2(ImGui::GetItemRectMin().x - 2, ImGui::GetItemRectMin().y - 2), ImVec2(ImGui::GetWindowSize().x -15, ImGui::GetItemRectMax().y + 2), IM_COL32(255, 255, 255, 255));
             } else if (output == "") {
                 ImGui::TextColored((ImVec4)ImColor::HSV(0, 0.8f, 0.8f), "Whoops...\nThe code did not retrieve anything...\n that\'s a strange error case...");
@@ -321,7 +332,7 @@ int main(int, char**)
 
         ImGui::Begin("graphe", NULL, windowFlags);
         ImPlot::CreateContext();
-        doGraph(width, height, -2.0, 12.5, -10.0, 10.0, -2.0, 12.5);
+        doGraph(width, height, -2.0, 12.5, -10.0, 10.0, -2.0, 12.5, testColorsV, sizeof(testColorsV)/sizeof(testColorsV[0]));
         ImPlot::DestroyContext();
         ImGui::End();
 
@@ -404,7 +415,7 @@ static void doStyle()
 
 /*=======================================================================================*/
 //TODO   add the function as parameters
-static void doGraph(int *width, int *height, double interXmin, double interXmax, const double &displayYmin, const double &displayYmax, const double &displayXmin, const double &displayXmax)
+static void doGraph(int *width, int *height, double interXmin, double interXmax, const double &displayYmin, const double &displayYmax, const double &displayXmin, const double &displayXmax, ImVec4 testColors[], int testColorsLen)
 {
     /* Get widget's width */
     const unsigned int sizeN = *width - 480;
@@ -418,22 +429,33 @@ static void doGraph(int *width, int *height, double interXmin, double interXmax,
     for (unsigned int i = 0; i < sizeN; ++i) {
         arrY[i] = 10 * (cos(interXmin)*exp(-0.5 * interXmin));//! will change
         arrX[i] = interXmin;
-        interXmin += step1;/* Corresponds to 1px *///? to check
+        interXmin += step1; // Corresponds to 1px on the X axis
     }
 
-    if (ImPlot::BeginPlot("Line Plot", ImVec2(*width - 480 - 15,*height - 37))) {//! will change (label)
+    ImPlot::PushColormap(ImPlot::AddColormap("UserColors", testColors, testColorsLen, true));
+
+    if (ImPlot::BeginPlot("MathematiC", ImVec2(*width - 480 - 15,*height - 37))) {
         /* Init Axis */
         ImPlot::SetupAxes("x", "y");
-        /*Always prevents movable axis*/
+        /*Always prevents movable axis + set the display frame*/
         ImPlot::SetupAxesLimits(displayXmin, displayXmax, displayYmin, displayYmax, ImGuiCond_Always);
 
         /* PlotLine(label, x values, y values, arrays length = # of points to draw) */
         //! will change to be able to plot n functions from lexer/parser
         ImPlot::PlotLine("y=10*cos(20*x)*e^(-0.5*x)", arrX, arrY, sizeN);// First func
-        ImPlot::PlotLine("y=x", arrX, arrX, sizeN);// Second func
+        //...
+        ImPlot::PlotLine("y=x", arrX, arrX, sizeN);// func number N
         ImPlot::EndPlot();
     }
 
+}
+/*=======================================================================================*/
+ImVec4 convertHexToRGBA(std::string& inputHex)
+{
+    int r, g, b;
+    const char *cstr = inputHex.c_str();
+    sscanf(cstr, "#%02x%02x%02x", &r, &g, &b);
+    return(ImVec4((float)r/255, (float)g/255, (float)b/255, 1));
 }
 
 /*=======================================================================================*/
