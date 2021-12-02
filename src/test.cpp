@@ -282,21 +282,37 @@ int main(int, char**)
         ImGui::Begin("code", NULL, windowFlags);
         doStyle();
         /* Multiline Input */
-        if (ImGuiInputTextMultiline("", buf, BUFF_SIZE, *height - 75, 0) && SDL_GetWindowTitle(window)[0] != '~') {
+        if (ImGuiInputTextMultiline("", buf, BUFF_SIZE, *height - 150, 0) && SDL_GetWindowTitle(window)[0] != '~') {
             /* Check if something changed in the input, if yes, then change the title */
             std::string newTitle("~ ") ;
             newTitle +=  SDL_GetWindowTitle(window);
             SDL_SetWindowTitle(window, newTitle.c_str());
         }
-
         /* Run Button */
         if (ImGui::Button("Run", ImVec2(50, 25)))
             clicked++;
+
+        /* Output Console  */
+        ImDrawList* draw_list = ImGui::GetWindowDrawList();
+        ImGui::Text("Output Console:");
+        std::string output("");
         if (clicked & 1) {
-            /*TODO: add calls to the run function; lex & show*/
-            ImGui::SameLine();
-            ImGui::Text("Calling the lex func");
+            /*TODO: add calls to the lex, and the lex call the console func*/
+            /*TODO: fix colors, fix border size and add call to the actual lex func*/
+            bool isError = false;
+            output = "fsd";
+            if (isError && output != ""){
+                ImGui::TextColored((ImVec4)ImColor::HSV(0, 0.8f, 0.8f), ("ERROR ...\n" + output).c_str());
+                draw_list->AddRect(ImGui::GetItemRectMin(), ImVec2(ImGui::GetWindowSize().x -15, ImGui::GetItemRectMax().y), IM_COL32(255, 255, 255, 255));
+            } else if (!isError && output != "") {
+                ImGui::TextColored((ImVec4)ImColor::HSV(2 / 7.0f, 0.8f, 0.8f), ("Running ...\n" + output).c_str()); 
+                draw_list->AddRect(ImVec2(ImGui::GetItemRectMin().x - 2, ImGui::GetItemRectMin().y - 2), ImVec2(ImGui::GetWindowSize().x -15, ImGui::GetItemRectMax().y + 2), IM_COL32(255, 255, 255, 255));
+            } else if (output == "") {
+                ImGui::TextColored((ImVec4)ImColor::HSV(0, 0.8f, 0.8f), "Whoops...\nThe code did not retrieve anything...\n that\'s a strange error case...");
+                draw_list->AddRect(ImVec2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight()), ImGui::GetItemRectMax(), IM_COL32(255, 255, 255, 255));
+            }
         }
+        /* console output */
         ImGui::End();
 
         /* Graph widget */
