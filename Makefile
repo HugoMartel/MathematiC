@@ -51,7 +51,7 @@ LDFLAGS := -g
 LFLAGS = -v
 LFLAGS += -d -p
 # Bison
-BFLAGS = --warnings=all --color=yes --defines -v
+BFLAGS = --warnings=all --defines -v
 BFLAGS += -t
 LIBS =
 
