@@ -303,6 +303,7 @@ int main(int, char**)
             save(buf, opened_file);
             /* calling the yy parse function (still needs to be coded under includes/interface.hpp  */
             callingYYParse(opened_file);
+            getVerbose(isError, output);
             /* the button is clicked  */
             clicked = 1;
         }
@@ -344,6 +345,22 @@ int main(int, char**)
         ImPlot::DestroyContext();
         ImGui::End();
 
+        
+        /* detecting inputs */
+        /* ctrl s, save  */
+        if (io.KeyCtrl && ImGui::IsKeyDown(22)) {
+            /* if no filename, when we prompt for one  */
+            if (opened_file == "") {
+                opened_file = file_dialog({ {"matc", "MathematiC File"} }, true);
+            }
+            /* saving  */
+            save(buf, opened_file);
+        }
+        /* ctrl o, open  */
+        if (io.KeyCtrl && ImGui::IsKeyDown(18)) {
+            opened_file = file_dialog({ {"matc", "MathematiC File"} }, false);
+            open(buf, opened_file);
+        }
 
         // Rendering
         ImGui::Render();
@@ -464,6 +481,8 @@ static void ShowMainMenuBar(char *buff, SDL_Window *window, std::string &filenam
             ImGui::EndMenu();
         }
 
+        //TODO: add ctrl + a
+
         if (ImGui::BeginMenu("Edit")) {
             if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
             if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
@@ -491,9 +510,7 @@ static void menuFile(char *buff, SDL_Window *window, std::string &filename)
     } else if (ImGui::MenuItem("Open", "Ctrl+O")) {
         /* OPEN FILE */
         filename = file_dialog({ {"matc", "MathematiC File"} }, false);
-        printf("To open: %s\n", filename.c_str());
         if (filename != "") {
-            //TODO
             open(buff, filename);
             title += filename;
             title.resize(100);
