@@ -45,7 +45,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 175 "language/parser.y"
+#line 171 "language/parser.y"
 
     typedef struct adr {
         int jmp;  // adresse du jmp
@@ -108,26 +108,24 @@ extern int yydebug;
     JMP = 299,                     /* JMP  */
     JMPCOND = 300,                 /* JMPCOND  */
     ASSIGN = 301,                  /* ASSIGN  */
-    DECLARE = 302,                 /* DECLARE  */
-    LOAD = 303,                    /* LOAD  */
-    INTERV = 304,                  /* INTERV  */
-    PLUS = 305,                    /* PLUS  */
-    MIN = 306,                     /* MIN  */
-    TIMES = 307,                   /* TIMES  */
-    DIV = 308,                     /* DIV  */
-    PLUS_EQUAL = 309,              /* PLUS_EQUAL  */
-    MIN_EQUAL = 310,               /* MIN_EQUAL  */
-    TIMES_EQUAL = 311,             /* TIMES_EQUAL  */
-    DIV_EQUAL = 312,               /* DIV_EQUAL  */
-    EQUAL = 313,                   /* EQUAL  */
-    NOT_EQ = 314,                  /* NOT_EQ  */
-    INF_STRICT = 315,              /* INF_STRICT  */
-    SUP_STRICT = 316,              /* SUP_STRICT  */
-    INF = 317,                     /* INF  */
-    SUP = 318,                     /* SUP  */
-    AND = 319,                     /* AND  */
-    OR = 320,                      /* OR  */
-    NOT = 321                      /* NOT  */
+    CALL = 302,                    /* CALL  */
+    PLUS = 303,                    /* PLUS  */
+    MIN = 304,                     /* MIN  */
+    TIMES = 305,                   /* TIMES  */
+    DIV = 306,                     /* DIV  */
+    PLUS_EQUAL = 307,              /* PLUS_EQUAL  */
+    MIN_EQUAL = 308,               /* MIN_EQUAL  */
+    TIMES_EQUAL = 309,             /* TIMES_EQUAL  */
+    DIV_EQUAL = 310,               /* DIV_EQUAL  */
+    EQUAL = 311,                   /* EQUAL  */
+    NOT_EQ = 312,                  /* NOT_EQ  */
+    INF_STRICT = 313,              /* INF_STRICT  */
+    SUP_STRICT = 314,              /* SUP_STRICT  */
+    INF = 315,                     /* INF  */
+    SUP = 316,                     /* SUP  */
+    AND = 317,                     /* AND  */
+    OR = 318,                      /* OR  */
+    NOT = 319                      /* NOT  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -136,14 +134,14 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 182 "language/parser.y"
+#line 178 "language/parser.y"
 
     double dvalue;
     char svalue[50];
     bool bvalue;
     type_adresse adresse;
 
-#line 147 "generated/parser.bison.hpp"
+#line 145 "generated/parser.bison.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

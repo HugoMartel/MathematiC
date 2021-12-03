@@ -39,6 +39,8 @@ toskip          \n|\r|\t|\ |\/\/.*
     yylval.dvalue = std::strtod(yytext, &endptr); return NUM;
 }
 {toskip}                                                    {  }
+and                                                         { return AND; }
+or                                                          { return OR; }
 sin                                                         { return SIN; }
 cos                                                         { return COS; }
 tan                                                         { return TAN; }
@@ -93,8 +95,7 @@ ymax                                                        { return ymax; }
 ">="                                                        { return SUP; }
 "<"                                                         { return INF_STRICT; }
 ">"                                                         { return SUP_STRICT; }
-"&&"                                                        { return AND; }
-"||"                                                        { return OR; }
+"!"                                                         { return NOT; }
 "="                                                         { return yytext[0]; }
 "+"                                                         { return PLUS; }
 "-"                                                         { return MIN; }

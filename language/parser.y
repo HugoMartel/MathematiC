@@ -12,6 +12,9 @@
     #include <vector>
     #include <iostream>
 
+    /* \/ Uncomment to enable debug output */
+    #define __DEBUG__
+
     using namespace std;//? useful ?
 
     extern int yylex();
@@ -93,29 +96,17 @@
             return 0;
         }
         /**
-         * Define a parameter used in a function declaration
-         * @param[in]   s   Name of the parameter
-         * @param[in]   c   Code of the DECLARE instruction (since it is not known by cpp)
-         * @return      Error Code
-         */
-        int add_param(const std::string &s, const int &c) {
-            if (!parameters.count(s)) {
-                    parameters[s] = 0;
-                    /* c is the code number for DECLARE */
-                    add_instruction(c, 0, s);
-                    return EXIT_SUCCESS;
-            } else {
-                yyerror("Parameter already declared...");
-                return -1;
-            }
-        }
-        /**
          * Function to execute a function
          * @param[in]   args             Parameter values (double)
          * @return      Value returned by the function (double)
          */
         double operator()(...);
     };
+
+
+    /*===================*/
+    /* --  VARIABLES  -- */
+    /*===================*/
 
     /* Draw function Variables */
     int functionToEdit = 0;
@@ -125,15 +116,6 @@
     double argYmin = -10;
     double argYmax = 10;
 
-
-    /*===================*/
-    /* --  FUNCTIONS  -- */
-    /*===================*/
-    /**
-     * Convert int code to string value
-     * @param[in]   ins     Instruction code
-     */
-    string print_code(const int &ins);
 
     /**
      * String storing the current code (main or function) to write to.
@@ -146,18 +128,32 @@
      */
     std::queue<std::string> argQueue;
 
-    // Déclaration de la map qui associe
-    // les noms des variables à leur valeur
-    // (La table de symboles)
+    /**
+     * Temporary stack to store values on the fly for the declarations
+     */
+    std::stack<Instruction> onTheFly;
+
+    /**
+     * Map storing variables declared gloabally
+     */
     std::map<std::string,double> variables;
 
     //  Map storing functions instructions, access them by their name (string)
     std::map<std::string,Function> functions;
 
-    /* Map storing functions to draw */
-    std::map</*name*/std::string, std::pair</*xbegin*/double, /*xend*/double>> funcsToDraw;
 
+    /*===================*/
+    /* --  FUNCTIONS  -- */
+    /*===================*/
+    /**
+     * Convert int code to string value
+     * @param[in]   ins     Instruction code
+     */
+    string print_code(const int &ins);
 
+    /**
+     * 
+     */
     int add_instruction(const int &c, const double &v=0, const string &n="") {
         /* Check where this instruction should be put */
         if (current_scope[0] == "") {
@@ -241,9 +237,7 @@
 %token JMP
 %token JMPCOND
 %token ASSIGN
-%token DECLARE
-%token LOAD
-%token INTERV
+%token CALL
 
 /* Operators */
 %token <DOUBLE> PLUS
@@ -285,24 +279,30 @@ code: declarations fonctions affichage                  { /* TODO: print start c
 
 
 declarations: %empty /* \epsilon */                 { /* End of declarations */
+#ifdef __DEBUG__
                     std::cout << "-- End of declarations --\n";
- }
+#endif
+}
             | declarations var VAR '=' expr ';'     { /* Init Vars */
                 if (!variables.count($3)) {
                     variables[$3] = $5;
-                    add_instruction(DECLARE, 0, $3);
-                    add_instruction(ASSIGN, 0, $3);
+#ifdef __DEBUG__
+                    printf("Declared %s = %lf\n", $3, $5);
+#endif
                 } else {
-                    yyerror("Variable already declared...");
+                    yyerror(("Variable " + std::string($3) + " has already been declared...").c_str());
                 }
-}
+                                                    }
             | declarations var VAR ';'              {
                 if (!variables.count($3)) {
                     variables[$3] = 0;
-                    add_instruction(DECLARE, 0, $3);
-                    add_instruction(ASSIGN, 0, $3);
+#ifdef __DEBUG__
+                    printf("Declared %s (=0)\n", $3);
+#endif
+                } else {
+                    yyerror(("Variable " + std::string($3) + " has already been declared...").c_str());
                 }
-            }
+                                                    }
 
 
 fonctions: DEF VAR ':' '(' parameters ')' arrow '{'           {
@@ -310,8 +310,9 @@ fonctions: DEF VAR ':' '(' parameters ')' arrow '{'           {
                     if(!functions.count($2)) {
                         functions[$2] = Function();
                         /* Enqueue to keep it in memory */
-                        current_scope.push_back($2);
-                        add_instruction(DEF, 0, $2);
+                        current_scope[0] = $2;
+
+                        /* Declare parameters */
                         while (!argQueue.empty()) {
                             functions[$2].parameters[argQueue.front()] = 0;
                             argQueue.pop();
@@ -329,40 +330,41 @@ fonctions: DEF VAR ':' '(' parameters ')' arrow '{'           {
                     /*Clear the queue in case it is not empty*/
                     while (!argQueue.empty())
                         argQueue.pop();
-}
+                                                        }
          | fonctions fonctions                          { /* Support multiple functions */ }
 
+
 parameters: VAR                                         {
-                    add_instruction(DECLARE, 0, $1);
-                    /* Load the param in the parameters queue */
-                    argQueue.push($1);
-}
+                    /* Load function names to send to the front-end */
+                    current_scope.push_back($1);
+                    /* Check if the function is already drawn or missing */
+                    if (!functions.count($1)){
+                        yyerror("Function already drawn or missing...");
+                    }
+                                                        }
           | parameters ',' parameters                   { /* Support multiple parameters */ }
 
 
 draw_func: VAR in '[' NUM ',' NUM ']'                   {
                     /* Load function names to send to the front-end */
-
                     current_scope.push_back($1);
 
                     /* Check if the function is already drawn or missing */
                     if (functions.count($1)){
-                        funcsToDraw[$1] = std::pair<double,double>($4,$6);
-
+                        functions[$1].xInterval.first = $4;
+                        functions[$1].xInterval.second = $6;
                     } else {
                         yyerror("Function already drawn or missing...");
                     }
-
-
-}
+                                                        }
          | VAR                                          { current_scope.push_back($1); }
-         | draw_func ',' draw_func                      { /* Support multiple ??? */ }
+         | draw_func ',' draw_func                      { /* Support multiple functions to draw at the same time */ }
 
 
 affichage: DRAW draw_func '{'                           {
                                                           /* On vide le scope */
                                                           while(current_scope.size()>0){
-                                                            current_scope.pop_back();
+                                                              current_scope.pop_back();
                                                           }
                                                         }
                 draw_args
@@ -372,22 +374,22 @@ affichage: DRAW draw_func '{'                           {
 
 draw_args: color ':' '[' color_args ']'                 { /* getting the multiples color args (or not) */ 
                                                           if(current_scope.size() == argQueue.size()){ // on vérifie qu'il y a suffisament d'arguments
-                                                            functionToEdit = current_scope.size();
-                                                            while (!argQueue.empty()){ // on attribue chaque argument à sa fonction
-                                                              --functionToEdit;
-                                                              functions[current_scope[functionToEdit]].color = argQueue.front();
-                                                              argQueue.pop();
-                                                            }
+                                                              functionToEdit = current_scope.size();
+                                                              while (!argQueue.empty()){ // on attribue chaque argument à sa fonction
+                                                                  --functionToEdit;
+                                                                  functions[current_scope[functionToEdit]].color = argQueue.front();
+                                                                argQueue.pop();
+                                                              }
                                                           }
                                                         }
-         | style ':' '[' style_args ']'                 { /* getting the multiples style args (or not) */ 
+         | style ':' '[' style_args ']'                 { /* getting the multiples style args (or not) */
                                                           if(current_scope.size() == argQueue.size()){ // on vérifie qu'il y a suffisament d'arguments
-                                                            functionToEdit = current_scope.size();
-                                                            while (!argQueue.empty()){ // on attribue chaque argument à sa fonction 
-                                                                --functionToEdit;
-                                                                functions[current_scope[functionToEdit]].style = argQueue.front();
-                                                                argQueue.pop();
-                                                            }
+                                                              functionToEdit = current_scope.size();
+                                                              while (!argQueue.empty()) { // on attribue chaque argument à sa fonction
+                                                                  --functionToEdit;
+                                                                  functions[current_scope[functionToEdit]].style = argQueue.front();
+                                                                  argQueue.pop();
+                                                              }
                                                           }
                                                         }
          | label ':' STRING                             { argLabel = $3;}
@@ -404,6 +406,7 @@ draw_args: color ':' '[' color_args ']'                 { /* getting the multipl
 
 style_args: STYLE_PARAM                                 {
                                 /* Check if the value is correct */
+                                std::cout << "arg: " << $1 << "\n";
                                 if (
                                     strcmp($1,"\"solid\"") &&
                                     strcmp($1,"\"filled\"") &&
@@ -469,8 +472,8 @@ logic: expr SUP expr        { add_instruction(SUP); }
      | expr INF_STRICT expr { add_instruction(INF_STRICT); }
      | expr EQUAL expr      { add_instruction(EQUAL); }
      | expr NOT_EQ expr     { add_instruction(NOT_EQ); }
-     | expr AND expr        { add_instruction(AND); }
-     | expr OR expr         { add_instruction(OR); }
+     | logic AND logic      { add_instruction(AND); }
+     | logic OR logic       { add_instruction(OR); }
      | NOT logic            { add_instruction(NOT); }
 
 
@@ -513,16 +516,61 @@ expr: NUM                   { add_instruction(NUM, $1); }
     | LOG '(' expr ')'              { add_instruction(LOG); }
     | SQRT '(' expr ')'             { add_instruction(SQRT); }
     | VAR                           {
-                                        /* Only add to the vector if we are in a function */
-                                        if (current_scope[0] != ""){
+                                        /* Only add to the ins vector if we are in a function */
+                                        if (current_scope[0] != "") {
                                             add_instruction(VAR, 0, $1);
+                                        } else {
+                                            onTheFly.emplace(VAR, 0, $1);
                                         }
                                     }
-    | VAR '=' expr                  { add_instruction(ASSIGN,0,$1); }
-    | VAR PLUS_EQUAL expr           { add_instruction(VAR,0,$1); add_instruction(PLUS); add_instruction(ASSIGN,0,$1); }
-    | VAR MIN_EQUAL expr            { add_instruction(VAR,0,$1); add_instruction(MIN); add_instruction(ASSIGN,0,$1); }
-    | VAR TIMES_EQUAL expr          { add_instruction(VAR,0,$1); add_instruction(TIMES); add_instruction(ASSIGN,0,$1); }
-    | VAR DIV_EQUAL expr            { add_instruction(VAR,0,$1); add_instruction(DIV); add_instruction(ASSIGN,0,$1); }
+    | VAR '=' expr                  {
+                                        /* Only add to the ins vector if we are in a function */
+                                        if (current_scope[0] != "") {
+                                            add_instruction(ASSIGN,0,$1);
+                                        } else {
+                                            yyerror("Can only assign to an already declared variable when in a function...");
+                                        }
+                                    }
+    | VAR PLUS_EQUAL expr           {
+                                        /* Only add to the ins vector if we are in a function */
+                                        if (current_scope[0] != "") {
+                                            add_instruction(VAR,0,$1);
+                                            add_instruction(PLUS);
+                                            add_instruction(ASSIGN,0,$1);
+                                        } else {
+                                            yyerror("Can only assign to an already declared variable when in a function...");
+                                        }
+                                    }
+    | VAR MIN_EQUAL expr            {
+                                        /* Only add to the ins vector if we are in a function */
+                                        if (current_scope[0] != "") {
+                                            add_instruction(VAR,0,$1);
+                                            add_instruction(MIN);
+                                            add_instruction(ASSIGN,0,$1);
+                                        } else {
+                                            yyerror("Can only assign to an already declared variable when in a function...");
+                                        }
+                                    }
+    | VAR TIMES_EQUAL expr          {
+                                        /* Only add to the ins vector if we are in a function */
+                                        if (current_scope[0] != "") {
+                                            add_instruction(VAR,0,$1);
+                                            add_instruction(TIMES);
+                                            add_instruction(ASSIGN,0,$1);
+                                        } else {
+                                            yyerror("Can only assign to an already declared variable when in a function...");
+                                        }
+                                    }
+    | VAR DIV_EQUAL expr            {
+                                        /* Only add to the ins vector if we are in a function */
+                                        if (current_scope[0] != "") {
+                                            add_instruction(VAR,0,$1);
+                                            add_instruction(DIV);
+                                            add_instruction(ASSIGN,0,$1);
+                                        } else {
+                                            yyerror("Can only assign to an already declared variable when in a function...");
+                                        }
+                                    }
 
 %%
 
@@ -535,7 +583,7 @@ int yyerror(const char *s)
 }
 
 
- /*================================================================================================*/
+/*================================================================================================*/
 string print_code(const int &ins) {
     switch (ins) {
         /* Blocks */
@@ -582,11 +630,9 @@ string print_code(const int &ins) {
         case DEF            : return "DEF";
         case JMP            : return "JMP";
         case JMPCOND        : return "JC ";
-        case LOAD           : return "LOAD";
-        case INTERV         : return "INTERV";
+        case CALL           : return "CALL";
         /* Variables Instructions */
         case ASSIGN         : return "ASSIGN";
-        case DECLARE        : return "DECLARE";
         /*---------------------------------*/
         default : return "";
     }
@@ -613,21 +659,24 @@ double Function::operator()(...)
 
     va_end(params);
 
-
-    printf("\n------- Exécution du programme ---------\n");
+#ifdef __DEBUG__
+    printf("\n------- FUNCTION START ---------\n");
+#endif
 
     /* Run the Function code */
     while (ic < code.size()) { /* While the ic hasn't reached the end */
-          ins = code[ic];
-          std::vector<std::string> current_functions;
 
-          switch (ins.code) {
-            case PLUS:
-                r1 = pile.top();    // Récupérer la tête de pile;
-                pile.pop();
+        /* Load the next instruction to execute */
+        ins = code[ic];
+        std::vector<std::string> current_functions;
 
-                r2 = pile.top();    // Récupérer la tête de pile;
-                pile.pop();
+        switch (ins.code) {
+        case PLUS:
+            r1 = pile.top();    // Récupérer la tête de pile;
+            pile.pop();
+
+            r2 = pile.top();    // Récupérer la tête de pile;
+            pile.pop();
 
                 pile.push(r1+r2);
                 ++ic;
@@ -640,7 +689,10 @@ double Function::operator()(...)
                 r2 = pile.top();    // Récupérer la tête de pile;
                 pile.pop();
 
-                pile.push(r1/r2);
+                if (r2 != 0)
+                    pile.push(r1/r2);
+                else
+                    yyerror("Division by 0...");
                 ++ic;
               break;
 
@@ -688,55 +740,55 @@ double Function::operator()(...)
                 ++ic;
               break;
 
-            case SUP_STRICT:
-                 r1 = pile.top();    // Récupérer la tête de pile;
+            case SUP_STRICT:        // >
+                 r1 = pile.top();
                 pile.pop();
 
-                r2 = pile.top();    // Récupérer la tête de pile;
+                r2 = pile.top();
                 pile.pop();
 
                 pile.push(r1>=r2);
                 ++ic;
               break;
 
-            case INF_STRICT:
-                 r1 = pile.top();    // Récupérer la tête de pile;
+            case INF_STRICT:        // <
+                 r1 = pile.top();
                 pile.pop();
 
-                r2 = pile.top();    // Récupérer la tête de pile;
+                r2 = pile.top();
                 pile.pop();
 
                 pile.push(r1<=r2);
                 ++ic;
               break;
 
-            case EQUAL:
-                 r1 = pile.top();    // Récupérer la tête de pile;
+            case EQUAL:             // ==
+                 r1 = pile.top();
                 pile.pop();
 
-                r2 = pile.top();    // Récupérer la tête de pile;
+                r2 = pile.top();
                 pile.pop();
 
                 pile.push(r1==r2);
                 ++ic;
               break;
 
-            case NOT_EQ:
-                 r1 = pile.top();    // Récupérer la tête de pile;
+            case NOT_EQ:            // !=
+                 r1 = pile.top();
                 pile.pop();
 
-                r2 = pile.top();    // Récupérer la tête de pile;
+                r2 = pile.top();
                 pile.pop();
 
                 pile.push(r1!=r2);
                 ++ic;
               break;
 
-            case AND:
-                 r1 = pile.top();    // Récupérer la tête de pile;
+            case AND:               // &&
+                r1 = pile.top();
                 pile.pop();
 
-                r2 = pile.top();    // Récupérer la tête de pile;
+                r2 = pile.top();
                 pile.pop();
 
                 pile.push(r1 && r2);
@@ -744,10 +796,10 @@ double Function::operator()(...)
               break;
 
             case OR:
-                 r1 = pile.top();    // Récupérer la tête de pile;
+                 r1 = pile.top();
                 pile.pop();
 
-                r2 = pile.top();    // Récupérer la tête de pile;
+                r2 = pile.top();
                 pile.pop();
 
                 pile.push(r1 || r2);
@@ -755,181 +807,158 @@ double Function::operator()(...)
               break;
 
             case NOT:
-                 r1 = pile.top();    // Récupérer la tête de pile;
+                r1 = pile.top();
                 pile.pop();
 
                 pile.push(!r1);
                 ++ic;
               break;
 
-            case NUM:   // pour un nombre, on empile
+            case NUM:               // Literal value
                 pile.push(ins.value);
                 ++ic;
               break;
 
-            case COS: // pour un cos
-                r1 = pile.top();    // Récupérer la tête de pile;
+            case COS:               // cos
+                r1 = pile.top();
                 pile.pop();
                 pile.push(std::cos(r1));
                 ++ic;
               break;
 
-            case SIN: // pour un cos
-                r1 = pile.top();    // Récupérer la tête de pile;
+            case SIN:               // sin
+                r1 = pile.top();
                 pile.pop();
                 pile.push(std::sin(r1));
                 ++ic;
               break;
 
-            case TAN: // pour un cos
-                r1 = pile.top();    // Récupérer la tête de pile;
+            case TAN:               // tan
+                r1 = pile.top();
                 pile.pop();
                 pile.push(std::tan(r1));
                 ++ic;
               break;
 
-            case COSH: // pour un cos
-                r1 = pile.top();    // Récupérer la tête de pile;
+            case COSH:              // cosh
+                r1 = pile.top();
                 pile.pop();
                 pile.push(std::cosh(r1));
                 ++ic;
               break;
 
-            case SINH: // pour un cos
-                r1 = pile.top();    // Récupérer la tête de pile;
+            case SINH:              // sinh
+                r1 = pile.top();
                 pile.pop();
                 pile.push(std::sinh(r1));
                 ++ic;
               break;
 
-            case TANH: // pour un cos
-                r1 = pile.top();    // Récupérer la tête de pile;
+            case TANH:              // tanh
+                r1 = pile.top();
                 pile.pop();
                 pile.push(std::tanh(r1));
                 ++ic;
               break;
 
-            case ARCCOS: // pour un cos
-                r1 = pile.top();    // Récupérer la tête de pile;
+            case ARCCOS:            // arccos
+                r1 = pile.top();
                 pile.pop();
                 pile.push(std::acos(r1));
                 ++ic;
               break;
 
-            case ARCSIN: // pour un cos
-                r1 = pile.top();    // Récupérer la tête de pile;
+            case ARCSIN:            // arcsin
+                r1 = pile.top();
                 pile.pop();
                 pile.push(std::asin(r1));
                 ++ic;
               break;
 
-            case ARCTAN: // pour un cos
-                r1 = pile.top();    // Récupérer la tête de pile;
+            case ARCTAN:            // arctan
+                r1 = pile.top();
                 pile.pop();
                 pile.push(std::atan(r1));
                 ++ic;
               break;
 
-            case ARCCOSH: // pour un cos
-                r1 = pile.top();    // Récupérer la tête de pile;
+            case ARCCOSH:           // arccosh
+                r1 = pile.top();
                 pile.pop();
                 pile.push(std::acosh(r1));
                 ++ic;
               break;
 
-            case ARCSINH: // pour un cos
-                r1 = pile.top();    // Récupérer la tête de pile;
+            case ARCSINH:           // arcsinh
+                r1 = pile.top();
                 pile.pop();
                 pile.push(std::asinh(r1));
                 ++ic;
               break;
 
-            case ARCTANH: // pour un cos
-                r1 = pile.top();    // Récupérer la tête de pile;
+            case ARCTANH:           // arctanh
+                r1 = pile.top();
                 pile.pop();
                 pile.push(std::atanh(r1));
                 ++ic;
               break;
 
-            case POW: // pour un cos
-                 r1 = pile.top();    // Récupérer la tête de pile;
+            case POW:               // power
+                 r1 = pile.top();
                 pile.pop();
 
-                r2 = pile.top();    // Récupérer la tête de pile;
+                r2 = pile.top();
                 pile.pop();
 
-                pile.push(std::pow(r1, r2));
+                pile.push(std::pow(r1, r2)); // r1^r2
                 ++ic;
               break;
 
-            case EXP: // pour un cos
-                r1 = pile.top();    // Récupérer la tête de pile;
+            case EXP:               // exponential
+                r1 = pile.top();
                 pile.pop();
                 pile.push(std::exp(r1));
                 ++ic;
               break;
 
-            case LOG: // pour un cos
-                r1 = pile.top();    // Récupérer la tête de pile;
+            case LOG:               // logarithm (base e)
+                r1 = pile.top();
                 pile.pop();
                 pile.push(std::log(r1));
                 ++ic;
               break;
 
-            case SQRT: // pour un cos
-                r1 = pile.top();    // Récupérer la tête de pile;
+            case SQRT:              // square root function
+                r1 = pile.top();
                 pile.pop();
                 pile.push(std::sqrt(r1));
                 ++ic;
               break;
 
             case JMP:
-                // je récupère l'adresse à partir de la table
+                /* Go to the stored address */
                 ic = ins.value;
               break;
 
             case JMPCOND:
-                 r1 = pile.top();    // Récupérer la tête de pile;
+                 r1 = pile.top();     // Get the last logic value
                  pile.pop();
-                 if (r1)
+                 if (r1)              // Logic true => go to next instruction
                     ++ic;
-                 else
+                 else                 // Otherwise  => go to the given address
                     ic = (int)ins.value;
               break;
 
-            case LOAD:
-                 current_functions.push_back(ins.name);
-                 ++ic;
-              break;
-
-            case INTERV:
-                /* check if r1 < r2 */
-                if (r1 < r2) {
-                    /* add the interval to the appropriate function */
-                    functions[ins.name].xInterval.first = r1;
-                    functions[ins.name].xInterval.second = r2;
-                } else {
-                    yyerror("Bad interval values...");
-                }
+            case CALL:  /* Recursive function */
+                pile.push(this->operator()(params));
                 ++ic;
-             break;
+              break;
 
             case ASSIGN:
                 r1 = pile.top();    // Récupérer la tête de pile;
                 pile.pop();
                 variables[ins.name] = r1;
                 ++ic;
-                break;
-
-            case DECLARE:           // Create the variable entry in the variables map
-                if (!variables.count(ins.name)) {
-                    variables[ins.name] = 0;
-                } else {
-                    yyerror(("Variable " + ins.name + " has already been declared...").c_str());
-                }
-
-                ++ic;
-
                 break;
 
             case VAR:    // je consulte la table de symbole et j'empile la valeur de la variable
@@ -947,6 +976,10 @@ double Function::operator()(...)
 
         }
     }
+
+#ifdef __DEBUG__
+    printf("\n------- FUNCTION RETURNED OR ENDED ---------\n");
+#endif
 
     /* return the last value contained in the stack */
     return pile.top();
@@ -991,7 +1024,7 @@ int main(int argc, char* argv[])
             "\n\tcolor: " << it->second.color <<
             "\n\tstyle: " << it->second.style <<
             "\n\t[ " << it->second.xInterval.first << ", " << it->second.xInterval.second << " ]" <<
-            "\n}\n";
+            "\n}\n\n";
 
         std::cout << "CODE:\n";
         /* Print the generated code */
@@ -1010,8 +1043,8 @@ int main(int argc, char* argv[])
     }
 
     /* FUNCTION TEST */
-    std::cout << "g(3) = " << functions["g"](3) << "\n";
-    std::cout << "fonction1(4) = " << functions["fonction1"](5.4) << "\n";
+    std::cout << "g(3) = " << functions["g"](3) << "\n\n";
+    std::cout << "fonction1(4) = " << functions["fonction1"](5.4) << "\n\n";
 
 
     return EXIT_SUCCESS;

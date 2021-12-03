@@ -14,7 +14,7 @@ var y = 4;
 
 def fonction1: (x) => {
 	// Function Instructions
-	if z<y {
+	if z<y and y>0 {
 		if y > 0 {
 			y = sin(2);
 			z = x + y + pi;
