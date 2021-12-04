@@ -52,7 +52,6 @@ struct MultilineScrollState
     float scrollRegionX;
     float scrollX;
     ImGuiStorage *storage;
-
     // Output.
     bool newScrollPositionAvailable;
     float newScrollX;
@@ -220,7 +219,7 @@ int main(int, char**)
 
     /* Imgui definitions */
     std::string opened_file = "";
-    ImGuiWindowFlags windowFlags = (ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
+    ImGuiWindowFlags windowFlags = (ImGuiWindowFlags_NoScrollWithMouse |  ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
     char *buf = (char *) malloc((BUFF_SIZE+1) * sizeof(char));//! Multiline input max length
     if(buf == NULL) exit(1);
     buf[0] = '\0';
@@ -405,10 +404,11 @@ static int MultilineScrollCallback(ImGuiInputTextCallbackData *data)
 }
 
 /*=======================================================================================*/
-static bool ImGuiInputTextMultiline(const char* label, char* buf, size_t buf_size, float height, ImGuiInputTextFlags flags = 0)
+static bool ImGuiInputTextMultiline(const char* label, char* buf, size_t buf_size, float height, ImGuiInputTextFlags flags = ImGuiInputTextFlags_AllowTabInput)
 {
+    flags = ImGuiInputTextFlags_AllowTabInput;
     float scrollbarSize = ImGui::GetStyle().ScrollbarSize;
-    float labelWidth = ImGui::CalcTextSize(label).x + scrollbarSize;
+    float labelWidth = ImGui::CalcTextSize(label).x;
     float SCROLL_WIDTH = 750.0f; // Large scrolling width to allow for long lines.
     MultilineScrollState scrollState = {};
     // Set up child region for horizontal scrolling of the text box.
@@ -418,6 +418,11 @@ static bool ImGuiInputTextMultiline(const char* label, char* buf, size_t buf_siz
     scrollState.storage = ImGui::GetStateStorage();
     ImGuiStyle &style = ImGui::GetStyle();
     style.Colors[ImGuiCol_FrameBg] = ImColor(69, 71, 91, 255);
+    /* if we want the horizontal scroll bar, we need to comment the SCROLL_WIDTH and replace with it ImGui::WindowSize().x, line bool changed .... 
+     * also, we need to change labelWidth with ImGui::CalcTextSize(label).x;
+     * and finaly we need to set scrollbarSize = ImGui::GetStyle().ScrollbarSize;
+     * TODO: find better conditions to allow horizontal scroll, cause now it's a bit broken, you can only use keyboard arrows
+     *       to scroll the text */
     bool changed = ImGui::InputTextMultiline(label, buf, buf_size, ImVec2(SCROLL_WIDTH, MAX(0.0f, height - scrollbarSize)),
                                              flags | ImGuiInputTextFlags_CallbackAlways, MultilineScrollCallback, &scrollState);
 
