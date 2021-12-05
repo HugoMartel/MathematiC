@@ -26,7 +26,7 @@ SOURCES = src/test.cpp
 SOURCES += $(IMGUI_DIR)/imgui.cpp $(IMGUI_DIR)/imgui_draw.cpp $(IMGUI_DIR)/imgui_tables.cpp $(IMGUI_DIR)/imgui_widgets.cpp
 SOURCES += $(IMGUI_DIR)/backends/imgui_impl_sdl.cpp $(IMGUI_DIR)/backends/imgui_impl_opengl3.cpp
 SOURCES += $(IMPLOT_DIR)/implot.cpp $(IMPLOT_DIR)/implot_items.cpp
-SOURCES += $(INC)/zenity.cpp
+SOURCES += $(INC)/zenity.cpp $(INC)/mathGraph.cpp
 
 OBJS = $(addprefix $(BUILD)/, $(addsuffix .o, $(basename $(notdir $(SOURCES)))))
 UNAME_S := $(shell uname -s)
@@ -103,7 +103,6 @@ $(BUILD)/test.o: $(SRC)/test.cpp
 
 # Include Files
 $(BUILD)/%.o: $(INC)/%.cpp
-	@echo $(ZENITY)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Imgui Files
@@ -120,6 +119,7 @@ $(BUILD)/%.o: $(IMPLOT_DIR)/%.cpp
 # Build Executable File
 $(EXE): $(OBJS)
 	@echo $(OBJS)
+	@echo $(ZENITY)
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBS)
 
 clean:

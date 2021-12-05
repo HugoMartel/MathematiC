@@ -27,6 +27,7 @@
 
 /* Custom includes */
 #include "zenity.hpp"
+#include "mathGraph.hpp"
 
 /* STD includes */
 #if defined(_WIN32)
@@ -81,23 +82,6 @@ static bool ImGuiInputTextMultiline(const char* label, char* buf, size_t buf_siz
  * Function to add background color & style to the window and Imgui elements
  */
 static void doStyle();
-/**
- * Function used to draw a Graph
- * @param[in]       width       Window width
- * @param[in]       height      Window height
- * @param[in]       interXmin   Min x value of the drawn functions, will become a table of values
- * @param[in]       interXmax   Max x value of the drawn functions
- * @param[in]       displayYmin Min y value of the function display
- * @param[in]       displayYmax Max y value of the function display
- * @param[in]       displayXmin Min x value of the function display
- * @param[in]       displayXmax Max x value of the function display
- */
-static void doGraph(int *width, int *height, double interXmin, double interXmax, const double &displayYmin, const double &displayYmax, const double &displayXmin, const double &displayXmax, ImVec4 testColors[], int testColorsLen);
-/**
-* Convert hexadecimal string to RGBA ImVec4
-* @param[in]       inputHex    string of the hexadecimal value format #FFFFFF (equal white)
-*/
-ImVec4 convertHexToRGBA(std::string& inputHex);
 /**
  * Function to display the menu bar
  * @param[in]       buff        buffer containing the code written
@@ -231,9 +215,9 @@ int main(int, char**)
     //char buf[BUFF_SIZE] = "//enter your code here\n";
     strcat(buf, "/**\n * @file      example.matc\n * @version 1.0.0\n */\n\n// Declarations\nvar a = 1;\nvar b = 2;\nvar c = 3;\nvar z = 5;\nvar y = 4;\n\n\n// Functions\ndef fonction1: (x) => {\n    // Function Instructions\n    if z<y {\n        if y > 0 {\n            y = sin(2);\n            z = x + y + pi;\n        } else {\n            z = cos(3);\n        }\n    } else {\n        z =  6*7;\n    }\n    return a*x^2 + b*x + c;/* simple polynomial */\n}\n\ndef g: (x) => {\n    x += 2;\n    return 2*sin(x);\n}\n\n// Draw Functions\ndraw fonction1 in [-8,8], g {\n    color: [\"red\", \"#00FF00\"],\n    style: [\"dashed\", \"solid\"],\n    label: \"Fonction 1\"\n}\n");
 
-    std::string testHex = "#FF2020";
+    std::string testHex = "#eFd020";
     ImVec4 testRGB = convertHexToRGBA(testHex);
-    std::string testHex1 = "#20FF20";
+    std::string testHex1 = "#20cFf0";
     ImVec4 testRGB1 = convertHexToRGBA(testHex1);
     std::string testHex2 = "#2020FF";
     ImVec4 testRGB2 = convertHexToRGBA(testHex2);
@@ -332,7 +316,7 @@ int main(int, char**)
 
         ImGui::Begin("graphe", NULL, windowFlags);
         ImPlot::CreateContext();
-        doGraph(width, height, -2.0, 12.5, -10.0, 10.0, -2.0, 12.5, testColorsV, sizeof(testColorsV)/sizeof(testColorsV[0]));
+        doGraph(width, height, -2.0, 12.5, -10.0, 10.0, -2.0, 12.5, testColorsV, sizeof(testColorsV)/sizeof(testColorsV[0]), "hist");
         ImPlot::DestroyContext();
         ImGui::End();
 
@@ -411,51 +395,6 @@ static void doStyle()
 {
     ImGuiStyle &style = ImGui::GetStyle();
     style.Colors[ImGuiCol_WindowBg] = ImColor(40, 43, 55, 255);
-}
-
-/*=======================================================================================*/
-//TODO   add the function as parameters
-static void doGraph(int *width, int *height, double interXmin, double interXmax, const double &displayYmin, const double &displayYmax, const double &displayXmin, const double &displayXmax, ImVec4 testColors[], int testColorsLen)
-{
-    /* Get widget's width */
-    const unsigned int sizeN = *width - 480;
-    /* Points to plot coords (x,y) */
-    double arrX[sizeN];
-    double arrY[sizeN];
-
-    /* step between two points plotted */
-    double step1 = (1.0/sizeN) * (interXmax - interXmin);
-    /* Compute coords on the interval [interXmin, interXmax] */
-    for (unsigned int i = 0; i < sizeN; ++i) {
-        arrY[i] = 10 * (cos(interXmin)*exp(-0.5 * interXmin));//! will change
-        arrX[i] = interXmin;
-        interXmin += step1; // Corresponds to 1px on the X axis
-    }
-
-    ImPlot::PushColormap(ImPlot::AddColormap("UserColors", testColors, testColorsLen, true));
-
-    if (ImPlot::BeginPlot("MathematiC", ImVec2(*width - 480 - 15,*height - 37))) {
-        /* Init Axis */
-        ImPlot::SetupAxes("x", "y");
-        /*Always prevents movable axis + set the display frame*/
-        ImPlot::SetupAxesLimits(displayXmin, displayXmax, displayYmin, displayYmax, ImGuiCond_Always);
-
-        /* PlotLine(label, x values, y values, arrays length = # of points to draw) */
-        //! will change to be able to plot n functions from lexer/parser
-        ImPlot::PlotLine("y=10*cos(20*x)*e^(-0.5*x)", arrX, arrY, sizeN);// First func
-        //...
-        ImPlot::PlotLine("y=x", arrX, arrX, sizeN);// func number N
-        ImPlot::EndPlot();
-    }
-
-}
-/*=======================================================================================*/
-ImVec4 convertHexToRGBA(std::string& inputHex)
-{
-    int r, g, b;
-    const char *cstr = inputHex.c_str();
-    sscanf(cstr, "#%02x%02x%02x", &r, &g, &b);
-    return(ImVec4((float)r/255, (float)g/255, (float)b/255, 1));
 }
 
 /*=======================================================================================*/
