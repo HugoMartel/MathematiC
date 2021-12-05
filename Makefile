@@ -20,34 +20,43 @@ IMPLOT_DIR = ./lib/implot
 
 INC := include
 SRC := src
+INC := include
+LANG := language
+GEN := generated
 BUILD := build
 
-SOURCES = src/test.cpp
+# SRC
+SOURCES = $(SRC)/test.cpp
+# IMGUI_DIR
 SOURCES += $(IMGUI_DIR)/imgui.cpp $(IMGUI_DIR)/imgui_draw.cpp $(IMGUI_DIR)/imgui_tables.cpp $(IMGUI_DIR)/imgui_widgets.cpp
+# IMGUI_DIR/backends
 SOURCES += $(IMGUI_DIR)/backends/imgui_impl_sdl.cpp $(IMGUI_DIR)/backends/imgui_impl_opengl3.cpp
 SOURCES += $(IMPLOT_DIR)/implot.cpp $(IMPLOT_DIR)/implot_items.cpp
 SOURCES += $(INC)/zenity.cpp $(INC)/interface.cpp
 
+# Get generated objects names
 OBJS = $(addprefix $(BUILD)/, $(addsuffix .o, $(basename $(notdir $(SOURCES)))))
-UNAME_S := $(shell uname -s)
-LINUX_GL_LIBS = -lGL
+CLEANABLE = $(EXE) $(OBJS) $(BUILD)/lexer.flex.o $(BUILD)/parser.bison.o $(BUILD)/lang $(GEN)/*.cpp $(GEN)/*.hpp
 
-## IMGUI HEASERS && OURS
-CXXFLAGS = -I $(IMGUI_DIR) -I $(IMGUI_DIR)/backends -I $(IMPLOT_DIR) -I ./include
-CXXFLAGS += -g -Wall -Wextra -Wformat
+# Get current config-d -p
+UNAME_S := $(shell uname -s)
+
+
+## IMGUI HEADERS && OURS
+CXXFLAGS = -Wall -Wextra -Wformat --std=c++17
+LIBFLAGS = -I $(IMGUI_DIR) -I $(IMGUI_DIR)/backends -I $(IMPLOT_DIR) -I ./include
+# Linker
+LDFLAGS := -g
+#LDFLAGS := -O3
+# Flex
+LFLAGS = -v
+LFLAGS += -d -p
+# Bison /!\ 3.7.6 flags: -Wcounterexamples --color=yes
+BFLAGS = --warnings=all --defines -v
+BFLAGS += -t
 LIBS =
 ZENITY =
 
-##---------------------------------------------------------------------
-## OPENGL ES
-##---------------------------------------------------------------------
-
-## This assumes a GL ES library available in the system, e.g. libGLESv2.so
-# CXXFLAGS += -DIMGUI_IMPL_OPENGL_ES2
-# LINUX_GL_LIBS = -lGLESv2
-## If you're on a Raspberry Pi and want to use the legacy drivers,
-## use the following instead:
-# LINUX_GL_LIBS = -L/opt/vc/lib -lbrcmGLESv2
 
 ##---------------------------------------------------------------------
 ## BUILD FLAGS PER PLATFORM
@@ -55,14 +64,27 @@ ZENITY =
 
 ifeq ($(UNAME_S), Linux) #LINUX
 	ECHO_MESSAGE = "Linux"
+
+##----------##
+##  OPENGL  ##
+##----------##
+	LINUX_GL_LIBS = -lGL
+## This assumes a GL ES library available in the system, e.g. libGLESv2.so
+# CXXFLAGS += -DIMGUI_IMPL_OPENGL_ES2
+# LINUX_GL_LIBS = -lGLESv2
+## If you're on a Raspberry Pi and want to use the legacy drivers,
+## use the following instead:
+# LINUX_GL_LIBS = -L/opt/vc/lib -lbrcmGLESv2
+
 	LIBS += $(LINUX_GL_LIBS) -ldl `sdl2-config --libs`
 
 # Check for zenity
 	ZENITY = Zenity version :
 	ZENITY += $(shell zenity --version)
 
-	CXXFLAGS += `sdl2-config --cflags`
-	CFLAGS = $(CXXFLAGS)
+	LIBFLAGS += `sdl2-config --cflags`
+	CFLAGS = $(CXXFLAGS) $(LIBFLAGS)
+
 endif
 
 ifeq ($(UNAME_S), Darwin) #APPLE
@@ -70,17 +92,17 @@ ifeq ($(UNAME_S), Darwin) #APPLE
 	LIBS += -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo `sdl2-config --libs`
 	LIBS += -L/usr/local/lib -L/opt/local/lib
 
-	CXXFLAGS += `sdl2-config --cflags`
-	CXXFLAGS += -I/usr/local/include -I/opt/local/include
-	CFLAGS = $(CXXFLAGS)
+	LIBFLAGS += `sdl2-config --cflags`
+	LIBFLAGS += -I/usr/local/include -I/opt/local/include
+	CFLAGS = -W -Wextra -Wformat $(LIBFLAGS)
 endif
 
 ifeq ($(OS), Windows_NT)
 	ECHO_MESSAGE = "MinGW"
 	LIBS += -lgdi32 -lopengl32 -limm32 `pkg-config --static --libs sdl2`
 
-	CXXFLAGS += `pkg-config --cflags sdl2`
-	CFLAGS = $(CXXFLAGS)
+	LIBFLAGS += `pkg-config --cflags sdl2`
+	CFLAGS = -W -Wextra -Wformat $(LIBFLAGS)
 endif
 
 
@@ -92,9 +114,12 @@ endif
 all: $(EXE)
 	@echo Build complete for $(ECHO_MESSAGE)
 
+run: $(EXE)
+	./$(EXE)
+
 # Test File
 $(BUILD)/test.o: $(SRC)/test.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(LIBFLAGS) -c $< -o $@
 
 # Main File
 
@@ -103,15 +128,25 @@ $(BUILD)/test.o: $(SRC)/test.cpp
 
 # Include Files
 $(BUILD)/%.o: $(INC)/%.cpp
-	@echo $(ZENITY)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Bison/Flex Files
+$(GEN)/parser.bison.cpp: $(LANG)/parser.y
+	bison $(BFLAGS) -o $@ $<
+
+$(GEN)/lexer.flex.cpp: $(LANG)/lexer.l
+	flex $(LFLAGS) -o $@ $<
+
+$(BUILD)/%.o: $(GEN)/%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
 
 # Imgui Files
 $(BUILD)/%.o: $(IMGUI_DIR)/%.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(LIBFLAGS) -c $< -o $@
 
 $(BUILD)/%.o: $(IMGUI_DIR)/backends/%.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(LIBFLAGS) -c $< -o $@
 
 # Implot Files
 $(BUILD)/%.o: $(IMPLOT_DIR)/%.cpp
@@ -120,7 +155,14 @@ $(BUILD)/%.o: $(IMPLOT_DIR)/%.cpp
 # Build Executable File
 $(EXE): $(OBJS)
 	@echo $(OBJS)
-	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBS)
+	@echo $(ZENITY)
+	$(CXX) -o $@ $^ $(LDFLAGS) $(LIBS)
+
+# Build Bison/Flex exe
+lang: $(BUILD)/parser.bison.o $(BUILD)/lexer.flex.o
+	@echo Building Bison/Flex
+	$(CXX) -o $(BUILD)/lang $^
+	$(BUILD)/$@ $(LANG)/test.txt
 
 clean:
-	rm -f $(EXE) $(OBJS)
+	rm -vf $(CLEANABLE)
