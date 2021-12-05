@@ -32,6 +32,13 @@ def g: (x) => {
 	return 2*sin(x);
 }
 
+def g2: (x) => {
+	for b in [ 1, 2, 9] {
+		x=x*2;
+	}
+	return 2*sin(x);
+}
+
 draw fonction1 in [-8,8], g {
     color: ["red", "#00FF00"],
 	style: ["dotted", "solid"],

@@ -117,12 +117,13 @@
     double argYmin = -10;
     double argYmax = 10;
 
+    /* Map with FOR variables */
+    std::map<std::string, std::tuple<double, double, double>> forArguments;
 
     /* Variables only used during parsing */
     /** Function currently modified index */
     unsigned int functionToEdit = 0;
     int i;
-
 
 
     /**
@@ -508,15 +509,41 @@ instruction: %empty /* \epsilon */                      { /* No instructions lef
                 // Je mets à jour l'adresse du saut inconditionnel
                  functions[current_scope[0]].code[$1.jmp].value = functions[current_scope[0]].iic;
 }
-           | FOR VAR in '[' expr ':' expr ':' expr ']' '{'  {  }
+           | FOR VAR in '[' expr ':' expr ':' expr ']' '{'  { 
+                                                                if (!functions[$2].parameters.count($2)) {
+                                                                    add_instruction(FOR,0,$2);
+                                                                    // Init FOR parameters
+                                                                    // functions[$2].parameters.at($2) = forArguments.at($2);
+                                                                    // add_instruction(ASSIGN, std::get<0>(forArguments.at($2)), $2); //! Check stack value
+                                                                    
+                                                                    $1.jmp = functions[current_scope[0]].iic;
+                                                                    $1.jc = functions[current_scope[0]].iic;
+                                                                    add_instruction(NOT);
+                                                                    add_instruction(JMPCOND);
+                                                                } else
+                                                                    yyerror("Parameter already used...");
+                                                             
+                                                            }
                 instruction
-             '}'                                            {  }
-           | WHILE logic '{'                                { $1.jmp = functions[current_scope[0]].iic; }
-                instruction                             
              '}'                                            { 
-                                                                add_instruction(JMP);
+                                                                //! Check stack value
+                                                                add_instruction(VAR,0,$2);
+                                                                add_instruction(PLUS);
+                                                                add_instruction(ASSIGN,0,$2);
+                                                                add_instruction(JMP, $1.jc);
+                                                                functions[current_scope[0]].code[$1.jc].value = functions[current_scope[0]].iic;
+                                                            }
+           | WHILE logic '{'                                {   
+                                                                // Store instruction vector index of both jumps
+                                                                $1.jmp = functions[current_scope[0]].iic;
                                                                 $1.jc = functions[current_scope[0]].iic;
+                                                                add_instruction(NOT);
                                                                 add_instruction(JMPCOND);
+                                                            }
+                instruction                                 {   }
+             '}'                                            { 
+                                                                add_instruction(JMP, $1.jmp);
+                                                                functions[current_scope[0]].code[$1.jc].value = functions[current_scope[0]].iic;
                                                             }
 
 
@@ -831,7 +858,7 @@ double Function::operator()(...)
     stack<double> pile;
     va_list params;
     long unsigned int ic = 0;  /* Instruction Counter */
-    double r1, r2;  /* double registers */
+    double r1, r2, r4;  /* double registers */
     std::string r3; /* string register */
     Instruction ins; /* Current instruction */
 
@@ -1154,6 +1181,11 @@ double Function::operator()(...)
             ++ic;
             break;
 
+        case FOR:
+            r1 = pile.top();
+            r2 = pile.top();
+            r4 = pile.top();
+            forArguments.at(ins.name) = std::make_tuple (r4,r2,r1);
         }
     }
 
