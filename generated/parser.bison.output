@@ -6,22 +6,6 @@ Terminals unused in grammar
     CALL
 
 
-State 10 conflicts: 1 shift/reduce
-State 79 conflicts: 1 shift/reduce
-State 84 conflicts: 7 shift/reduce
-State 85 conflicts: 7 shift/reduce
-State 86 conflicts: 7 shift/reduce
-State 87 conflicts: 7 shift/reduce
-State 88 conflicts: 7 shift/reduce
-State 137 conflicts: 1 shift/reduce
-State 162 conflicts: 1 shift/reduce
-State 186 conflicts: 1 shift/reduce
-State 187 conflicts: 1 shift/reduce
-State 189 conflicts: 2 shift/reduce
-State 203 conflicts: 2 shift/reduce
-State 204 conflicts: 2 shift/reduce
-
-
 Grammar
 
     0 $accept: code $end
@@ -34,8 +18,8 @@ Grammar
 
     5 $@1: %empty
 
-    6 fonctions: DEF VAR ':' '(' parameters ')' arrow '{' $@1 instruction '}'
-    7          | fonctions fonctions
+    6 fonctions: DEF VAR ':' '(' parameters ')' arrow '{' $@1 instruction '}' fonctions
+    7          | %empty
 
     8 parameters: VAR
     9           | parameters ',' parameters
@@ -103,8 +87,8 @@ Grammar
    57     | ARCCOS '(' expr ')'
    58     | ARCSIN '(' expr ')'
    59     | ARCTAN '(' expr ')'
-   60     | SINH '(' expr ')'
-   61     | COSH '(' expr ')'
+   60     | COSH '(' expr ')'
+   61     | SINH '(' expr ')'
    62     | TANH '(' expr ')'
    63     | ARCCOSH '(' expr ')'
    64     | ARCSINH '(' expr ')'
@@ -114,36 +98,32 @@ Grammar
    68     | expr MIN expr
    69     | expr TIMES expr
    70     | expr DIV expr
-   71     | expr '&' expr
-   72     | expr '|' expr
-   73     | expr '^' expr
-   74     | POW '(' expr ',' expr ')'
-   75     | EXP '(' expr ')'
-   76     | LOG '(' expr ')'
-   77     | SQRT '(' expr ')'
-   78     | VAR
-   79     | VAR '=' expr
-   80     | VAR PLUS_EQUAL expr
-   81     | VAR MIN_EQUAL expr
-   82     | VAR TIMES_EQUAL expr
-   83     | VAR DIV_EQUAL expr
+   71     | expr '^' expr
+   72     | POW '(' expr ',' expr ')'
+   73     | EXP '(' expr ')'
+   74     | LOG '(' expr ')'
+   75     | SQRT '(' expr ')'
+   76     | VAR
+   77     | VAR '=' expr
+   78     | VAR PLUS_EQUAL expr
+   79     | VAR MIN_EQUAL expr
+   80     | VAR TIMES_EQUAL expr
+   81     | VAR DIV_EQUAL expr
 
 
 Terminals, with rules where they appear
 
     $end (0) 0
-    '&' (38) 71
-    '(' (40) 6 54 55 56 57 58 59 60 61 62 63 64 65 66 74 75 76 77
-    ')' (41) 6 54 55 56 57 58 59 60 61 62 63 64 65 66 74 75 76 77
-    ',' (44) 9 10 12 27 29 31 74
+    '(' (40) 6 54 55 56 57 58 59 60 61 62 63 64 65 66 72 73 74 75
+    ')' (41) 6 54 55 56 57 58 59 60 61 62 63 64 65 66 72 73 74 75
+    ',' (44) 9 10 12 27 29 31 72
     ':' (58) 6 16 17 18 19 20 21 22 23 24 25 26 38
     ';' (59) 3 4 15 33 34
-    '=' (61) 3 79
+    '=' (61) 3 77
     '[' (91) 10 16 17 38
     ']' (93) 10 16 17 38
-    '^' (94) 73
+    '^' (94) 71
     '{' (123) 6 14 37 38 40
-    '|' (124) 72
     '}' (125) 6 14 37 38 40
     error (256)
     PI <DOUBLE> (258) 51
@@ -167,9 +147,9 @@ Terminals, with rules where they appear
     NUM <DOUBLE> (276) 10 19 21 23 25 50
     SIN <DOUBLE> (277) 54
     COS <DOUBLE> (278) 55
-    POW <DOUBLE> (279) 74
-    EXP <DOUBLE> (280) 75
-    VAR <STRING> (281) 3 4 6 8 10 11 20 22 24 26 38 78 79 80 81 82 83
+    POW <DOUBLE> (279) 72
+    EXP <DOUBLE> (280) 73
+    VAR <STRING> (281) 3 4 6 8 10 11 20 22 24 26 38 76 77 78 79 80 81
     FOR <ADDRESS> (282) 38
     IF <ADDRESS> (283) 37
     ELSE <ADDRESS> (284) 37
@@ -178,14 +158,14 @@ Terminals, with rules where they appear
     ARCCOS <DOUBLE> (287) 57
     ARCSIN <DOUBLE> (288) 58
     ARCTAN <DOUBLE> (289) 59
-    COSH <DOUBLE> (290) 61
-    SINH <DOUBLE> (291) 60
+    COSH <DOUBLE> (290) 60
+    SINH <DOUBLE> (291) 61
     TANH <DOUBLE> (292) 62
     ARCSINH <DOUBLE> (293) 64
     ARCCOSH <DOUBLE> (294) 63
     ARCTANH <DOUBLE> (295) 65
-    SQRT <DOUBLE> (296) 77
-    LOG <DOUBLE> (297) 76
+    SQRT <DOUBLE> (296) 75
+    LOG <DOUBLE> (297) 74
     DRAW (298) 14 15
     JMP (299)
     JMPCOND (300)
@@ -195,10 +175,10 @@ Terminals, with rules where they appear
     MIN <DOUBLE> (304) 68
     TIMES <DOUBLE> (305) 69
     DIV <DOUBLE> (306) 70
-    PLUS_EQUAL <DOUBLE> (307) 80
-    MIN_EQUAL <DOUBLE> (308) 81
-    TIMES_EQUAL <DOUBLE> (309) 82
-    DIV_EQUAL <DOUBLE> (310) 83
+    PLUS_EQUAL <DOUBLE> (307) 78
+    MIN_EQUAL <DOUBLE> (308) 79
+    TIMES_EQUAL <DOUBLE> (309) 80
+    DIV_EQUAL <DOUBLE> (310) 81
     EQUAL <BOOL> (311) 45
     NOT_EQ <BOOL> (312) 46
     INF_STRICT <BOOL> (313) 44
@@ -212,59 +192,59 @@ Terminals, with rules where they appear
 
 Nonterminals, with rules where they appear
 
-    $accept (78)
+    $accept (76)
         on left: 0
-    code (79)
+    code (77)
         on left: 1
         on right: 0
-    declarations (80)
+    declarations (78)
         on left: 2 3 4
         on right: 1 3 4
-    fonctions (81)
+    fonctions (79)
         on left: 6 7
-        on right: 1 7
-    $@1 (82)
+        on right: 1 6
+    $@1 (80)
         on left: 5
         on right: 6
-    parameters (83)
+    parameters (81)
         on left: 8 9
         on right: 6 9
-    draw_func (84)
+    draw_func (82)
         on left: 10 11 12
         on right: 12 14 15
-    affichage (85)
+    affichage (83)
         on left: 14 15
         on right: 1
-    $@2 (86)
+    $@2 (84)
         on left: 13
         on right: 14
-    draw_args (87)
+    draw_args (85)
         on left: 16 17 18 19 20 21 22 23 24 25 26 27
         on right: 14 27
-    style_args (88)
+    style_args (86)
         on left: 28 29
         on right: 17 29
-    color_args (89)
+    color_args (87)
         on left: 30 31
         on right: 16 31
-    instruction <Instruction> (90)
+    instruction <Instruction> (88)
         on left: 32 33 34 37 38 40
         on right: 6 33 34 37 38 40
-    $@3 (91)
+    $@3 (89)
         on left: 35
         on right: 37
-    $@4 (92)
+    $@4 (90)
         on left: 36
         on right: 37
-    $@5 (93)
+    $@5 (91)
         on left: 39
         on right: 40
-    logic <BOOL> (94)
+    logic <BOOL> (92)
         on left: 41 42 43 44 45 46 47 48 49
         on right: 37 40 47 48 49
-    expr <DOUBLE> (95)
-        on left: 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83
-        on right: 3 33 34 38 41 42 43 44 45 46 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 79 80 81 82 83
+    expr <DOUBLE> (93)
+        on left: 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81
+        on right: 3 33 34 38 41 42 43 44 45 46 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 77 78 79 80 81
 
 
 State 0
@@ -293,6 +273,8 @@ State 2
     var  shift, and go to state 4
     DEF  shift, and go to state 5
 
+    $default  reduce using rule 7 (fonctions)
+
     fonctions  go to state 6
 
 
@@ -313,7 +295,7 @@ State 4
 
 State 5
 
-    6 fonctions: DEF . VAR ':' '(' parameters ')' arrow '{' $@1 instruction '}'
+    6 fonctions: DEF . VAR ':' '(' parameters ')' arrow '{' $@1 instruction '}' fonctions
 
     VAR  shift, and go to state 8
 
@@ -321,13 +303,10 @@ State 5
 State 6
 
     1 code: declarations fonctions . affichage
-    7 fonctions: fonctions . fonctions
 
-    DEF   shift, and go to state 5
     DRAW  shift, and go to state 9
 
-    fonctions  go to state 10
-    affichage  go to state 11
+    affichage  go to state 10
 
 
 State 7
@@ -335,15 +314,15 @@ State 7
     3 declarations: declarations var VAR . '=' expr ';'
     4             | declarations var VAR . ';'
 
-    '='  shift, and go to state 12
-    ';'  shift, and go to state 13
+    '='  shift, and go to state 11
+    ';'  shift, and go to state 12
 
 
 State 8
 
-    6 fonctions: DEF VAR . ':' '(' parameters ')' arrow '{' $@1 instruction '}'
+    6 fonctions: DEF VAR . ':' '(' parameters ')' arrow '{' $@1 instruction '}' fonctions
 
-    ':'  shift, and go to state 14
+    ':'  shift, and go to state 13
 
 
 State 9
@@ -351,319 +330,311 @@ State 9
    14 affichage: DRAW . draw_func '{' $@2 draw_args '}'
    15          | DRAW . draw_func ';'
 
-    VAR  shift, and go to state 15
+    VAR  shift, and go to state 14
 
-    draw_func  go to state 16
+    draw_func  go to state 15
 
 
 State 10
-
-    7 fonctions: fonctions . fonctions
-    7          | fonctions fonctions .
-
-    DEF  shift, and go to state 5
-
-    DEF       [reduce using rule 7 (fonctions)]
-    $default  reduce using rule 7 (fonctions)
-
-    fonctions  go to state 10
-
-
-State 11
 
     1 code: declarations fonctions affichage .
 
     $default  reduce using rule 1 (code)
 
 
-State 12
+State 11
 
     3 declarations: declarations var VAR '=' . expr ';'
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
-    expr  go to state 39
+    expr  go to state 38
 
 
-State 13
+State 12
 
     4 declarations: declarations var VAR ';' .
 
     $default  reduce using rule 4 (declarations)
 
 
+State 13
+
+    6 fonctions: DEF VAR ':' . '(' parameters ')' arrow '{' $@1 instruction '}' fonctions
+
+    '('  shift, and go to state 39
+
+
 State 14
-
-    6 fonctions: DEF VAR ':' . '(' parameters ')' arrow '{' $@1 instruction '}'
-
-    '('  shift, and go to state 40
-
-
-State 15
 
    10 draw_func: VAR . in '[' NUM ',' NUM ']'
    11          | VAR .
 
-    in  shift, and go to state 41
+    in  shift, and go to state 40
 
     $default  reduce using rule 11 (draw_func)
 
 
-State 16
+State 15
 
    12 draw_func: draw_func . ',' draw_func
    14 affichage: DRAW draw_func . '{' $@2 draw_args '}'
    15          | DRAW draw_func . ';'
 
+    ','  shift, and go to state 41
     ';'  shift, and go to state 42
     '{'  shift, and go to state 43
-    ','  shift, and go to state 44
 
 
-State 17
+State 16
 
    51 expr: PI .
 
     $default  reduce using rule 51 (expr)
 
 
-State 18
+State 17
 
    52 expr: E .
 
     $default  reduce using rule 52 (expr)
 
 
-State 19
+State 18
 
    53 expr: PHI .
 
     $default  reduce using rule 53 (expr)
 
 
-State 20
+State 19
 
    50 expr: NUM .
 
     $default  reduce using rule 50 (expr)
 
 
-State 21
+State 20
 
    54 expr: SIN . '(' expr ')'
+
+    '('  shift, and go to state 44
+
+
+State 21
+
+   55 expr: COS . '(' expr ')'
 
     '('  shift, and go to state 45
 
 
 State 22
 
-   55 expr: COS . '(' expr ')'
+   72 expr: POW . '(' expr ',' expr ')'
 
     '('  shift, and go to state 46
 
 
 State 23
 
-   74 expr: POW . '(' expr ',' expr ')'
+   73 expr: EXP . '(' expr ')'
 
     '('  shift, and go to state 47
 
 
 State 24
 
-   75 expr: EXP . '(' expr ')'
+   76 expr: VAR .
+   77     | VAR . '=' expr
+   78     | VAR . PLUS_EQUAL expr
+   79     | VAR . MIN_EQUAL expr
+   80     | VAR . TIMES_EQUAL expr
+   81     | VAR . DIV_EQUAL expr
 
-    '('  shift, and go to state 48
+    PLUS_EQUAL   shift, and go to state 48
+    MIN_EQUAL    shift, and go to state 49
+    TIMES_EQUAL  shift, and go to state 50
+    DIV_EQUAL    shift, and go to state 51
+    '='          shift, and go to state 52
+
+    $default  reduce using rule 76 (expr)
 
 
 State 25
 
-   78 expr: VAR .
-   79     | VAR . '=' expr
-   80     | VAR . PLUS_EQUAL expr
-   81     | VAR . MIN_EQUAL expr
-   82     | VAR . TIMES_EQUAL expr
-   83     | VAR . DIV_EQUAL expr
+   56 expr: TAN . '(' expr ')'
 
-    PLUS_EQUAL   shift, and go to state 49
-    MIN_EQUAL    shift, and go to state 50
-    TIMES_EQUAL  shift, and go to state 51
-    DIV_EQUAL    shift, and go to state 52
-    '='          shift, and go to state 53
-
-    $default  reduce using rule 78 (expr)
+    '('  shift, and go to state 53
 
 
 State 26
 
-   56 expr: TAN . '(' expr ')'
+   57 expr: ARCCOS . '(' expr ')'
 
     '('  shift, and go to state 54
 
 
 State 27
 
-   57 expr: ARCCOS . '(' expr ')'
+   58 expr: ARCSIN . '(' expr ')'
 
     '('  shift, and go to state 55
 
 
 State 28
 
-   58 expr: ARCSIN . '(' expr ')'
+   59 expr: ARCTAN . '(' expr ')'
 
     '('  shift, and go to state 56
 
 
 State 29
 
-   59 expr: ARCTAN . '(' expr ')'
+   60 expr: COSH . '(' expr ')'
 
     '('  shift, and go to state 57
 
 
 State 30
 
-   61 expr: COSH . '(' expr ')'
+   61 expr: SINH . '(' expr ')'
 
     '('  shift, and go to state 58
 
 
 State 31
 
-   60 expr: SINH . '(' expr ')'
+   62 expr: TANH . '(' expr ')'
 
     '('  shift, and go to state 59
 
 
 State 32
 
-   62 expr: TANH . '(' expr ')'
+   64 expr: ARCSINH . '(' expr ')'
 
     '('  shift, and go to state 60
 
 
 State 33
 
-   64 expr: ARCSINH . '(' expr ')'
+   63 expr: ARCCOSH . '(' expr ')'
 
     '('  shift, and go to state 61
 
 
 State 34
 
-   63 expr: ARCCOSH . '(' expr ')'
+   65 expr: ARCTANH . '(' expr ')'
 
     '('  shift, and go to state 62
 
 
 State 35
 
-   65 expr: ARCTANH . '(' expr ')'
+   75 expr: SQRT . '(' expr ')'
 
     '('  shift, and go to state 63
 
 
 State 36
 
-   77 expr: SQRT . '(' expr ')'
+   74 expr: LOG . '(' expr ')'
 
     '('  shift, and go to state 64
 
 
 State 37
 
-   76 expr: LOG . '(' expr ')'
+   66 expr: '(' . expr ')'
 
-    '('  shift, and go to state 65
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
+
+    expr  go to state 65
 
 
 State 38
-
-   66 expr: '(' . expr ')'
-
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
-
-    expr  go to state 66
-
-
-State 39
 
     3 declarations: declarations var VAR '=' expr . ';'
    67 expr: expr . PLUS expr
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
+   71     | expr . '^' expr
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
-    ';'    shift, and go to state 74
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
+    ';'    shift, and go to state 71
+
+
+State 39
+
+    6 fonctions: DEF VAR ':' '(' . parameters ')' arrow '{' $@1 instruction '}' fonctions
+
+    VAR  shift, and go to state 72
+
+    parameters  go to state 73
 
 
 State 40
 
-    6 fonctions: DEF VAR ':' '(' . parameters ')' arrow '{' $@1 instruction '}'
+   10 draw_func: VAR in . '[' NUM ',' NUM ']'
 
-    VAR  shift, and go to state 75
-
-    parameters  go to state 76
+    '['  shift, and go to state 74
 
 
 State 41
 
-   10 draw_func: VAR in . '[' NUM ',' NUM ']'
+   12 draw_func: draw_func ',' . draw_func
 
-    '['  shift, and go to state 77
+    VAR  shift, and go to state 14
+
+    draw_func  go to state 75
 
 
 State 42
@@ -679,975 +650,943 @@ State 43
 
     $default  reduce using rule 13 ($@2)
 
-    $@2  go to state 78
+    $@2  go to state 76
 
 
 State 44
 
-   12 draw_func: draw_func ',' . draw_func
+   54 expr: SIN '(' . expr ')'
 
-    VAR  shift, and go to state 15
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
-    draw_func  go to state 79
+    expr  go to state 77
 
 
 State 45
 
-   54 expr: SIN '(' . expr ')'
+   55 expr: COS '(' . expr ')'
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
-    expr  go to state 80
+    expr  go to state 78
 
 
 State 46
 
-   55 expr: COS '(' . expr ')'
+   72 expr: POW '(' . expr ',' expr ')'
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
-    expr  go to state 81
+    expr  go to state 79
 
 
 State 47
 
-   74 expr: POW '(' . expr ',' expr ')'
+   73 expr: EXP '(' . expr ')'
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
-    expr  go to state 82
+    expr  go to state 80
 
 
 State 48
 
-   75 expr: EXP '(' . expr ')'
+   78 expr: VAR PLUS_EQUAL . expr
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
-    expr  go to state 83
+    expr  go to state 81
 
 
 State 49
 
-   80 expr: VAR PLUS_EQUAL . expr
+   79 expr: VAR MIN_EQUAL . expr
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
-    expr  go to state 84
+    expr  go to state 82
 
 
 State 50
 
-   81 expr: VAR MIN_EQUAL . expr
+   80 expr: VAR TIMES_EQUAL . expr
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
-    expr  go to state 85
+    expr  go to state 83
 
 
 State 51
 
-   82 expr: VAR TIMES_EQUAL . expr
+   81 expr: VAR DIV_EQUAL . expr
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
-    expr  go to state 86
+    expr  go to state 84
 
 
 State 52
 
-   83 expr: VAR DIV_EQUAL . expr
+   77 expr: VAR '=' . expr
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
-    expr  go to state 87
+    expr  go to state 85
 
 
 State 53
 
-   79 expr: VAR '=' . expr
+   56 expr: TAN '(' . expr ')'
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
-    expr  go to state 88
+    expr  go to state 86
 
 
 State 54
 
-   56 expr: TAN '(' . expr ')'
+   57 expr: ARCCOS '(' . expr ')'
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
-    expr  go to state 89
+    expr  go to state 87
 
 
 State 55
 
-   57 expr: ARCCOS '(' . expr ')'
+   58 expr: ARCSIN '(' . expr ')'
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
-    expr  go to state 90
+    expr  go to state 88
 
 
 State 56
 
-   58 expr: ARCSIN '(' . expr ')'
+   59 expr: ARCTAN '(' . expr ')'
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
-    expr  go to state 91
+    expr  go to state 89
 
 
 State 57
 
-   59 expr: ARCTAN '(' . expr ')'
+   60 expr: COSH '(' . expr ')'
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
-    expr  go to state 92
+    expr  go to state 90
 
 
 State 58
 
-   61 expr: COSH '(' . expr ')'
+   61 expr: SINH '(' . expr ')'
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
-    expr  go to state 93
+    expr  go to state 91
 
 
 State 59
 
-   60 expr: SINH '(' . expr ')'
+   62 expr: TANH '(' . expr ')'
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
-    expr  go to state 94
+    expr  go to state 92
 
 
 State 60
 
-   62 expr: TANH '(' . expr ')'
+   64 expr: ARCSINH '(' . expr ')'
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
-    expr  go to state 95
+    expr  go to state 93
 
 
 State 61
 
-   64 expr: ARCSINH '(' . expr ')'
+   63 expr: ARCCOSH '(' . expr ')'
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
-    expr  go to state 96
+    expr  go to state 94
 
 
 State 62
 
-   63 expr: ARCCOSH '(' . expr ')'
+   65 expr: ARCTANH '(' . expr ')'
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
-    expr  go to state 97
+    expr  go to state 95
 
 
 State 63
 
-   65 expr: ARCTANH '(' . expr ')'
+   75 expr: SQRT '(' . expr ')'
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
-    expr  go to state 98
+    expr  go to state 96
 
 
 State 64
 
-   77 expr: SQRT '(' . expr ')'
+   74 expr: LOG '(' . expr ')'
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
-    expr  go to state 99
+    expr  go to state 97
 
 
 State 65
-
-   76 expr: LOG '(' . expr ')'
-
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
-
-    expr  go to state 100
-
-
-State 66
 
    66 expr: '(' expr . ')'
    67     | expr . PLUS expr
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
+   71     | expr . '^' expr
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
-    ')'    shift, and go to state 101
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
+    ')'    shift, and go to state 98
+
+
+State 66
+
+   67 expr: expr PLUS . expr
+
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
+
+    expr  go to state 99
 
 
 State 67
 
-   67 expr: expr PLUS . expr
+   68 expr: expr MIN . expr
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
-    expr  go to state 102
+    expr  go to state 100
 
 
 State 68
 
-   68 expr: expr MIN . expr
+   69 expr: expr TIMES . expr
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
-    expr  go to state 103
+    expr  go to state 101
 
 
 State 69
 
-   69 expr: expr TIMES . expr
+   70 expr: expr DIV . expr
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
-    expr  go to state 104
+    expr  go to state 102
 
 
 State 70
 
-   70 expr: expr DIV . expr
+   71 expr: expr '^' . expr
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
-    expr  go to state 105
+    expr  go to state 103
 
 
 State 71
-
-   72 expr: expr '|' . expr
-
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
-
-    expr  go to state 106
-
-
-State 72
-
-   71 expr: expr '&' . expr
-
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
-
-    expr  go to state 107
-
-
-State 73
-
-   73 expr: expr '^' . expr
-
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
-
-    expr  go to state 108
-
-
-State 74
 
     3 declarations: declarations var VAR '=' expr ';' .
 
     $default  reduce using rule 3 (declarations)
 
 
-State 75
+State 72
 
     8 parameters: VAR .
 
     $default  reduce using rule 8 (parameters)
 
 
-State 76
+State 73
 
-    6 fonctions: DEF VAR ':' '(' parameters . ')' arrow '{' $@1 instruction '}'
+    6 fonctions: DEF VAR ':' '(' parameters . ')' arrow '{' $@1 instruction '}' fonctions
     9 parameters: parameters . ',' parameters
 
-    ')'  shift, and go to state 109
-    ','  shift, and go to state 110
+    ','  shift, and go to state 104
+    ')'  shift, and go to state 105
 
 
-State 77
+State 74
 
    10 draw_func: VAR in '[' . NUM ',' NUM ']'
 
-    NUM  shift, and go to state 111
+    NUM  shift, and go to state 106
 
 
-State 78
-
-   14 affichage: DRAW draw_func '{' $@2 . draw_args '}'
-
-    color  shift, and go to state 112
-    style  shift, and go to state 113
-    label  shift, and go to state 114
-    xmin   shift, and go to state 115
-    xmax   shift, and go to state 116
-    ymin   shift, and go to state 117
-    ymax   shift, and go to state 118
-
-    draw_args  go to state 119
-
-
-State 79
+State 75
 
    12 draw_func: draw_func . ',' draw_func
    12          | draw_func ',' draw_func .
 
-    ','  shift, and go to state 44
-
-    ','       [reduce using rule 12 (draw_func)]
     $default  reduce using rule 12 (draw_func)
 
 
-State 80
+State 76
+
+   14 affichage: DRAW draw_func '{' $@2 . draw_args '}'
+
+    color  shift, and go to state 107
+    style  shift, and go to state 108
+    label  shift, and go to state 109
+    xmin   shift, and go to state 110
+    xmax   shift, and go to state 111
+    ymin   shift, and go to state 112
+    ymax   shift, and go to state 113
+
+    draw_args  go to state 114
+
+
+State 77
 
    54 expr: SIN '(' expr . ')'
    67     | expr . PLUS expr
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
+   71     | expr . '^' expr
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
-    ')'    shift, and go to state 120
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
+    ')'    shift, and go to state 115
 
 
-State 81
+State 78
 
    55 expr: COS '(' expr . ')'
    67     | expr . PLUS expr
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
+   71     | expr . '^' expr
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
-    ')'    shift, and go to state 121
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
+    ')'    shift, and go to state 116
+
+
+State 79
+
+   67 expr: expr . PLUS expr
+   68     | expr . MIN expr
+   69     | expr . TIMES expr
+   70     | expr . DIV expr
+   71     | expr . '^' expr
+   72     | POW '(' expr . ',' expr ')'
+
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
+    ','    shift, and go to state 117
+
+
+State 80
+
+   67 expr: expr . PLUS expr
+   68     | expr . MIN expr
+   69     | expr . TIMES expr
+   70     | expr . DIV expr
+   71     | expr . '^' expr
+   73     | EXP '(' expr . ')'
+
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
+    ')'    shift, and go to state 118
+
+
+State 81
+
+   67 expr: expr . PLUS expr
+   68     | expr . MIN expr
+   69     | expr . TIMES expr
+   70     | expr . DIV expr
+   71     | expr . '^' expr
+   78     | VAR PLUS_EQUAL expr .
+
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
+
+    $default  reduce using rule 78 (expr)
 
 
 State 82
@@ -1656,19 +1595,16 @@ State 82
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
-   74     | POW '(' expr . ',' expr ')'
+   71     | expr . '^' expr
+   79     | VAR MIN_EQUAL expr .
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
-    ','    shift, and go to state 122
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
+
+    $default  reduce using rule 79 (expr)
 
 
 State 83
@@ -1677,19 +1613,16 @@ State 83
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
-   75     | EXP '(' expr . ')'
+   71     | expr . '^' expr
+   80     | VAR TIMES_EQUAL expr .
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
-    ')'    shift, and go to state 123
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
+
+    $default  reduce using rule 80 (expr)
 
 
 State 84
@@ -1698,27 +1631,16 @@ State 84
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
-   80     | VAR PLUS_EQUAL expr .
+   71     | expr . '^' expr
+   81     | VAR DIV_EQUAL expr .
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
 
-    PLUS      [reduce using rule 80 (expr)]
-    MIN       [reduce using rule 80 (expr)]
-    TIMES     [reduce using rule 80 (expr)]
-    DIV       [reduce using rule 80 (expr)]
-    '|'       [reduce using rule 80 (expr)]
-    '&'       [reduce using rule 80 (expr)]
-    '^'       [reduce using rule 80 (expr)]
-    $default  reduce using rule 80 (expr)
+    $default  reduce using rule 81 (expr)
 
 
 State 85
@@ -1727,1199 +1649,993 @@ State 85
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
-   81     | VAR MIN_EQUAL expr .
+   71     | expr . '^' expr
+   77     | VAR '=' expr .
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
 
-    PLUS      [reduce using rule 81 (expr)]
-    MIN       [reduce using rule 81 (expr)]
-    TIMES     [reduce using rule 81 (expr)]
-    DIV       [reduce using rule 81 (expr)]
-    '|'       [reduce using rule 81 (expr)]
-    '&'       [reduce using rule 81 (expr)]
-    '^'       [reduce using rule 81 (expr)]
-    $default  reduce using rule 81 (expr)
+    $default  reduce using rule 77 (expr)
 
 
 State 86
-
-   67 expr: expr . PLUS expr
-   68     | expr . MIN expr
-   69     | expr . TIMES expr
-   70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
-   82     | VAR TIMES_EQUAL expr .
-
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
-
-    PLUS      [reduce using rule 82 (expr)]
-    MIN       [reduce using rule 82 (expr)]
-    TIMES     [reduce using rule 82 (expr)]
-    DIV       [reduce using rule 82 (expr)]
-    '|'       [reduce using rule 82 (expr)]
-    '&'       [reduce using rule 82 (expr)]
-    '^'       [reduce using rule 82 (expr)]
-    $default  reduce using rule 82 (expr)
-
-
-State 87
-
-   67 expr: expr . PLUS expr
-   68     | expr . MIN expr
-   69     | expr . TIMES expr
-   70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
-   83     | VAR DIV_EQUAL expr .
-
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
-
-    PLUS      [reduce using rule 83 (expr)]
-    MIN       [reduce using rule 83 (expr)]
-    TIMES     [reduce using rule 83 (expr)]
-    DIV       [reduce using rule 83 (expr)]
-    '|'       [reduce using rule 83 (expr)]
-    '&'       [reduce using rule 83 (expr)]
-    '^'       [reduce using rule 83 (expr)]
-    $default  reduce using rule 83 (expr)
-
-
-State 88
-
-   67 expr: expr . PLUS expr
-   68     | expr . MIN expr
-   69     | expr . TIMES expr
-   70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
-   79     | VAR '=' expr .
-
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
-
-    PLUS      [reduce using rule 79 (expr)]
-    MIN       [reduce using rule 79 (expr)]
-    TIMES     [reduce using rule 79 (expr)]
-    DIV       [reduce using rule 79 (expr)]
-    '|'       [reduce using rule 79 (expr)]
-    '&'       [reduce using rule 79 (expr)]
-    '^'       [reduce using rule 79 (expr)]
-    $default  reduce using rule 79 (expr)
-
-
-State 89
 
    56 expr: TAN '(' expr . ')'
    67     | expr . PLUS expr
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
+   71     | expr . '^' expr
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
-    ')'    shift, and go to state 124
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
+    ')'    shift, and go to state 119
 
 
-State 90
+State 87
 
    57 expr: ARCCOS '(' expr . ')'
    67     | expr . PLUS expr
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
+   71     | expr . '^' expr
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
-    ')'    shift, and go to state 125
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
+    ')'    shift, and go to state 120
 
 
-State 91
+State 88
 
    58 expr: ARCSIN '(' expr . ')'
    67     | expr . PLUS expr
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
+   71     | expr . '^' expr
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
-    ')'    shift, and go to state 126
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
+    ')'    shift, and go to state 121
 
 
-State 92
+State 89
 
    59 expr: ARCTAN '(' expr . ')'
    67     | expr . PLUS expr
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
+   71     | expr . '^' expr
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
-    ')'    shift, and go to state 127
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
+    ')'    shift, and go to state 122
 
 
-State 93
+State 90
 
-   61 expr: COSH '(' expr . ')'
+   60 expr: COSH '(' expr . ')'
    67     | expr . PLUS expr
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
+   71     | expr . '^' expr
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
-    ')'    shift, and go to state 128
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
+    ')'    shift, and go to state 123
 
 
-State 94
+State 91
 
-   60 expr: SINH '(' expr . ')'
+   61 expr: SINH '(' expr . ')'
    67     | expr . PLUS expr
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
+   71     | expr . '^' expr
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
-    ')'    shift, and go to state 129
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
+    ')'    shift, and go to state 124
 
 
-State 95
+State 92
 
    62 expr: TANH '(' expr . ')'
    67     | expr . PLUS expr
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
+   71     | expr . '^' expr
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
-    ')'    shift, and go to state 130
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
+    ')'    shift, and go to state 125
 
 
-State 96
+State 93
 
    64 expr: ARCSINH '(' expr . ')'
    67     | expr . PLUS expr
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
+   71     | expr . '^' expr
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
-    ')'    shift, and go to state 131
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
+    ')'    shift, and go to state 126
 
 
-State 97
+State 94
 
    63 expr: ARCCOSH '(' expr . ')'
    67     | expr . PLUS expr
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
+   71     | expr . '^' expr
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
-    ')'    shift, and go to state 132
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
+    ')'    shift, and go to state 127
 
 
-State 98
+State 95
 
    65 expr: ARCTANH '(' expr . ')'
    67     | expr . PLUS expr
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
+   71     | expr . '^' expr
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
-    ')'    shift, and go to state 133
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
+    ')'    shift, and go to state 128
 
 
-State 99
+State 96
 
    67 expr: expr . PLUS expr
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
-   77     | SQRT '(' expr . ')'
+   71     | expr . '^' expr
+   75     | SQRT '(' expr . ')'
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
-    ')'    shift, and go to state 134
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
+    ')'    shift, and go to state 129
 
 
-State 100
+State 97
 
    67 expr: expr . PLUS expr
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
-   76     | LOG '(' expr . ')'
+   71     | expr . '^' expr
+   74     | LOG '(' expr . ')'
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
-    ')'    shift, and go to state 135
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
+    ')'    shift, and go to state 130
 
 
-State 101
+State 98
 
    66 expr: '(' expr ')' .
 
     $default  reduce using rule 66 (expr)
 
 
-State 102
+State 99
 
    67 expr: expr . PLUS expr
    67     | expr PLUS expr .
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
+   71     | expr . '^' expr
 
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
 
     $default  reduce using rule 67 (expr)
 
 
-State 103
+State 100
 
    67 expr: expr . PLUS expr
    68     | expr . MIN expr
    68     | expr MIN expr .
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
+   71     | expr . '^' expr
 
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
 
     $default  reduce using rule 68 (expr)
 
 
-State 104
+State 101
 
    67 expr: expr . PLUS expr
    68     | expr . MIN expr
    69     | expr . TIMES expr
    69     | expr TIMES expr .
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
+   71     | expr . '^' expr
 
-    '|'  shift, and go to state 71
-    '&'  shift, and go to state 72
-    '^'  shift, and go to state 73
+    '^'  shift, and go to state 70
 
     $default  reduce using rule 69 (expr)
 
 
-State 105
+State 102
 
    67 expr: expr . PLUS expr
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
    70     | expr DIV expr .
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
+   71     | expr . '^' expr
 
-    '|'  shift, and go to state 71
-    '&'  shift, and go to state 72
-    '^'  shift, and go to state 73
+    '^'  shift, and go to state 70
 
     $default  reduce using rule 70 (expr)
 
 
-State 106
+State 103
 
    67 expr: expr . PLUS expr
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   72     | expr '|' expr .
-   73     | expr . '^' expr
+   71     | expr . '^' expr
+   71     | expr '^' expr .
 
-    '^'  shift, and go to state 73
-
-    $default  reduce using rule 72 (expr)
-
-
-State 107
-
-   67 expr: expr . PLUS expr
-   68     | expr . MIN expr
-   69     | expr . TIMES expr
-   70     | expr . DIV expr
-   71     | expr . '&' expr
-   71     | expr '&' expr .
-   72     | expr . '|' expr
-   73     | expr . '^' expr
-
-    '^'  shift, and go to state 73
+    '^'  shift, and go to state 70
 
     $default  reduce using rule 71 (expr)
 
 
+State 104
+
+    9 parameters: parameters ',' . parameters
+
+    VAR  shift, and go to state 72
+
+    parameters  go to state 131
+
+
+State 105
+
+    6 fonctions: DEF VAR ':' '(' parameters ')' . arrow '{' $@1 instruction '}' fonctions
+
+    arrow  shift, and go to state 132
+
+
+State 106
+
+   10 draw_func: VAR in '[' NUM . ',' NUM ']'
+
+    ','  shift, and go to state 133
+
+
+State 107
+
+   16 draw_args: color . ':' '[' color_args ']'
+
+    ':'  shift, and go to state 134
+
+
 State 108
 
-   67 expr: expr . PLUS expr
-   68     | expr . MIN expr
-   69     | expr . TIMES expr
-   70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
-   73     | expr '^' expr .
+   17 draw_args: style . ':' '[' style_args ']'
 
-    '^'  shift, and go to state 73
-
-    $default  reduce using rule 73 (expr)
+    ':'  shift, and go to state 135
 
 
 State 109
 
-    6 fonctions: DEF VAR ':' '(' parameters ')' . arrow '{' $@1 instruction '}'
+   18 draw_args: label . ':' STRING
 
-    arrow  shift, and go to state 136
+    ':'  shift, and go to state 136
 
 
 State 110
 
-    9 parameters: parameters ',' . parameters
+   19 draw_args: xmin . ':' NUM
+   20          | xmin . ':' VAR
 
-    VAR  shift, and go to state 75
-
-    parameters  go to state 137
+    ':'  shift, and go to state 137
 
 
 State 111
 
-   10 draw_func: VAR in '[' NUM . ',' NUM ']'
+   21 draw_args: xmax . ':' NUM
+   22          | xmax . ':' VAR
 
-    ','  shift, and go to state 138
+    ':'  shift, and go to state 138
 
 
 State 112
 
-   16 draw_args: color . ':' '[' color_args ']'
+   23 draw_args: ymin . ':' NUM
+   24          | ymin . ':' VAR
 
     ':'  shift, and go to state 139
 
 
 State 113
 
-   17 draw_args: style . ':' '[' style_args ']'
+   25 draw_args: ymax . ':' NUM
+   26          | ymax . ':' VAR
 
     ':'  shift, and go to state 140
 
 
 State 114
 
-   18 draw_args: label . ':' STRING
-
-    ':'  shift, and go to state 141
-
-
-State 115
-
-   19 draw_args: xmin . ':' NUM
-   20          | xmin . ':' VAR
-
-    ':'  shift, and go to state 142
-
-
-State 116
-
-   21 draw_args: xmax . ':' NUM
-   22          | xmax . ':' VAR
-
-    ':'  shift, and go to state 143
-
-
-State 117
-
-   23 draw_args: ymin . ':' NUM
-   24          | ymin . ':' VAR
-
-    ':'  shift, and go to state 144
-
-
-State 118
-
-   25 draw_args: ymax . ':' NUM
-   26          | ymax . ':' VAR
-
-    ':'  shift, and go to state 145
-
-
-State 119
-
    14 affichage: DRAW draw_func '{' $@2 draw_args . '}'
    27 draw_args: draw_args . ',' draw_args
 
-    '}'  shift, and go to state 146
-    ','  shift, and go to state 147
+    ','  shift, and go to state 141
+    '}'  shift, and go to state 142
 
 
-State 120
+State 115
 
    54 expr: SIN '(' expr ')' .
 
     $default  reduce using rule 54 (expr)
 
 
-State 121
+State 116
 
    55 expr: COS '(' expr ')' .
 
     $default  reduce using rule 55 (expr)
 
 
-State 122
+State 117
 
-   74 expr: POW '(' expr ',' . expr ')'
+   72 expr: POW '(' expr ',' . expr ')'
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
-    expr  go to state 148
-
-
-State 123
-
-   75 expr: EXP '(' expr ')' .
-
-    $default  reduce using rule 75 (expr)
+    expr  go to state 143
 
 
-State 124
+State 118
+
+   73 expr: EXP '(' expr ')' .
+
+    $default  reduce using rule 73 (expr)
+
+
+State 119
 
    56 expr: TAN '(' expr ')' .
 
     $default  reduce using rule 56 (expr)
 
 
-State 125
+State 120
 
    57 expr: ARCCOS '(' expr ')' .
 
     $default  reduce using rule 57 (expr)
 
 
-State 126
+State 121
 
    58 expr: ARCSIN '(' expr ')' .
 
     $default  reduce using rule 58 (expr)
 
 
-State 127
+State 122
 
    59 expr: ARCTAN '(' expr ')' .
 
     $default  reduce using rule 59 (expr)
 
 
-State 128
+State 123
 
-   61 expr: COSH '(' expr ')' .
-
-    $default  reduce using rule 61 (expr)
-
-
-State 129
-
-   60 expr: SINH '(' expr ')' .
+   60 expr: COSH '(' expr ')' .
 
     $default  reduce using rule 60 (expr)
 
 
-State 130
+State 124
+
+   61 expr: SINH '(' expr ')' .
+
+    $default  reduce using rule 61 (expr)
+
+
+State 125
 
    62 expr: TANH '(' expr ')' .
 
     $default  reduce using rule 62 (expr)
 
 
-State 131
+State 126
 
    64 expr: ARCSINH '(' expr ')' .
 
     $default  reduce using rule 64 (expr)
 
 
-State 132
+State 127
 
    63 expr: ARCCOSH '(' expr ')' .
 
     $default  reduce using rule 63 (expr)
 
 
-State 133
+State 128
 
    65 expr: ARCTANH '(' expr ')' .
 
     $default  reduce using rule 65 (expr)
 
 
-State 134
+State 129
 
-   77 expr: SQRT '(' expr ')' .
+   75 expr: SQRT '(' expr ')' .
 
-    $default  reduce using rule 77 (expr)
-
-
-State 135
-
-   76 expr: LOG '(' expr ')' .
-
-    $default  reduce using rule 76 (expr)
+    $default  reduce using rule 75 (expr)
 
 
-State 136
+State 130
 
-    6 fonctions: DEF VAR ':' '(' parameters ')' arrow . '{' $@1 instruction '}'
+   74 expr: LOG '(' expr ')' .
 
-    '{'  shift, and go to state 149
+    $default  reduce using rule 74 (expr)
 
 
-State 137
+State 131
 
     9 parameters: parameters . ',' parameters
     9           | parameters ',' parameters .
 
-    ','  shift, and go to state 110
-
-    ','       [reduce using rule 9 (parameters)]
     $default  reduce using rule 9 (parameters)
 
 
-State 138
+State 132
+
+    6 fonctions: DEF VAR ':' '(' parameters ')' arrow . '{' $@1 instruction '}' fonctions
+
+    '{'  shift, and go to state 144
+
+
+State 133
 
    10 draw_func: VAR in '[' NUM ',' . NUM ']'
 
-    NUM  shift, and go to state 150
+    NUM  shift, and go to state 145
 
 
-State 139
+State 134
 
    16 draw_args: color ':' . '[' color_args ']'
 
-    '['  shift, and go to state 151
+    '['  shift, and go to state 146
 
 
-State 140
+State 135
 
    17 draw_args: style ':' . '[' style_args ']'
 
-    '['  shift, and go to state 152
+    '['  shift, and go to state 147
 
 
-State 141
+State 136
 
    18 draw_args: label ':' . STRING
 
-    STRING  shift, and go to state 153
+    STRING  shift, and go to state 148
 
 
-State 142
+State 137
 
    19 draw_args: xmin ':' . NUM
    20          | xmin ':' . VAR
 
-    NUM  shift, and go to state 154
-    VAR  shift, and go to state 155
+    NUM  shift, and go to state 149
+    VAR  shift, and go to state 150
 
 
-State 143
+State 138
 
    21 draw_args: xmax ':' . NUM
    22          | xmax ':' . VAR
 
-    NUM  shift, and go to state 156
-    VAR  shift, and go to state 157
+    NUM  shift, and go to state 151
+    VAR  shift, and go to state 152
 
 
-State 144
+State 139
 
    23 draw_args: ymin ':' . NUM
    24          | ymin ':' . VAR
 
-    NUM  shift, and go to state 158
-    VAR  shift, and go to state 159
+    NUM  shift, and go to state 153
+    VAR  shift, and go to state 154
 
 
-State 145
+State 140
 
    25 draw_args: ymax ':' . NUM
    26          | ymax ':' . VAR
 
-    NUM  shift, and go to state 160
-    VAR  shift, and go to state 161
+    NUM  shift, and go to state 155
+    VAR  shift, and go to state 156
 
 
-State 146
+State 141
+
+   27 draw_args: draw_args ',' . draw_args
+
+    color  shift, and go to state 107
+    style  shift, and go to state 108
+    label  shift, and go to state 109
+    xmin   shift, and go to state 110
+    xmax   shift, and go to state 111
+    ymin   shift, and go to state 112
+    ymax   shift, and go to state 113
+
+    draw_args  go to state 157
+
+
+State 142
 
    14 affichage: DRAW draw_func '{' $@2 draw_args '}' .
 
     $default  reduce using rule 14 (affichage)
 
 
-State 147
-
-   27 draw_args: draw_args ',' . draw_args
-
-    color  shift, and go to state 112
-    style  shift, and go to state 113
-    label  shift, and go to state 114
-    xmin   shift, and go to state 115
-    xmax   shift, and go to state 116
-    ymin   shift, and go to state 117
-    ymax   shift, and go to state 118
-
-    draw_args  go to state 162
-
-
-State 148
+State 143
 
    67 expr: expr . PLUS expr
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
-   74     | POW '(' expr ',' expr . ')'
+   71     | expr . '^' expr
+   72     | POW '(' expr ',' expr . ')'
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
-    ')'    shift, and go to state 163
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
+    ')'    shift, and go to state 158
 
 
-State 149
+State 144
 
-    6 fonctions: DEF VAR ':' '(' parameters ')' arrow '{' . $@1 instruction '}'
+    6 fonctions: DEF VAR ':' '(' parameters ')' arrow '{' . $@1 instruction '}' fonctions
 
     $default  reduce using rule 5 ($@1)
 
-    $@1  go to state 164
+    $@1  go to state 159
 
 
-State 150
+State 145
 
    10 draw_func: VAR in '[' NUM ',' NUM . ']'
 
-    ']'  shift, and go to state 165
+    ']'  shift, and go to state 160
 
 
-State 151
+State 146
 
    16 draw_args: color ':' '[' . color_args ']'
 
-    COLOR_PARAM  shift, and go to state 166
+    COLOR_PARAM  shift, and go to state 161
 
-    color_args  go to state 167
+    color_args  go to state 162
 
 
-State 152
+State 147
 
    17 draw_args: style ':' '[' . style_args ']'
 
-    STYLE_PARAM  shift, and go to state 168
+    STYLE_PARAM  shift, and go to state 163
 
-    style_args  go to state 169
+    style_args  go to state 164
 
 
-State 153
+State 148
 
    18 draw_args: label ':' STRING .
 
     $default  reduce using rule 18 (draw_args)
 
 
-State 154
+State 149
 
    19 draw_args: xmin ':' NUM .
 
     $default  reduce using rule 19 (draw_args)
 
 
-State 155
+State 150
 
    20 draw_args: xmin ':' VAR .
 
     $default  reduce using rule 20 (draw_args)
 
 
-State 156
+State 151
 
    21 draw_args: xmax ':' NUM .
 
     $default  reduce using rule 21 (draw_args)
 
 
-State 157
+State 152
 
    22 draw_args: xmax ':' VAR .
 
     $default  reduce using rule 22 (draw_args)
 
 
-State 158
+State 153
 
    23 draw_args: ymin ':' NUM .
 
     $default  reduce using rule 23 (draw_args)
 
 
-State 159
+State 154
 
    24 draw_args: ymin ':' VAR .
 
     $default  reduce using rule 24 (draw_args)
 
 
-State 160
+State 155
 
    25 draw_args: ymax ':' NUM .
 
     $default  reduce using rule 25 (draw_args)
 
 
-State 161
+State 156
 
    26 draw_args: ymax ':' VAR .
 
     $default  reduce using rule 26 (draw_args)
 
 
-State 162
+State 157
 
    27 draw_args: draw_args . ',' draw_args
    27          | draw_args ',' draw_args .
 
-    ','  shift, and go to state 147
-
-    ','       [reduce using rule 27 (draw_args)]
     $default  reduce using rule 27 (draw_args)
 
 
-State 163
+State 158
 
-   74 expr: POW '(' expr ',' expr ')' .
+   72 expr: POW '(' expr ',' expr ')' .
 
-    $default  reduce using rule 74 (expr)
+    $default  reduce using rule 72 (expr)
 
 
-State 164
+State 159
 
-    6 fonctions: DEF VAR ':' '(' parameters ')' arrow '{' $@1 . instruction '}'
+    6 fonctions: DEF VAR ':' '(' parameters ')' arrow '{' $@1 . instruction '}' fonctions
 
-    FOR    shift, and go to state 170
-    IF     shift, and go to state 171
-    WHILE  shift, and go to state 172
+    FOR    shift, and go to state 165
+    IF     shift, and go to state 166
+    WHILE  shift, and go to state 167
 
     $default  reduce using rule 32 (instruction)
 
-    instruction  go to state 173
+    instruction  go to state 168
 
 
-State 165
+State 160
 
    10 draw_func: VAR in '[' NUM ',' NUM ']' .
 
     $default  reduce using rule 10 (draw_func)
 
 
-State 166
+State 161
 
    30 color_args: COLOR_PARAM .
 
     $default  reduce using rule 30 (color_args)
 
 
-State 167
+State 162
 
    16 draw_args: color ':' '[' color_args . ']'
    31 color_args: color_args . ',' color_args
 
-    ','  shift, and go to state 174
-    ']'  shift, and go to state 175
+    ','  shift, and go to state 169
+    ']'  shift, and go to state 170
 
 
-State 168
+State 163
 
    28 style_args: STYLE_PARAM .
 
     $default  reduce using rule 28 (style_args)
 
 
-State 169
+State 164
 
    17 draw_args: style ':' '[' style_args . ']'
    29 style_args: style_args . ',' style_args
 
-    ','  shift, and go to state 176
-    ']'  shift, and go to state 177
+    ','  shift, and go to state 171
+    ']'  shift, and go to state 172
 
 
-State 170
+State 165
 
    38 instruction: FOR . VAR in '[' expr ':' expr ':' expr ']' '{' instruction '}'
 
-    VAR  shift, and go to state 178
+    VAR  shift, and go to state 173
 
 
-State 171
+State 166
 
    37 instruction: IF . logic '{' $@3 instruction $@4 '}' ELSE '{' instruction '}'
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    NOT      shift, and go to state 179
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    NOT      shift, and go to state 174
+    '('      shift, and go to state 37
 
-    logic  go to state 180
-    expr   go to state 181
+    logic  go to state 175
+    expr   go to state 176
 
 
-State 172
+State 167
 
    40 instruction: WHILE . logic '{' $@5 instruction '}'
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    NOT      shift, and go to state 179
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    NOT      shift, and go to state 174
+    '('      shift, and go to state 37
 
-    logic  go to state 182
-    expr   go to state 181
+    logic  go to state 177
+    expr   go to state 176
 
 
-State 173
+State 168
 
-    6 fonctions: DEF VAR ':' '(' parameters ')' arrow '{' $@1 instruction . '}'
+    6 fonctions: DEF VAR ':' '(' parameters ')' arrow '{' $@1 instruction . '}' fonctions
    33 instruction: instruction . expr ';'
    34            | instruction . RETURN expr ';'
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    RETURN   shift, and go to state 183
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
-    '}'      shift, and go to state 184
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    RETURN   shift, and go to state 178
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
+    '}'      shift, and go to state 179
 
-    expr  go to state 185
+    expr  go to state 180
 
 
-State 174
+State 169
 
    31 color_args: color_args ',' . color_args
 
-    COLOR_PARAM  shift, and go to state 166
+    COLOR_PARAM  shift, and go to state 161
 
-    color_args  go to state 186
+    color_args  go to state 181
 
 
-State 175
+State 170
 
    16 draw_args: color ':' '[' color_args ']' .
 
     $default  reduce using rule 16 (draw_args)
 
 
-State 176
+State 171
 
    29 style_args: style_args ',' . style_args
 
-    STYLE_PARAM  shift, and go to state 168
+    STYLE_PARAM  shift, and go to state 163
 
-    style_args  go to state 187
+    style_args  go to state 182
 
 
-State 177
+State 172
 
    17 draw_args: style ':' '[' style_args ']' .
 
     $default  reduce using rule 17 (draw_args)
 
 
-State 178
+State 173
 
    38 instruction: FOR VAR . in '[' expr ':' expr ':' expr ']' '{' instruction '}'
 
-    in  shift, and go to state 188
+    in  shift, and go to state 183
 
 
-State 179
+State 174
 
    49 logic: NOT . logic
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    NOT      shift, and go to state 179
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    NOT      shift, and go to state 174
+    '('      shift, and go to state 37
 
-    logic  go to state 189
-    expr   go to state 181
+    logic  go to state 184
+    expr   go to state 176
 
 
-State 180
+State 175
 
    37 instruction: IF logic . '{' $@3 instruction $@4 '}' ELSE '{' instruction '}'
    47 logic: logic . AND logic
    48      | logic . OR logic
 
-    AND  shift, and go to state 190
-    OR   shift, and go to state 191
-    '{'  shift, and go to state 192
+    AND  shift, and go to state 185
+    OR   shift, and go to state 186
+    '{'  shift, and go to state 187
 
 
-State 181
+State 176
 
    41 logic: expr . SUP expr
    42      | expr . INF expr
@@ -2931,980 +2647,927 @@ State 181
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
+   71     | expr . '^' expr
 
-    PLUS        shift, and go to state 67
-    MIN         shift, and go to state 68
-    TIMES       shift, and go to state 69
-    DIV         shift, and go to state 70
-    EQUAL       shift, and go to state 193
-    NOT_EQ      shift, and go to state 194
-    INF_STRICT  shift, and go to state 195
-    SUP_STRICT  shift, and go to state 196
-    INF         shift, and go to state 197
-    SUP         shift, and go to state 198
-    '|'         shift, and go to state 71
-    '&'         shift, and go to state 72
-    '^'         shift, and go to state 73
+    PLUS        shift, and go to state 66
+    MIN         shift, and go to state 67
+    TIMES       shift, and go to state 68
+    DIV         shift, and go to state 69
+    EQUAL       shift, and go to state 188
+    NOT_EQ      shift, and go to state 189
+    INF_STRICT  shift, and go to state 190
+    SUP_STRICT  shift, and go to state 191
+    INF         shift, and go to state 192
+    SUP         shift, and go to state 193
+    '^'         shift, and go to state 70
 
 
-State 182
+State 177
 
    40 instruction: WHILE logic . '{' $@5 instruction '}'
    47 logic: logic . AND logic
    48      | logic . OR logic
 
-    AND  shift, and go to state 190
-    OR   shift, and go to state 191
-    '{'  shift, and go to state 199
+    AND  shift, and go to state 185
+    OR   shift, and go to state 186
+    '{'  shift, and go to state 194
 
 
-State 183
+State 178
 
    34 instruction: instruction RETURN . expr ';'
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
-    expr  go to state 200
-
-
-State 184
-
-    6 fonctions: DEF VAR ':' '(' parameters ')' arrow '{' $@1 instruction '}' .
-
-    $default  reduce using rule 6 (fonctions)
+    expr  go to state 195
 
 
-State 185
+State 179
+
+    6 fonctions: DEF VAR ':' '(' parameters ')' arrow '{' $@1 instruction '}' . fonctions
+
+    DEF  shift, and go to state 5
+
+    $default  reduce using rule 7 (fonctions)
+
+    fonctions  go to state 196
+
+
+State 180
 
    33 instruction: instruction expr . ';'
    67 expr: expr . PLUS expr
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
+   71     | expr . '^' expr
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
-    ';'    shift, and go to state 201
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
+    ';'    shift, and go to state 197
 
 
-State 186
+State 181
 
    31 color_args: color_args . ',' color_args
    31           | color_args ',' color_args .
 
-    ','  shift, and go to state 174
-
-    ','       [reduce using rule 31 (color_args)]
     $default  reduce using rule 31 (color_args)
 
 
-State 187
+State 182
 
    29 style_args: style_args . ',' style_args
    29           | style_args ',' style_args .
 
-    ','  shift, and go to state 176
-
-    ','       [reduce using rule 29 (style_args)]
     $default  reduce using rule 29 (style_args)
 
 
-State 188
+State 183
 
    38 instruction: FOR VAR in . '[' expr ':' expr ':' expr ']' '{' instruction '}'
 
-    '['  shift, and go to state 202
+    '['  shift, and go to state 198
 
 
-State 189
+State 184
 
    47 logic: logic . AND logic
    48      | logic . OR logic
    49      | NOT logic .
 
-    AND  shift, and go to state 190
-    OR   shift, and go to state 191
+    AND  shift, and go to state 185
+    OR   shift, and go to state 186
 
-    AND       [reduce using rule 49 (logic)]
-    OR        [reduce using rule 49 (logic)]
     $default  reduce using rule 49 (logic)
 
 
-State 190
+State 185
 
    47 logic: logic AND . logic
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    NOT      shift, and go to state 179
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    NOT      shift, and go to state 174
+    '('      shift, and go to state 37
 
-    logic  go to state 203
-    expr   go to state 181
+    logic  go to state 199
+    expr   go to state 176
 
 
-State 191
+State 186
 
    48 logic: logic OR . logic
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    NOT      shift, and go to state 179
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    NOT      shift, and go to state 174
+    '('      shift, and go to state 37
 
-    logic  go to state 204
-    expr   go to state 181
+    logic  go to state 200
+    expr   go to state 176
 
 
-State 192
+State 187
 
    37 instruction: IF logic '{' . $@3 instruction $@4 '}' ELSE '{' instruction '}'
 
     $default  reduce using rule 35 ($@3)
 
-    $@3  go to state 205
+    $@3  go to state 201
 
 
-State 193
+State 188
 
    45 logic: expr EQUAL . expr
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
+
+    expr  go to state 202
+
+
+State 189
+
+   46 logic: expr NOT_EQ . expr
+
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
+
+    expr  go to state 203
+
+
+State 190
+
+   44 logic: expr INF_STRICT . expr
+
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
+
+    expr  go to state 204
+
+
+State 191
+
+   43 logic: expr SUP_STRICT . expr
+
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
+
+    expr  go to state 205
+
+
+State 192
+
+   42 logic: expr INF . expr
+
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
     expr  go to state 206
 
 
-State 194
+State 193
 
-   46 logic: expr NOT_EQ . expr
+   41 logic: expr SUP . expr
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
     expr  go to state 207
 
 
-State 195
-
-   44 logic: expr INF_STRICT . expr
-
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
-
-    expr  go to state 208
-
-
-State 196
-
-   43 logic: expr SUP_STRICT . expr
-
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
-
-    expr  go to state 209
-
-
-State 197
-
-   42 logic: expr INF . expr
-
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
-
-    expr  go to state 210
-
-
-State 198
-
-   41 logic: expr SUP . expr
-
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
-
-    expr  go to state 211
-
-
-State 199
+State 194
 
    40 instruction: WHILE logic '{' . $@5 instruction '}'
 
     $default  reduce using rule 39 ($@5)
 
-    $@5  go to state 212
+    $@5  go to state 208
 
 
-State 200
+State 195
 
    34 instruction: instruction RETURN expr . ';'
    67 expr: expr . PLUS expr
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
+   71     | expr . '^' expr
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
-    ';'    shift, and go to state 213
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
+    ';'    shift, and go to state 209
 
 
-State 201
+State 196
+
+    6 fonctions: DEF VAR ':' '(' parameters ')' arrow '{' $@1 instruction '}' fonctions .
+
+    $default  reduce using rule 6 (fonctions)
+
+
+State 197
 
    33 instruction: instruction expr ';' .
 
     $default  reduce using rule 33 (instruction)
 
 
-State 202
+State 198
 
    38 instruction: FOR VAR in '[' . expr ':' expr ':' expr ']' '{' instruction '}'
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
-    expr  go to state 214
+    expr  go to state 210
 
 
-State 203
+State 199
 
    47 logic: logic . AND logic
    47      | logic AND logic .
    48      | logic . OR logic
 
-    AND  shift, and go to state 190
-    OR   shift, and go to state 191
-
-    AND       [reduce using rule 47 (logic)]
-    OR        [reduce using rule 47 (logic)]
     $default  reduce using rule 47 (logic)
 
 
-State 204
+State 200
 
    47 logic: logic . AND logic
    48      | logic . OR logic
    48      | logic OR logic .
 
-    AND  shift, and go to state 190
-    OR   shift, and go to state 191
+    AND  shift, and go to state 185
 
-    AND       [reduce using rule 48 (logic)]
-    OR        [reduce using rule 48 (logic)]
     $default  reduce using rule 48 (logic)
 
 
-State 205
+State 201
 
    37 instruction: IF logic '{' $@3 . instruction $@4 '}' ELSE '{' instruction '}'
 
-    FOR    shift, and go to state 170
-    IF     shift, and go to state 171
-    WHILE  shift, and go to state 172
+    FOR    shift, and go to state 165
+    IF     shift, and go to state 166
+    WHILE  shift, and go to state 167
 
     $default  reduce using rule 32 (instruction)
 
-    instruction  go to state 215
+    instruction  go to state 211
 
 
-State 206
+State 202
 
    45 logic: expr EQUAL expr .
    67 expr: expr . PLUS expr
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
+   71     | expr . '^' expr
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
 
     $default  reduce using rule 45 (logic)
 
 
-State 207
+State 203
 
    46 logic: expr NOT_EQ expr .
    67 expr: expr . PLUS expr
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
+   71     | expr . '^' expr
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
 
     $default  reduce using rule 46 (logic)
 
 
-State 208
+State 204
 
    44 logic: expr INF_STRICT expr .
    67 expr: expr . PLUS expr
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
+   71     | expr . '^' expr
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
 
     $default  reduce using rule 44 (logic)
 
 
-State 209
+State 205
 
    43 logic: expr SUP_STRICT expr .
    67 expr: expr . PLUS expr
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
+   71     | expr . '^' expr
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
 
     $default  reduce using rule 43 (logic)
 
 
-State 210
+State 206
 
    42 logic: expr INF expr .
    67 expr: expr . PLUS expr
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
+   71     | expr . '^' expr
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
 
     $default  reduce using rule 42 (logic)
 
 
-State 211
+State 207
 
    41 logic: expr SUP expr .
    67 expr: expr . PLUS expr
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
+   71     | expr . '^' expr
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
 
     $default  reduce using rule 41 (logic)
 
 
-State 212
+State 208
 
    40 instruction: WHILE logic '{' $@5 . instruction '}'
 
-    FOR    shift, and go to state 170
-    IF     shift, and go to state 171
-    WHILE  shift, and go to state 172
+    FOR    shift, and go to state 165
+    IF     shift, and go to state 166
+    WHILE  shift, and go to state 167
 
     $default  reduce using rule 32 (instruction)
 
-    instruction  go to state 216
+    instruction  go to state 212
 
 
-State 213
+State 209
 
    34 instruction: instruction RETURN expr ';' .
 
     $default  reduce using rule 34 (instruction)
 
 
-State 214
+State 210
 
    38 instruction: FOR VAR in '[' expr . ':' expr ':' expr ']' '{' instruction '}'
    67 expr: expr . PLUS expr
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
+   71     | expr . '^' expr
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
-    ':'    shift, and go to state 217
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
+    ':'    shift, and go to state 213
 
 
-State 215
+State 211
 
    33 instruction: instruction . expr ';'
    34            | instruction . RETURN expr ';'
    37            | IF logic '{' $@3 instruction . $@4 '}' ELSE '{' instruction '}'
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    RETURN   shift, and go to state 183
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    RETURN   shift, and go to state 178
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
     $default  reduce using rule 36 ($@4)
 
-    $@4   go to state 218
-    expr  go to state 185
+    $@4   go to state 214
+    expr  go to state 180
 
 
-State 216
+State 212
 
    33 instruction: instruction . expr ';'
    34            | instruction . RETURN expr ';'
    40            | WHILE logic '{' $@5 instruction . '}'
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    RETURN   shift, and go to state 183
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
-    '}'      shift, and go to state 219
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    RETURN   shift, and go to state 178
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
+    '}'      shift, and go to state 215
 
-    expr  go to state 185
+    expr  go to state 180
 
 
-State 217
+State 213
 
    38 instruction: FOR VAR in '[' expr ':' . expr ':' expr ']' '{' instruction '}'
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
-    expr  go to state 220
+    expr  go to state 216
 
 
-State 218
+State 214
 
    37 instruction: IF logic '{' $@3 instruction $@4 . '}' ELSE '{' instruction '}'
 
-    '}'  shift, and go to state 221
+    '}'  shift, and go to state 217
 
 
-State 219
+State 215
 
    40 instruction: WHILE logic '{' $@5 instruction '}' .
 
     $default  reduce using rule 40 (instruction)
 
 
-State 220
+State 216
 
    38 instruction: FOR VAR in '[' expr ':' expr . ':' expr ']' '{' instruction '}'
    67 expr: expr . PLUS expr
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
+   71     | expr . '^' expr
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
-    ':'    shift, and go to state 222
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
+    ':'    shift, and go to state 218
 
 
-State 221
+State 217
 
    37 instruction: IF logic '{' $@3 instruction $@4 '}' . ELSE '{' instruction '}'
 
-    ELSE  shift, and go to state 223
+    ELSE  shift, and go to state 219
 
 
-State 222
+State 218
 
    38 instruction: FOR VAR in '[' expr ':' expr ':' . expr ']' '{' instruction '}'
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
 
-    expr  go to state 224
+    expr  go to state 220
 
 
-State 223
+State 219
 
    37 instruction: IF logic '{' $@3 instruction $@4 '}' ELSE . '{' instruction '}'
 
-    '{'  shift, and go to state 225
+    '{'  shift, and go to state 221
 
 
-State 224
+State 220
 
    38 instruction: FOR VAR in '[' expr ':' expr ':' expr . ']' '{' instruction '}'
    67 expr: expr . PLUS expr
    68     | expr . MIN expr
    69     | expr . TIMES expr
    70     | expr . DIV expr
-   71     | expr . '&' expr
-   72     | expr . '|' expr
-   73     | expr . '^' expr
+   71     | expr . '^' expr
 
-    PLUS   shift, and go to state 67
-    MIN    shift, and go to state 68
-    TIMES  shift, and go to state 69
-    DIV    shift, and go to state 70
-    '|'    shift, and go to state 71
-    '&'    shift, and go to state 72
-    '^'    shift, and go to state 73
-    ']'    shift, and go to state 226
+    PLUS   shift, and go to state 66
+    MIN    shift, and go to state 67
+    TIMES  shift, and go to state 68
+    DIV    shift, and go to state 69
+    '^'    shift, and go to state 70
+    ']'    shift, and go to state 222
 
 
-State 225
+State 221
 
    37 instruction: IF logic '{' $@3 instruction $@4 '}' ELSE '{' . instruction '}'
 
-    FOR    shift, and go to state 170
-    IF     shift, and go to state 171
-    WHILE  shift, and go to state 172
+    FOR    shift, and go to state 165
+    IF     shift, and go to state 166
+    WHILE  shift, and go to state 167
 
     $default  reduce using rule 32 (instruction)
 
-    instruction  go to state 227
+    instruction  go to state 223
 
 
-State 226
+State 222
 
    38 instruction: FOR VAR in '[' expr ':' expr ':' expr ']' . '{' instruction '}'
 
-    '{'  shift, and go to state 228
+    '{'  shift, and go to state 224
 
 
-State 227
+State 223
 
    33 instruction: instruction . expr ';'
    34            | instruction . RETURN expr ';'
    37            | IF logic '{' $@3 instruction $@4 '}' ELSE '{' instruction . '}'
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    RETURN   shift, and go to state 183
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
-    '}'      shift, and go to state 229
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    RETURN   shift, and go to state 178
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
+    '}'      shift, and go to state 225
 
-    expr  go to state 185
+    expr  go to state 180
 
 
-State 228
+State 224
 
    38 instruction: FOR VAR in '[' expr ':' expr ':' expr ']' '{' . instruction '}'
 
-    FOR    shift, and go to state 170
-    IF     shift, and go to state 171
-    WHILE  shift, and go to state 172
+    FOR    shift, and go to state 165
+    IF     shift, and go to state 166
+    WHILE  shift, and go to state 167
 
     $default  reduce using rule 32 (instruction)
 
-    instruction  go to state 230
+    instruction  go to state 226
 
 
-State 229
+State 225
 
    37 instruction: IF logic '{' $@3 instruction $@4 '}' ELSE '{' instruction '}' .
 
     $default  reduce using rule 37 (instruction)
 
 
-State 230
+State 226
 
    33 instruction: instruction . expr ';'
    34            | instruction . RETURN expr ';'
    38            | FOR VAR in '[' expr ':' expr ':' expr ']' '{' instruction . '}'
 
-    PI       shift, and go to state 17
-    E        shift, and go to state 18
-    PHI      shift, and go to state 19
-    RETURN   shift, and go to state 183
-    NUM      shift, and go to state 20
-    SIN      shift, and go to state 21
-    COS      shift, and go to state 22
-    POW      shift, and go to state 23
-    EXP      shift, and go to state 24
-    VAR      shift, and go to state 25
-    TAN      shift, and go to state 26
-    ARCCOS   shift, and go to state 27
-    ARCSIN   shift, and go to state 28
-    ARCTAN   shift, and go to state 29
-    COSH     shift, and go to state 30
-    SINH     shift, and go to state 31
-    TANH     shift, and go to state 32
-    ARCSINH  shift, and go to state 33
-    ARCCOSH  shift, and go to state 34
-    ARCTANH  shift, and go to state 35
-    SQRT     shift, and go to state 36
-    LOG      shift, and go to state 37
-    '('      shift, and go to state 38
-    '}'      shift, and go to state 231
+    PI       shift, and go to state 16
+    E        shift, and go to state 17
+    PHI      shift, and go to state 18
+    RETURN   shift, and go to state 178
+    NUM      shift, and go to state 19
+    SIN      shift, and go to state 20
+    COS      shift, and go to state 21
+    POW      shift, and go to state 22
+    EXP      shift, and go to state 23
+    VAR      shift, and go to state 24
+    TAN      shift, and go to state 25
+    ARCCOS   shift, and go to state 26
+    ARCSIN   shift, and go to state 27
+    ARCTAN   shift, and go to state 28
+    COSH     shift, and go to state 29
+    SINH     shift, and go to state 30
+    TANH     shift, and go to state 31
+    ARCSINH  shift, and go to state 32
+    ARCCOSH  shift, and go to state 33
+    ARCTANH  shift, and go to state 34
+    SQRT     shift, and go to state 35
+    LOG      shift, and go to state 36
+    '('      shift, and go to state 37
+    '}'      shift, and go to state 227
 
-    expr  go to state 185
+    expr  go to state 180
 
 
-State 231
+State 227
 
    38 instruction: FOR VAR in '[' expr ':' expr ':' expr ']' '{' instruction '}' .
 

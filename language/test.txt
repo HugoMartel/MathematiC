@@ -4,11 +4,11 @@
  */
 
 // Valid code 1
-var a = 1;
+var a = cos(0);
 var b = 2;
-var c = 3;
-var z = 5;
-var y = 4;
+var c = 3 * b;
+var z = 5.5 - 6;
+var y = phi;
 
 
 
@@ -34,7 +34,7 @@ def g: (x) => {
 
 draw fonction1 in [-8,8], g {
     color: ["red", "#00FF00"],
-	style: ["dashed", "solid"],
+	style: ["dotted", "solid"],
     label: "Fonction 1",
 	xmin: -8
 }

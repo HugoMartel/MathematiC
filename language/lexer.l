@@ -11,8 +11,9 @@
 %option noyywrap
 
 variable        [a-zA-Z_][a-zA-Z0-9_]*
-color_arg       \"(blue|red|green|black|white|magenta|cyan|yellow|\#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3}))\"
-style_arg       \"(dashed|dotted|solid)\"
+/* /!\ color doesn't support [A-Fa-f0-9]{3} format */
+color_arg       \"(blue|red|green|black|white|magenta|cyan|yellow|\#([A-Fa-f0-9]{6}))\"
+style_arg       \"(dashed|dotted|solid|hist)\"
 string          \"[a-zA-Z0-9\-\+\/\*\(\)\[\]\{\}\ \&\~\#\^\@\=\$\%\!\,\.\:\>\<]+\"
 number          [+-]?[0-9]+(\.[0-9]*)?([Ee][+-]?[0-9]+)?
 toskip          \n|\r|\t|\ |\/\/.*
@@ -55,7 +56,7 @@ arcsinh                                                     { return ARCSINH; }
 arctanh                                                     { return ARCTANH; }
 log                                                         { return LOG; }
 sqrt                                                        { return SQRT; }
-\^|\*\*                                                     { return '^'; }
+\^                                                          { return '^'; }
 pow                                                         { return POW; }
 exp                                                         { return EXP; }
 if                                                          { return IF; }
@@ -80,9 +81,10 @@ xmin                                                        { return xmin; }
 xmax                                                        { return xmax; }
 ymin                                                        { return ymin; }
 ymax                                                        { return ymax; }
-{color_arg}                                                 { return COLOR_PARAM; }
-{style_arg}                                                 { return STYLE_PARAM; }
-{string}                                                    { return STRING; }
+    /* /!\ copy char * */
+{color_arg}                                                 { strcpy(yylval.svalue, yytext); return COLOR_PARAM; }
+{style_arg}                                                 { strcpy(yylval.svalue, yytext); return STYLE_PARAM; }
+{string}                                                    { strcpy(yylval.svalue, yytext); return STRING; }
 {variable}                                                  { strcpy(yylval.svalue, yytext); return VAR; }
     /* Operators */
 "+="                                                        { return PLUS_EQUAL; }
@@ -96,12 +98,12 @@ ymax                                                        { return ymax; }
 "<"                                                         { return INF_STRICT; }
 ">"                                                         { return SUP_STRICT; }
 "!"                                                         { return NOT; }
-"="                                                         { return yytext[0]; }
+"="                                                         { return '='; }
 "+"                                                         { return PLUS; }
 "-"                                                         { return MIN; }
 "*"                                                         { return TIMES; }
 "/"                                                         { return DIV; }
-"%"                                                         { return yytext[0]; }
+"%"                                                         { return '%'; }
 \(                                                          { return '('; }
 \)                                                          { return ')'; }
 \{                                                          { return '{'; }
@@ -112,6 +114,6 @@ ymax                                                        { return ymax; }
 ";"                                                         { return ';'; }
 ":"                                                         { return ':'; }
 <<EOF>>                                                     { printf("File contains a valid source code\n"); return EOF; }
-.                                                           { printf("lex error : %s\n", yytext); return 0; }
+.                                                           { fprintf(stderr, "lex error : %s\n", yytext); return 0; }
 
 %%

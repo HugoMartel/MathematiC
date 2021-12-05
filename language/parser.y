@@ -12,6 +12,8 @@
     #include <vector>
     #include <iostream>
 
+    //#include "inteface.hpp"
+
     /* \/ Uncomment to enable debug output */
     #define __DEBUG__
 
@@ -109,7 +111,6 @@
     /*===================*/
 
     /* Draw function Variables */
-    int functionToEdit = 0;
     std::string argLabel = "Affichage";
     double argXmin = -10;
     double argXmax = 10;
@@ -117,11 +118,18 @@
     double argYmax = 10;
 
 
+    /* Variables only used during parsing */
+    /** Function currently modified index */
+    unsigned int functionToEdit = 0;
+    int i;
+
+
+
     /**
      * String storing the current code (main or function) to write to.
      * 0 -> main code, otherwise write to the associated function
      */
-    std::vector<std::string> current_scope = { "" };
+    std::vector<std::string> current_scope;
 
     /**
      * Temporary queue to store args to add to functions and draw
@@ -131,7 +139,7 @@
     /**
      * Temporary stack to store values on the fly for the declarations
      */
-    std::stack<Instruction> onTheFly;
+    std::stack<double> onTheFly;
 
     /**
      * Map storing variables declared gloabally
@@ -152,13 +160,12 @@
     string print_code(const int &ins);
 
     /**
-     * 
+     *
      */
     int add_instruction(const int &c, const double &v=0, const string &n="") {
         /* Check where this instruction should be put */
-        if (current_scope[0] == "") {
-            yyerror("Writing code outside of a function...");
-            ++functions[current_scope[0]].iic;
+        if (current_scope.empty()) {
+            yyerror("Instructions not placed in a function...");
         } else {
             /* Write to the appropriated function stack */
             functions[current_scope[0]].add_instruction(c, v, n);
@@ -261,11 +268,13 @@
 %token <BOOL> NOT
 
 
-/* Define operators priority */
-%left PLUS MIN
-%left TIMES DIV
-%left '|' '&'
+/* Define operators priority and associativity behaviour */
+%precedence '=' PLUS_EQUAL MIN_EQUAL TIMES_EQUAL DIV_EQUAL
+%precedence NOT
+%left PLUS MIN OR
+%left TIMES DIV AND
 %right '^'
+%left ','
 
 
 %%
@@ -275,20 +284,28 @@
     Fonctions
     Affichage
 */
-code: declarations fonctions affichage                  { /* TODO: print start compiling */ }
+code: declarations fonctions affichage              {
+#ifdef __DEBUG__
+                std::cout << "-- END OF COMPILATION --\n";
+#endif
+                                                    }
 
 
+/*===========================================================================================*/
 declarations: %empty /* \epsilon */                 { /* End of declarations */
 #ifdef __DEBUG__
-                    std::cout << "-- End of declarations --\n";
+                std::cout << "-- End of declarations --\n";
 #endif
-}
+                                                    }
             | declarations var VAR '=' expr ';'     { /* Init Vars */
+                /* Check if already declared */
                 if (!variables.count($3)) {
                     variables[$3] = $5;
+
 #ifdef __DEBUG__
                     printf("Declared %s = %lf\n", $3, $5);
 #endif
+
                 } else {
                     yyerror(("Variable " + std::string($3) + " has already been declared...").c_str());
                 }
@@ -305,16 +322,24 @@ declarations: %empty /* \epsilon */                 { /* End of declarations */
                                                     }
 
 
+/*===========================================================================================*/
 fonctions: DEF VAR ':' '(' parameters ')' arrow '{'           {
+                    /* Clear the current_scope vector */
+                    current_scope.clear();
+
                     /* Check if the function wasn't already declared */
                     if(!functions.count($2)) {
                         functions[$2] = Function();
                         /* Enqueue to keep it in memory */
-                        current_scope[0] = $2;
+                        current_scope.push_back($2);
 
                         /* Declare parameters */
                         while (!argQueue.empty()) {
-                            functions[$2].parameters[argQueue.front()] = 0;
+                            if (!functions[$2].parameters.count(argQueue.front()))
+                                functions[$2].parameters[argQueue.front()] = 0;
+                            else
+                                yyerror("Parameter already used...");
+
                             argQueue.pop();
                         }
                     } else {
@@ -323,74 +348,81 @@ fonctions: DEF VAR ':' '(' parameters ')' arrow '{'           {
 
 }
                 instruction
-          '}'                                               {
+          '}' fonctions                                 {
                     /* Dequeue since we left the function scope */
-                    if (current_scope[0] != "")
+                    if (current_scope.empty())
                         current_scope.pop_back();
                     /*Clear the queue in case it is not empty*/
                     while (!argQueue.empty())
                         argQueue.pop();
                                                         }
-         | fonctions fonctions                          { /* Support multiple functions */ }
+         | %empty /* \epsilon */                        { /* End of function declarations */ }
 
 
+/*===========================================================================================*/
 parameters: VAR                                         {
-                    /* Load function names to send to the front-end */
-                    current_scope.push_back($1);
-                    /* Check if the function is already drawn or missing */
-                    if (!functions.count($1)){
-                        yyerror("Function already drawn or missing...");
-                    }
+                    argQueue.push($1);
                                                         }
           | parameters ',' parameters                   { /* Support multiple parameters */ }
 
 
+/*===========================================================================================*/
 draw_func: VAR in '[' NUM ',' NUM ']'                   {
                     /* Load function names to send to the front-end */
                     current_scope.push_back($1);
 
-                    /* Check if the function is already drawn or missing */
-                    if (functions.count($1)){
+                    /* Check if the function is already drawn */
+                    if (functions.count($1)) {
                         functions[$1].xInterval.first = $4;
                         functions[$1].xInterval.second = $6;
                     } else {
-                        yyerror("Function already drawn or missing...");
+                        yyerror("Function already drawn...");
                     }
                                                         }
-         | VAR                                          { current_scope.push_back($1); }
+         | VAR                                          {
+                    /* Load function names to send to the front-end */
+                    current_scope.push_back($1);
+
+                    /* Check if the function is already drawn */
+                    if (!functions.count($1)) {
+                        yyerror("Function already drawn...");
+                    }
+                                                        }
          | draw_func ',' draw_func                      { /* Support multiple functions to draw at the same time */ }
 
 
+/*===========================================================================================*/
 affichage: DRAW draw_func '{'                           {
                                                           /* On vide le scope */
-                                                          while(current_scope.size()>0){
-                                                              current_scope.pop_back();
-                                                          }
+                                                            while(!current_scope.empty()){
+                                                                current_scope.pop_back();
+                                                            }
                                                         }
                 draw_args
            '}'
          | DRAW draw_func ';'                           { /* TODO: load default args */ }
 
 
+/*===========================================================================================*/
 draw_args: color ':' '[' color_args ']'                 { /* getting the multiples color args (or not) */ 
                                                           if(current_scope.size() == argQueue.size()){ // on vérifie qu'il y a suffisament d'arguments
-                                                              functionToEdit = current_scope.size();
-                                                              while (!argQueue.empty()){ // on attribue chaque argument à sa fonction
-                                                                  --functionToEdit;
-                                                                  functions[current_scope[functionToEdit]].color = argQueue.front();
-                                                                argQueue.pop();
-                                                              }
-                                                          }
+                                                                functionToEdit = current_scope.size();
+                                                                while (!argQueue.empty()){ // on attribue chaque argument à sa fonction
+                                                                    --functionToEdit;
+                                                                    functions[current_scope[functionToEdit]].color = argQueue.front();
+                                                                    argQueue.pop();
+                                                                }
+                                                            }
                                                         }
          | style ':' '[' style_args ']'                 { /* getting the multiples style args (or not) */
-                                                          if(current_scope.size() == argQueue.size()){ // on vérifie qu'il y a suffisament d'arguments
-                                                              functionToEdit = current_scope.size();
-                                                              while (!argQueue.empty()) { // on attribue chaque argument à sa fonction
-                                                                  --functionToEdit;
-                                                                  functions[current_scope[functionToEdit]].style = argQueue.front();
-                                                                  argQueue.pop();
-                                                              }
-                                                          }
+                                                            if(current_scope.size() == argQueue.size()){ // on vérifie qu'il y a suffisament d'arguments
+                                                                functionToEdit = current_scope.size();
+                                                                while (!argQueue.empty()) { // on attribue chaque argument à sa fonction
+                                                                    --functionToEdit;
+                                                                    functions[current_scope[functionToEdit]].style = argQueue.front();
+                                                                    argQueue.pop();
+                                                                }
+                                                            }
                                                         }
          | label ':' STRING                             { argLabel = $3;}
          | xmin ':' NUM                                 { argXmin = $3; }
@@ -404,27 +436,41 @@ draw_args: color ':' '[' color_args ']'                 { /* getting the multipl
          | draw_args ',' draw_args                      { /* Support multiple args */ }
 
 
-style_args: STYLE_PARAM                                 {
-                                /* Check if the value is correct */
-                                std::cout << "arg: " << $1 << "\n";
-                                if (
-                                    strcmp($1,"\"solid\"") &&
-                                    strcmp($1,"\"filled\"") &&
-                                    strcmp($1,"\"dotted\"") &&
-                                    strcmp($1,"\"hist\"")
-                                ) {
-                                    yyerror("Wrong style argument...");
-                                } else {
-                                    argQueue.push($1);
-                                }
-                                                        }
+/*===========================================================================================*/
+style_args: STYLE_PARAM                                 { argQueue.push($1); }
           | style_args ',' style_args                   { /* Support multiple style_args */ }
 
 
-color_args: COLOR_PARAM                                 {  argQueue.push($1); }
+/*===========================================================================================*/
+color_args: COLOR_PARAM                                 {
+                                if (!strcmp($1,"\"blue\"")) {
+                                    argQueue.push("#0000FF");
+                                } else if (!strcmp($1,"\"red\"")) {
+                                    argQueue.push("#FF0000");
+                                } else if (!strcmp($1,"\"green\"")) {
+                                    argQueue.push("#00FF00");
+                                } else if (!strcmp($1,"\"black\"")) {
+                                    argQueue.push("#000000");
+                                } else if (!strcmp($1,"\"white\"")) {
+                                    argQueue.push("#FFFFFF");
+                                } else if (!strcmp($1,"\"magenta\"")) {
+                                    argQueue.push("#FF00FF");
+                                } else if (!strcmp($1,"\"cyan\"")) {
+                                    argQueue.push("#00FFFF");
+                                } else if (!strcmp($1,"\"yellow\"")) {
+                                    argQueue.push("#FFFF00");
+                                } else {
+                                    /* Remove the head and tail '"' */
+                                    for (i = 0; i <= 6; ++i)
+                                        $1 [i] = $1 [i+1];
+                                    $1[i] = '\0';
+                                    argQueue.push($1);
+                                }
+                                                        }
           | color_args ',' color_args                   { /* Support multiple color_args */ }
 
 
+/*===========================================================================================*/
 instruction: %empty /* \epsilon */                      { /* No instructions left */ }
            | instruction expr ';'                       { /* new line */ }
            | instruction RETURN expr ';'                {
@@ -466,6 +512,7 @@ instruction: %empty /* \epsilon */                      { /* No instructions lef
              '}'                                        { add_instruction(WHILE); }
 
 
+/*===========================================================================================*/
 logic: expr SUP expr        { add_instruction(SUP); }
      | expr INF expr        { add_instruction(INF); }
      | expr SUP_STRICT expr { add_instruction(SUP_STRICT); }
@@ -477,55 +524,182 @@ logic: expr SUP expr        { add_instruction(SUP); }
      | NOT logic            { add_instruction(NOT); }
 
 
-expr: NUM                   { add_instruction(NUM, $1); }
-    | PI                    { add_instruction(NUM, 3.14159265358979323846); }
-    | E                     { add_instruction(NUM, 2.71828182845904523536); }
-    | PHI                   { add_instruction(NUM, 1.61803398874989484820); }
-    | SIN '(' expr ')'      { add_instruction(SIN); }
-    | COS '(' expr ')'      { add_instruction(COS); }
-    | TAN '(' expr ')'      { add_instruction(TAN); }
-    | ARCCOS '(' expr ')'   { add_instruction(ARCCOS); }
-    | ARCSIN '(' expr ')'   { add_instruction(ARCSIN); }
-    | ARCTAN '(' expr ')'   { add_instruction(ARCTAN); }
-    | SINH '(' expr ')'     { add_instruction(SINH); }
-    | COSH '(' expr ')'     { add_instruction(COSH); }
-    | TANH '(' expr ')'     { add_instruction(TANH); }
-    | ARCCOSH '(' expr ')'  { add_instruction(ARCCOSH); }
-    | ARCSINH '(' expr ')'  { add_instruction(ARCSINH); }
-    | ARCTANH '(' expr ')'  { add_instruction(ARCTANH); }
+/*===========================================================================================*/
+expr: NUM                   {
+                                if (!current_scope.empty())
+                                    add_instruction(NUM, $1);
+                                else
+                                    $$ = $1;
+                            }
+    | PI                    {
+                                if (!current_scope.empty())
+                                    add_instruction(NUM, 3.14159265358979323846);
+                                else
+                                    $$ = 3.14159265358979323846;
+                            }
+    | E                     {
+                                if (!current_scope.empty())
+                                    add_instruction(NUM, 2.71828182845904523536);
+                                else
+                                    $$ = 2.71828182845904523536;
+                            }
+    | PHI                   {
+                                if (!current_scope.empty())
+                                    add_instruction(NUM, 1.61803398874989484820);
+                                else
+                                    $$ = 1.61803398874989484820;
+                            }
+    | SIN '(' expr ')'      {
+                                if (!current_scope.empty())
+                                    add_instruction(SIN);
+                                else
+                                    $$ = sin($3);
+                            }
+    | COS '(' expr ')'      {
+                                if (!current_scope.empty())
+                                    add_instruction(COS);
+                                else
+                                    $$ = cos($3);
+                            }
+    | TAN '(' expr ')'      {
+                                if (!current_scope.empty())
+                                    add_instruction(TAN);
+                                else
+                                    $$ = tan($3);
+                            }
+    | ARCCOS '(' expr ')'   {
+                                if (!current_scope.empty())
+                                    add_instruction(ARCCOS);
+                                else
+                                    $$ = acos($3);
+                            }
+    | ARCSIN '(' expr ')'   {
+                                if (!current_scope.empty())
+                                    add_instruction(ARCSIN);
+                                else
+                                    $$ = asin($3);
+                            }
+    | ARCTAN '(' expr ')'   {
+                                if (!current_scope.empty())
+                                    add_instruction(ARCTAN);
+                                else
+                                    $$ = atan($3);
+                            }
+    | COSH '(' expr ')'     {
+                                if (!current_scope.empty())
+                                    add_instruction(COSH);
+                                else
+                                    $$ = cosh($3);
+                            }
+    | SINH '(' expr ')'     {
+                                if (!current_scope.empty())
+                                    add_instruction(SINH);
+                                else
+                                    $$ = sinh($3);
+                            }
+    | TANH '(' expr ')'     {
+                                if (!current_scope.empty())
+                                    add_instruction(TANH);
+                                else
+                                    $$ = tanh($3);
+                            }
+    | ARCCOSH '(' expr ')'  {
+                                if (!current_scope.empty())
+                                    add_instruction(ARCCOSH);
+                                else
+                                    $$ = acosh($3);
+                            }
+    | ARCSINH '(' expr ')'  {
+                                if (!current_scope.empty())
+                                    add_instruction(ARCSINH);
+                                else
+                                    $$ = asinh($3);
+                            }
+    | ARCTANH '(' expr ')'  {
+                                if (!current_scope.empty())
+                                    add_instruction(ARCTANH);
+                                else
+                                    $$ = atanh($3);
+                            }
     | '(' expr ')'          { $$ = $2; }
-    | expr PLUS expr        { add_instruction(PLUS); }
-    | expr MIN expr         { add_instruction(MIN); }
-    | expr TIMES expr       { add_instruction(TIMES); }
-    | expr DIV expr         { add_instruction(DIV); }
-    | expr '&' expr         {
-        int tmp1 = (int)$1;
-        int tmp2 = (int)$3;
-        $$ = tmp1 & tmp2;
-        printf("%d & %d = %d\n", tmp1, tmp2, (int)$$);
-}
-    | expr '|' expr         {
-        int tmp1 = (int)$1;
-        int tmp2 = (int)$3;
-        $$ = tmp1 | tmp2;
-        printf("%d | %d = %d\n", tmp1, tmp2, (int)$$);
-}
-    | expr '^' expr                 { add_instruction(POW); }
-    | POW '(' expr ',' expr ')'     { add_instruction(POW); }
-    | EXP '(' expr ')'              { add_instruction(EXP); }
-    | LOG '(' expr ')'              { add_instruction(LOG); }
-    | SQRT '(' expr ')'             { add_instruction(SQRT); }
+    | expr PLUS expr        {
+                                if (!current_scope.empty())
+                                    add_instruction(PLUS);
+                                else
+                                    $$ = $1 + $3;
+                            }
+    | expr MIN expr         {
+                                if (!current_scope.empty())
+                                    add_instruction(PLUS);
+                                else
+                                    $$ = $1 - $3;
+                            }
+    | expr TIMES expr       {
+                                if (!current_scope.empty())
+                                    add_instruction(PLUS);
+                                else
+                                    $$ = $1 * $3;
+                            }
+    | expr DIV expr         {
+                                if (!current_scope.empty())
+                                    add_instruction(PLUS);
+                                else {
+                                    if ($3 == 0.)
+                                        yyerror("Dividing by 0...");
+                                    else
+                                        $$ = $1 / $3;
+                                }
+                            }
+    | expr '^' expr                 {
+                                        if (!current_scope.empty())
+                                            add_instruction(POW);
+                                        else {
+                                            if ($1 == 0. && $3 == 0.)
+                                                yyerror("Can't put 0 to the power 0...");
+                                            else
+                                                $$ = pow($1,$3);
+                                        }
+                                    }
+    | POW '(' expr ',' expr ')'     {
+                                        if (!current_scope.empty())
+                                            add_instruction(POW);
+                                        else {
+                                            if ($3 == 0. && $5 == 0.)
+                                                yyerror("Can't put 0 to the power 0...");
+                                            else
+                                                $$ = pow($3,$5);
+                                        }
+                                    }
+    | EXP '(' expr ')'              {
+                                        if (!current_scope.empty())
+                                            add_instruction(EXP);
+                                        else
+                                            $$ = exp($3);
+                                    }
+    | LOG '(' expr ')'              {
+                                        if (!current_scope.empty())
+                                            add_instruction(LOG);
+                                        else
+                                            $$ = log($3);
+                                    }
+    | SQRT '(' expr ')'             {
+                                        if (!current_scope.empty())
+                                            add_instruction(SQRT);
+                                        else
+                                            $$ = sqrt($3);
+                                    }
     | VAR                           {
                                         /* Only add to the ins vector if we are in a function */
-                                        if (current_scope[0] != "") {
+                                        if (!current_scope.empty()) {
                                             add_instruction(VAR, 0, $1);
                                         } else {
-                                            onTheFly.emplace(VAR, 0, $1);
+                                            if (variables.count($1))
+                                                $$ = variables.at($1);
                                         }
                                     }
     | VAR '=' expr                  {
                                         /* Only add to the ins vector if we are in a function */
-                                        if (current_scope[0] != "") {
+                                        if (!current_scope.empty()) {
                                             add_instruction(ASSIGN,0,$1);
                                         } else {
                                             yyerror("Can only assign to an already declared variable when in a function...");
@@ -533,7 +707,7 @@ expr: NUM                   { add_instruction(NUM, $1); }
                                     }
     | VAR PLUS_EQUAL expr           {
                                         /* Only add to the ins vector if we are in a function */
-                                        if (current_scope[0] != "") {
+                                        if (!current_scope.empty()) {
                                             add_instruction(VAR,0,$1);
                                             add_instruction(PLUS);
                                             add_instruction(ASSIGN,0,$1);
@@ -543,7 +717,7 @@ expr: NUM                   { add_instruction(NUM, $1); }
                                     }
     | VAR MIN_EQUAL expr            {
                                         /* Only add to the ins vector if we are in a function */
-                                        if (current_scope[0] != "") {
+                                        if (current_scope.empty()) {
                                             add_instruction(VAR,0,$1);
                                             add_instruction(MIN);
                                             add_instruction(ASSIGN,0,$1);
@@ -553,7 +727,7 @@ expr: NUM                   { add_instruction(NUM, $1); }
                                     }
     | VAR TIMES_EQUAL expr          {
                                         /* Only add to the ins vector if we are in a function */
-                                        if (current_scope[0] != "") {
+                                        if (current_scope.empty()) {
                                             add_instruction(VAR,0,$1);
                                             add_instruction(TIMES);
                                             add_instruction(ASSIGN,0,$1);
@@ -563,7 +737,7 @@ expr: NUM                   { add_instruction(NUM, $1); }
                                     }
     | VAR DIV_EQUAL expr            {
                                         /* Only add to the ins vector if we are in a function */
-                                        if (current_scope[0] != "") {
+                                        if (current_scope.empty()) {
                                             add_instruction(VAR,0,$1);
                                             add_instruction(DIV);
                                             add_instruction(ASSIGN,0,$1);
@@ -578,6 +752,7 @@ expr: NUM                   { add_instruction(NUM, $1); }
 /*================================================================================================*/
 int yyerror(const char *s)
 {
+    //TODO: TT add call to the getverbose under include/interface.cpp
     printf("%zu - %s : %s\n", yylineno, s, yytext);
     return EXIT_SUCCESS;
 }
@@ -643,7 +818,7 @@ string print_code(const int &ins) {
 double Function::operator()(...)
 {
     /* INIT */
-    stack<int> pile;
+    stack<double> pile;
     va_list params;
     long unsigned int ic = 0;  /* Instruction Counter */
     double r1, r2;  /* double registers */
@@ -678,301 +853,296 @@ double Function::operator()(...)
             r2 = pile.top();    // Récupérer la tête de pile;
             pile.pop();
 
-                pile.push(r1+r2);
-                ++ic;
-                break;
+            pile.push(r1+r2);
+            ++ic;
+            break;
 
-            case DIV:
-                r1 = pile.top();    // Récupérer la tête de pile;
-                pile.pop();
+        case DIV:
+            r1 = pile.top();    // Récupérer la tête de pile;
+            pile.pop();
 
-                r2 = pile.top();    // Récupérer la tête de pile;
-                pile.pop();
+            r2 = pile.top();    // Récupérer la tête de pile;
+            pile.pop();
 
-                if (r2 != 0)
-                    pile.push(r1/r2);
-                else
-                    yyerror("Division by 0...");
-                ++ic;
-              break;
+            if (r2 != 0)
+                pile.push(r1/r2);
+            else
+                yyerror("Division by 0...");
+            ++ic;
+            break;
 
-            case MIN:
-                r1 = pile.top();    // Récupérer la tête de pile;
-                pile.pop();
+        case MIN:
+            r1 = pile.top();    // Récupérer la tête de pile;
+            pile.pop();
 
-                r2 = pile.top();    // Récupérer la tête de pile;
-                pile.pop();
+            r2 = pile.top();    // Récupérer la tête de pile;
+            pile.pop();
 
-                pile.push(r1-r2);
-                ++ic;
-              break;
+            pile.push(r1-r2);
+            ++ic;
+            break;
 
-            case TIMES:
-                r1 = pile.top();    // Récupérer la tête de pile;
-                pile.pop();
+        case TIMES:
+            r1 = pile.top();    // Récupérer la tête de pile;
+            pile.pop();
 
-                r2 = pile.top();    // Récupérer la tête de pile;
-                pile.pop();
+            r2 = pile.top();    // Récupérer la tête de pile;
+            pile.pop();
 
-                pile.push(r1*r2);
-                ++ic;
-              break;
+            pile.push(r1*r2);
+            ++ic;
+            break;
 
-            case SUP:
-                 r1 = pile.top();    // Récupérer la tête de pile;
-                pile.pop();
+        case SUP:
+            r1 = pile.top();    // Récupérer la tête de pile;
+            pile.pop();
 
-                r2 = pile.top();    // Récupérer la tête de pile;
-                pile.pop();
+            r2 = pile.top();    // Récupérer la tête de pile;
+            pile.pop();
 
-                pile.push(r1>r2);
-                ++ic;
-              break;
+            pile.push((double)((bool)r1 >= (bool)r2));
+            ++ic;
+            break;
 
-            case INF:
-                 r1 = pile.top();    // Récupérer la tête de pile;
-                pile.pop();
+        case INF:
+            r1 = pile.top();    // Récupérer la tête de pile;
+            pile.pop();
 
-                r2 = pile.top();    // Récupérer la tête de pile;
-                pile.pop();
+            r2 = pile.top();    // Récupérer la tête de pile;
+            pile.pop();
 
-                pile.push(r1<r2);
-                ++ic;
-              break;
+            pile.push((double)((bool)r1 <= (bool)r2));
+            ++ic;
+            break;
 
-            case SUP_STRICT:        // >
-                 r1 = pile.top();
-                pile.pop();
+        case SUP_STRICT:        // >
+             r1 = pile.top();
+            pile.pop();
 
-                r2 = pile.top();
-                pile.pop();
+            r2 = pile.top();
+            pile.pop();
 
-                pile.push(r1>=r2);
-                ++ic;
-              break;
+            pile.push((double)((bool)r1 > (bool)r2));
+            ++ic;
+            break;
 
-            case INF_STRICT:        // <
-                 r1 = pile.top();
-                pile.pop();
+        case INF_STRICT:        // <
+            r1 = pile.top();
+            pile.pop();
 
-                r2 = pile.top();
-                pile.pop();
+            r2 = pile.top();
+            pile.pop();
 
-                pile.push(r1<=r2);
-                ++ic;
-              break;
+            pile.push((double)((bool)r1 < (bool)r2));
+            ++ic;
+            break;
 
-            case EQUAL:             // ==
-                 r1 = pile.top();
-                pile.pop();
+         case EQUAL:             // ==
+              r1 = pile.top();
+             pile.pop();
 
-                r2 = pile.top();
-                pile.pop();
+            r2 = pile.top();
+            pile.pop();
 
-                pile.push(r1==r2);
-                ++ic;
-              break;
+            pile.push((double)((bool)r1 == (bool)r2));
+            ++ic;
+            break;
 
-            case NOT_EQ:            // !=
-                 r1 = pile.top();
-                pile.pop();
+        case NOT_EQ:            // !=
+             r1 = pile.top();
+            pile.pop();
 
-                r2 = pile.top();
-                pile.pop();
+            r2 = pile.top();
+            pile.pop();
 
-                pile.push(r1!=r2);
-                ++ic;
-              break;
+            pile.push((double)((bool)r1 != (bool)r2));
+            ++ic;
+            break;
 
-            case AND:               // &&
-                r1 = pile.top();
-                pile.pop();
+        case AND:               // &&
+            r1 = pile.top();
+            pile.pop();
 
-                r2 = pile.top();
-                pile.pop();
+            r2 = pile.top();
+            pile.pop();
 
-                pile.push(r1 && r2);
-                ++ic;
-              break;
+            pile.push((double)((bool)r1 && (bool)r2));
+            ++ic;
+            break;
 
-            case OR:
-                 r1 = pile.top();
-                pile.pop();
+        case OR:
+            r1 = pile.top();
+            pile.pop();
 
-                r2 = pile.top();
-                pile.pop();
+            r2 = pile.top();
+            pile.pop();
 
-                pile.push(r1 || r2);
-                ++ic;
-              break;
+            pile.push((double)((bool)r1 || (bool)r2));
+            ++ic;
+            break;
 
-            case NOT:
-                r1 = pile.top();
-                pile.pop();
+        case NOT:
+            r1 = pile.top();
+            pile.pop();
 
-                pile.push(!r1);
-                ++ic;
-              break;
+            pile.push((double)(!(bool)r1));
+            ++ic;
+            break;
 
-            case NUM:               // Literal value
-                pile.push(ins.value);
-                ++ic;
-              break;
+        case NUM:               // Literal value
+            pile.push(ins.value);
+            ++ic;
+            break;
 
-            case COS:               // cos
-                r1 = pile.top();
-                pile.pop();
-                pile.push(std::cos(r1));
-                ++ic;
-              break;
+        case COS:               // cos
+            r1 = pile.top();
+            pile.pop();
+            pile.push(std::cos(r1));
+            ++ic;
+            break;
 
-            case SIN:               // sin
-                r1 = pile.top();
-                pile.pop();
-                pile.push(std::sin(r1));
-                ++ic;
-              break;
+        case SIN:               // sin
+            r1 = pile.top();
+            pile.pop();
+            pile.push(std::sin(r1));
+            ++ic;
+            break;
 
-            case TAN:               // tan
-                r1 = pile.top();
-                pile.pop();
-                pile.push(std::tan(r1));
-                ++ic;
-              break;
+        case TAN:               // tan
+            r1 = pile.top();
+            pile.pop();
+            pile.push(std::tan(r1));
+            ++ic;
+            break;
 
-            case COSH:              // cosh
-                r1 = pile.top();
-                pile.pop();
-                pile.push(std::cosh(r1));
-                ++ic;
-              break;
+        case COSH:              // cosh
+            r1 = pile.top();
+            pile.pop();
+            pile.push(std::cosh(r1));
+            ++ic;
+            break;
 
-            case SINH:              // sinh
-                r1 = pile.top();
-                pile.pop();
-                pile.push(std::sinh(r1));
-                ++ic;
-              break;
+        case SINH:              // sinh
+            r1 = pile.top();
+            pile.pop();
+            pile.push(std::sinh(r1));
+            ++ic;
+            break;
 
-            case TANH:              // tanh
-                r1 = pile.top();
-                pile.pop();
-                pile.push(std::tanh(r1));
-                ++ic;
-              break;
+        case TANH:              // tanh
+            r1 = pile.top();
+            pile.pop();
+            pile.push(std::tanh(r1));
+            ++ic;
+            break;
 
-            case ARCCOS:            // arccos
-                r1 = pile.top();
-                pile.pop();
-                pile.push(std::acos(r1));
-                ++ic;
-              break;
+        case ARCCOS:            // arccos
+            r1 = pile.top();
+            pile.pop();
+            pile.push(std::acos(r1));
+            ++ic;
+            break;
 
-            case ARCSIN:            // arcsin
-                r1 = pile.top();
-                pile.pop();
-                pile.push(std::asin(r1));
-                ++ic;
-              break;
+        case ARCSIN:            // arcsin
+            r1 = pile.top();
+            pile.pop();
+            pile.push(std::asin(r1));
+            ++ic;
+            break;
 
-            case ARCTAN:            // arctan
-                r1 = pile.top();
-                pile.pop();
-                pile.push(std::atan(r1));
-                ++ic;
-              break;
+        case ARCTAN:            // arctan
+            r1 = pile.top();
+            pile.pop();
+            pile.push(std::atan(r1));
+            ++ic;
+            break;
 
-            case ARCCOSH:           // arccosh
-                r1 = pile.top();
-                pile.pop();
-                pile.push(std::acosh(r1));
-                ++ic;
-              break;
+        case ARCCOSH:           // arccosh
+            r1 = pile.top();
+            pile.pop();
+            pile.push(std::acosh(r1));
+            ++ic;
+            break;
 
-            case ARCSINH:           // arcsinh
-                r1 = pile.top();
-                pile.pop();
-                pile.push(std::asinh(r1));
-                ++ic;
-              break;
+        case ARCSINH:           // arcsinh
+            r1 = pile.top();
+            pile.pop();
+            pile.push(std::asinh(r1));
+            ++ic;
+            break;
 
-            case ARCTANH:           // arctanh
-                r1 = pile.top();
-                pile.pop();
-                pile.push(std::atanh(r1));
-                ++ic;
-              break;
+        case ARCTANH:           // arctanh
+            r1 = pile.top();
+            pile.pop();
+            pile.push(std::atanh(r1));
+            ++ic;
+            break;
 
-            case POW:               // power
-                 r1 = pile.top();
-                pile.pop();
+        case POW:               // power
+            r1 = pile.top();
+            pile.pop();
 
-                r2 = pile.top();
-                pile.pop();
+            r2 = pile.top();
+            pile.pop();
 
-                pile.push(std::pow(r1, r2)); // r1^r2
-                ++ic;
-              break;
+            pile.push(std::pow(r1, r2)); // r1^r2
+            ++ic;
+            break;
 
-            case EXP:               // exponential
-                r1 = pile.top();
-                pile.pop();
-                pile.push(std::exp(r1));
-                ++ic;
-              break;
+        case EXP:               // exponential
+            r1 = pile.top();
+            pile.pop();
+            pile.push(std::exp(r1));
+            ++ic;
+            break;
 
-            case LOG:               // logarithm (base e)
-                r1 = pile.top();
-                pile.pop();
-                pile.push(std::log(r1));
-                ++ic;
-              break;
+        case LOG:               // logarithm (base e)
+            r1 = pile.top();
+            pile.pop();
+            pile.push(std::log(r1));
+            ++ic;
+            break;
 
-            case SQRT:              // square root function
-                r1 = pile.top();
-                pile.pop();
-                pile.push(std::sqrt(r1));
-                ++ic;
-              break;
+        case SQRT:              // square root function
+            r1 = pile.top();
+            pile.pop();
+            pile.push(std::sqrt(r1));
+            ++ic;
+            break;
 
-            case JMP:
-                /* Go to the stored address */
-                ic = ins.value;
-              break;
+        case JMP:
+            /* Go to the stored address */
+            ic = ins.value;
+            break;
 
-            case JMPCOND:
-                 r1 = pile.top();     // Get the last logic value
-                 pile.pop();
-                 if (r1)              // Logic true => go to next instruction
-                    ++ic;
-                 else                 // Otherwise  => go to the given address
-                    ic = (int)ins.value;
-              break;
+        case JMPCOND:
+            r1 = pile.top();     // Get the last logic value
+            pile.pop();
+            if (r1)              // Logic true => go to next instruction
+               ++ic;
+            else                 // Otherwise  => go to the given address
+               ic = (int)ins.value;
+            break;
 
-            case CALL:  /* Recursive function */
-                pile.push(this->operator()(params));
-                ++ic;
-              break;
+        case CALL:  /* Recursive function */
+            pile.push(this->operator()(params));
+            ++ic;
+            break;
 
-            case ASSIGN:
-                r1 = pile.top();    // Récupérer la tête de pile;
-                pile.pop();
-                variables[ins.name] = r1;
-                ++ic;
-                break;
+        case ASSIGN:
+            r1 = pile.top();    // Récupérer la tête de pile;
+            pile.pop();
+            variables[ins.name] = r1;
+            ++ic;
+            break;
 
-            case VAR:    // je consulte la table de symbole et j'empile la valeur de la variable
-                 // Si elle existe bien sur...
-                try {
-                    pile.push(variables.at(ins.name));
-                    ++ic;
-                }
-              catch(...) {
-                    variables[ins.name] = 0;
-                    pile.push(variables.at(ins.name));
-                    ++ic;
-                }
-                break;
+        case VAR:               // Get the value from a param (local) or a variable (global)
+            if (this->parameters.count(ins.name))
+                pile.push(this->parameters.at(ins.name));
+            else
+                pile.push(variables.at(ins.name));
+            ++ic;
+            break;
 
         }
     }

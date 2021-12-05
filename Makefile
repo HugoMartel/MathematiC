@@ -52,7 +52,7 @@ LFLAGS = -v
 LFLAGS += -d -p
 # Bison
 BFLAGS = --warnings=all --defines -v
-BFLAGS += -t
+BFLAGS += -t -Wcounterexamples
 LIBS =
 
 
