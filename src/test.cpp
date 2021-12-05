@@ -353,12 +353,14 @@ int main(int, char**)
                 opened_file = file_dialog({ {"matc", "MathematiC File"} }, true);
             }
             /* saving  */
-            save(buf, opened_file);
+            if (opened_file != "")
+                save(buf, opened_file);
         }
         /* ctrl o, open  */
         if (io.KeyCtrl && ImGui::IsKeyDown(18)) {
             opened_file = file_dialog({ {"matc", "MathematiC File"} }, false);
-            open(buf, opened_file);
+            if (opened_file != "")
+                open(buf, opened_file);
         }
 
         // Rendering
