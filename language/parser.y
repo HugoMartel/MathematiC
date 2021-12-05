@@ -369,7 +369,7 @@ parameters: VAR                                         {
 /*===========================================================================================*/
 draw_func: VAR in '[' NUM ',' NUM ']'                   {
                     /* Load function names to send to the front-end */
-                    current_scope.push_back($1);
+                    current_scope[0] = $1;
 
                     /* Check if the function is already drawn */
                     if (functions.count($1)) {
@@ -392,35 +392,42 @@ draw_func: VAR in '[' NUM ',' NUM ']'                   {
 
 
 /*===========================================================================================*/
-affichage: DRAW draw_func '{'                           {
-                                                          /* On vide le scope */
+affichage: DRAW draw_func '{'                           
+                draw_args
+           '}'                                          { 
+                                                            /* On vide le scope */
                                                             while(!current_scope.empty()){
                                                                 current_scope.pop_back();
                                                             }
+                                                            current_scope[0] = "";
                                                         }
-                draw_args
-           '}'
          | DRAW draw_func ';'                           { /* TODO: load default args */ }
 
 
 /*===========================================================================================*/
 draw_args: color ':' '[' color_args ']'                 { /* getting the multiples color args (or not) */ 
-                                                          if(current_scope.size() == argQueue.size()){ // on vérifie qu'il y a suffisament d'arguments
-                                                                functionToEdit = current_scope.size();
-                                                                while (!argQueue.empty()){ // on attribue chaque argument à sa fonction
-                                                                    --functionToEdit;
+                                                            if(current_scope.size() == argQueue.size()){ // on vérifie qu'il y a suffisament d'arguments
+                                                                functionToEdit = 0;
+                                                                while (argQueue.empty() != true){ // on attribue chaque argument à sa fonction
+#ifdef __DEBUG__
+                                                                    std::cout << "arg : " << argQueue.front() << " in " << current_scope[functionToEdit] << "\n";
+#endif
                                                                     functions[current_scope[functionToEdit]].color = argQueue.front();
                                                                     argQueue.pop();
+                                                                    ++functionToEdit;
                                                                 }
                                                             }
                                                         }
          | style ':' '[' style_args ']'                 { /* getting the multiples style args (or not) */
                                                             if(current_scope.size() == argQueue.size()){ // on vérifie qu'il y a suffisament d'arguments
-                                                                functionToEdit = current_scope.size();
+                                                                functionToEdit = 0;
                                                                 while (!argQueue.empty()) { // on attribue chaque argument à sa fonction
-                                                                    --functionToEdit;
+#ifdef __DEBUG__
+                                                                    std::cout << "arg : " << argQueue.front() << " in " << current_scope[functionToEdit] << "\n";
+#endif
                                                                     functions[current_scope[functionToEdit]].style = argQueue.front();
                                                                     argQueue.pop();
+                                                                    ++functionToEdit;
                                                                 }
                                                             }
                                                         }
@@ -501,15 +508,18 @@ instruction: %empty /* \epsilon */                      { /* No instructions lef
                 // Je mets à jour l'adresse du saut inconditionnel
                  functions[current_scope[0]].code[$1.jmp].value = functions[current_scope[0]].iic;
 }
-           | FOR VAR in '[' expr ':' expr ':' expr ']' '{'
+           | FOR VAR in '[' expr ':' expr ':' expr ']' '{'  {  }
                 instruction
-             '}'                                        { add_instruction(FOR); }
-           | WHILE logic '{'                            {
-                                                $1.jc = functions[current_scope[0]].iic;
-                                                add_instruction(JMPCOND);
-                                                        }
-                instruction
-             '}'                                        { add_instruction(WHILE); }
+             '}'                                            {  }
+           | WHILE logic '{'                                { $1.jmp = functions[current_scope[0]].iic; }
+                instruction                             
+             '}'                                            { 
+                                                                add_instruction(JMP);
+                                                                $1.jc = functions[current_scope[0]].iic;
+                                                                add_instruction(JMPCOND);
+                                                            }
+
+
 
 
 /*===========================================================================================*/
