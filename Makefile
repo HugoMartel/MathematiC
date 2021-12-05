@@ -50,9 +50,9 @@ LDFLAGS := -g
 # Flex
 LFLAGS = -v
 LFLAGS += -d -p
-# Bison
+# Bison /!\ 3.7.6 flags: -Wcounterexamples --color=yes
 BFLAGS = --warnings=all --defines -v
-BFLAGS += -t -Wcounterexamples
+BFLAGS += -t
 LIBS =
 
 
