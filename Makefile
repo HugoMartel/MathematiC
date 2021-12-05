@@ -25,18 +25,25 @@ LANG := language
 GEN := generated
 BUILD := build
 
+
+# BISON/FLEX DIR
+SOURCES = $(GEN)/parser.bison.cpp $(GEN)/lexer.flex.cpp
 # SRC
-SOURCES = $(SRC)/test.cpp
+SOURCES += $(SRC)/test.cpp
 # IMGUI_DIR
 SOURCES += $(IMGUI_DIR)/imgui.cpp $(IMGUI_DIR)/imgui_draw.cpp $(IMGUI_DIR)/imgui_tables.cpp $(IMGUI_DIR)/imgui_widgets.cpp
 # IMGUI_DIR/backends
 SOURCES += $(IMGUI_DIR)/backends/imgui_impl_sdl.cpp $(IMGUI_DIR)/backends/imgui_impl_opengl3.cpp
+# IMPLOT DIR
 SOURCES += $(IMPLOT_DIR)/implot.cpp $(IMPLOT_DIR)/implot_items.cpp
+# INCLUDE DIR
 SOURCES += $(INC)/zenity.cpp $(INC)/interface.cpp
+
 
 # Get generated objects names
 OBJS = $(addprefix $(BUILD)/, $(addsuffix .o, $(basename $(notdir $(SOURCES)))))
 CLEANABLE = $(EXE) $(OBJS) $(BUILD)/lexer.flex.o $(BUILD)/parser.bison.o $(BUILD)/lang $(GEN)/*.cpp $(GEN)/*.hpp
+
 
 # Get current config-d -p
 UNAME_S := $(shell uname -s)
@@ -44,15 +51,15 @@ UNAME_S := $(shell uname -s)
 
 ## IMGUI HEADERS && OURS
 CXXFLAGS = -Wall -Wextra -Wformat --std=c++17
-LIBFLAGS = -I $(IMGUI_DIR) -I $(IMGUI_DIR)/backends -I $(IMPLOT_DIR) -I ./include
+LIBFLAGS = -I $(IMGUI_DIR) -I $(IMGUI_DIR)/backends -I $(IMPLOT_DIR) -I $(INC) -I $(GEN)
 # Linker
 LDFLAGS := -g
 #LDFLAGS := -O3
 # Flex
-LFLAGS = -v
+LFLAGS = -v --header-file=$(GEN)/lexer.flex.hpp
 LFLAGS += -d -p
 # Bison /!\ 3.7.6 flags: -Wcounterexamples --color=yes
-BFLAGS = --warnings=all --defines -v
+BFLAGS = --warnings=all --defines=$(GEN)/parser.bison.hpp -v
 BFLAGS += -t
 LIBS =
 ZENITY =
@@ -138,7 +145,7 @@ $(GEN)/lexer.flex.cpp: $(LANG)/lexer.l
 	flex $(LFLAGS) -o $@ $<
 
 $(BUILD)/%.o: $(GEN)/%.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(LIBFLAGS) -c $< -o $@
 
 
 # Imgui Files
@@ -150,7 +157,11 @@ $(BUILD)/%.o: $(IMGUI_DIR)/backends/%.cpp
 
 # Implot Files
 $(BUILD)/%.o: $(IMPLOT_DIR)/%.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(LIBFLAGS) -c $< -o $@
+
+# Include Files
+$(BUILD)/%.o: $(INC)/%.cpp
+	$(CXX) $(CXXFLAGS) $(LIBFLAGS) -c $< -o $@
 
 # Build Executable File
 $(EXE): $(OBJS)
