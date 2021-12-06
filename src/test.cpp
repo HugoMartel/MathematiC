@@ -302,7 +302,7 @@ int main(int, char**)
             save(buf, opened_file);
             /* calling the yy parse function (still needs to be coded under includes/interface.hpp  */
             callingYYParse(opened_file);
-            getVerbose(isError, output);
+            isError = verbose(output, isError, true);
             /* the button is clicked  */
             clicked = 1;
         }
