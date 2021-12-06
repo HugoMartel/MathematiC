@@ -215,13 +215,8 @@ int main(int, char**)
     //char buf[BUFF_SIZE] = "//enter your code here\n";
     strcat(buf, "/**\n * @file      example.matc\n * @version 1.0.0\n */\n\n// Declarations\nvar a = 1;\nvar b = 2;\nvar c = 3;\nvar z = 5;\nvar y = 4;\n\n\n// Functions\ndef fonction1: (x) => {\n    // Function Instructions\n    if z<y {\n        if y > 0 {\n            y = sin(2);\n            z = x + y + pi;\n        } else {\n            z = cos(3);\n        }\n    } else {\n        z =  6*7;\n    }\n    return a*x^2 + b*x + c;/* simple polynomial */\n}\n\ndef g: (x) => {\n    x += 2;\n    return 2*sin(x);\n}\n\n// Draw Functions\ndraw fonction1 in [-8,8], g {\n    color: [\"red\", \"#00FF00\"],\n    style: [\"dashed\", \"solid\"],\n    label: \"Fonction 1\"\n}\n");
 
-    std::string testHex = "#eFd020";
-    ImVec4 testRGB = convertHexToRGBA(testHex);
-    std::string testHex1 = "#20cFf0";
-    ImVec4 testRGB1 = convertHexToRGBA(testHex1);
-    std::string testHex2 = "#2020FF";
-    ImVec4 testRGB2 = convertHexToRGBA(testHex2);
-    ImVec4 testColorsV[3] = {testRGB, testRGB1, testRGB2};
+    GraphSetup ourGraph = GraphSetup(*width, *height);
+    bool gotCompileOneTime = false;
 
     /*-----------------*/
     /* -- Main loop -- */
@@ -249,6 +244,11 @@ int main(int, char**)
                     /* Window Resize Handler */
                     *width = event.window.data1;
                     *height = event.window.data2;
+                    if (gotCompileOneTime) {
+                        ourGraph = GraphSetup(*width, *height, functions, current_scope, Ymin, Ymax, Xmin, Xmax);
+                    } else {
+                        ourGraph = GraphSetup(*width, *height);
+                    }
                 }
 
                 break;
@@ -316,7 +316,7 @@ int main(int, char**)
 
         ImGui::Begin("graphe", NULL, windowFlags);
         ImPlot::CreateContext();
-        doGraph(width, height, -2.0, 12.5, -10.0, 10.0, -2.0, 12.5, testColorsV, sizeof(testColorsV)/sizeof(testColorsV[0]), "hist");
+        doGraph(ourGraph);
         ImPlot::DestroyContext();
         ImGui::End();
 
