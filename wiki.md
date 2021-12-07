@@ -75,7 +75,7 @@ var variable3;
 ```
 
 You can only use alphanumerical character and you end the line with `';'`.
-You will notice that you can also chose to not assign any value to your variable it will be **0** as default.
+You will notice that you can also cho0se to not assign any value to your variable it will be **0** as default.
 
 There is also some variables already defined such as :
 
@@ -93,7 +93,7 @@ To declare a function you need to first use the key word `'def'`
 
 Then you put the **name** of your function followed by `'functionName : (x) => {'`
 
-You can put your function's instructions and end it with `'}'`
+You can put your function's instructions and end it with your `'return'` and `'}'`
 
 A full exemple will looks like that :
 
@@ -118,9 +118,121 @@ def fonction1: (x) => {
 
 ## IV. Display
 
+To display all the function you created you will have to call `'draw'` and then set all the parameters you want.
+
+Here is an example for every parameter you can set :
+
+```
+//if the interval isn't declare default interval will be [-10,10]
+draw fonctionName in [-8,8], g {
+    //set color by using name or hexadecimal code
+    color: ["red", "#00FF00"],
+    //set the style of your curve
+    style: ["dashed", "solid"],
+    //set a label on your curve
+    label: "Fonction 1",
+    //set xmin, ymin, xmax and ymax for your window
+    xmin: -5,
+    ymin: -5,
+    xmax: 5,
+    ymax: 5
+}
+```
+
+### List of parameter you can set in **draw** :
+
+- `color` : you can choose the color using the color name or the hexadecimal code
+
+- `style` : you can choose the style of your courb between `"solid", "filled", "dotted", "hist"`
+
+
+- `label` : you can choose to put a label on your curve
+
+- `xmin, xmax, ymin, ymax` : you can decide the size of the window
+
 ---
 
 ## V. Index
+
+### Mathematical function :
+
+- sin
+
+- cos
+
+- tan 
+
+- arcsin
+
+- arcos
+
+- arctan
+
+- cosh
+
+- sinh
+
+- tanh
+
+- arcosh
+
+- arcsinh
+
+- arctanh
+
+- pow
+
+- exp
+
+- sqrt
+
+- log
+
+### Logical function
+
+**FOR**
+
+```
+
+```
+
+**IF**
+
+```
+if condition {
+    instruction
+} 
+```
+It can also be used with multiple condition using `'and'` or `'or'` between two conditions
+
+
+**IF/ELSE**
+
+```
+if condition {
+    instruction
+} else {
+    instruction
+}
+```
+
+**WHILE**
+
+```
+
+```
+
+### Display function
+
+**DRAW**
+
+```
+draw functionName in [interval], otherFunctionName, ... {
+    parameter1,
+    parameter2,
+    ...    
+}
+```
 
 ---
 
@@ -130,7 +242,7 @@ You can of course use keyboard shortcuts in the program, some of them can be use
 
 | keyboard input |   output    |
 |----------------|-------------|
-| CTRL + O       | open  file |
+| CTRL + O       | open  file  |
 | CTRL + S       | save file   |
 | CTRL + C       | copy        |
 | CTRL + V       | paste       |
