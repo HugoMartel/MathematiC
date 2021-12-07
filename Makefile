@@ -17,6 +17,7 @@
 #CXX = clang++
 
 EXE = MathematiC
+TEST = test
 IMGUI_DIR = ./lib/imgui
 IMPLOT_DIR = ./lib/implot
 
@@ -30,8 +31,6 @@ BUILD := build
 
 # BISON/FLEX DIR
 SOURCES = $(GEN)/parser.yy.cpp $(GEN)/lexer.yy.cpp
-# SRC
-SOURCES += $(SRC)/main.cpp
 # IMGUI_DIR
 SOURCES += $(IMGUI_DIR)/imgui.cpp $(IMGUI_DIR)/imgui_draw.cpp $(IMGUI_DIR)/imgui_tables.cpp $(IMGUI_DIR)/imgui_widgets.cpp
 # IMGUI_DIR/backends
@@ -45,7 +44,7 @@ SOURCES += $(INC)/zenity.cpp $(INC)/interface.cpp
 # Get generated objects names
 OBJS = $(addprefix $(BUILD)/, $(addsuffix .o, $(basename $(notdir $(SOURCES)))))
 
-CLEANABLE = $(EXE) $(OBJS) $(GEN)/paser.yy.* $(GEN)/lexer.yy.*
+CLEANABLE = $(EXE) $(OBJS) $(GEN)/paser.yy.* $(GEN)/lexer.yy.* $(BUILD)/main.o $(BUILD)/unit-tests.o
 
 
 # Get current config-d -p
@@ -127,14 +126,14 @@ all: bison flex $(EXE)
 run: $(EXE)
 	./$(EXE)
 
-# Test File
 
 # Main File
 $(BUILD)/main.o: $(SRC)/main.cpp
 	$(CXX) $(CXXFLAGS) $(LIBFLAGS) -c $< -o $@
 
 # Unit tests File
-
+$(BUILD)/unit-tests.o: $(SRC)/unit-tests.cpp
+	$(CXX) $(CXXFLAGS) $(LIBFLAGS) -c $< -o $@
 
 
 # Bison/Flex Files
@@ -167,10 +166,15 @@ $(BUILD)/%.o: $(IMPLOT_DIR)/%.cpp
 
 
 # Build Executable File
-$(EXE): $(OBJS)
+$(EXE): $(OBJS) $(SRC)/main.cpp
 	@echo $(OBJS)
 	@echo $(ZENITY)
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LIBS)
+	
+$(TEST): lang $(OBJS) $(SRC)/unit-tests.cpp
+	@echo Unit Tests
+	$(CXX) -o $@ $^ $(LDFLAGS) $(LIBS)
+	./$(TEST)
 
 
 # Build Bison/Flex exe
