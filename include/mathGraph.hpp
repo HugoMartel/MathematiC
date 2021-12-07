@@ -28,27 +28,22 @@ public:
     //interval of definitions of each curves
     std::vector<double> interXmins;//
     std::vector<double> interXmaxs;//
+    //each curve
+    std::map<std::string, Function> curvesFunctions;
     //each curves calculated data
     std::vector<std::vector<double>> curvesCalData;//
-    //windows vals
-    int winW;//
-    int winH;//
 
     //functions
 
     //init
+    GraphSetup();
     /**
      * Function used init a GraphSetup
-     * @param[in]       width       Window width
-     * @param[in]       height      Window height
      */
-    GraphSetup(int width, int height);
-    /**
-     * Function used init a GraphSetup
-     * @param[in]       width       Window width
-     * @param[in]       height      Window height
-     */
-    GraphSetup(int width, int height, std::map<std::string, function::function> &curvesData, std::vector<std::string> curvesNames, double displayYmin, double displayYmax, double displayXmin, double displayXmax, std::string label);
+    GraphSetup(std::map<std::string, Function> &curvesData, std::vector<std::string> curvesNames, double displayYmin, double displayYmax, double displayXmin, double displayXmax, std::string label);
+
+    //update
+    void updateCurves(int width);
 };
 
 
@@ -58,7 +53,7 @@ public:
  * @param[in]       height      Window height
  * @param[in]       setup       GraphSetup object that contain everthing needed for display
  */
-void doGraph(GraphSetup setup);
+void doGraph(int width, int height, GraphSetup setup);
 /**
 * Convert hexadecimal string to RGBA ImVec4
 * @param[in]       inputHex    string of the hexadecimal value format #FFFFFF (equal white)

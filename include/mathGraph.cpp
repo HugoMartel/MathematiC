@@ -12,21 +12,14 @@
 #include <vector>
 
 /*GraphSetup=============================================================================*/
-GraphSetup::GraphSetup(int width, int height)
-{
-    //get widget size
-    this.winW = width - 495;
-    this.winH = height - 37;
-}
+GraphSetup::GraphSetup(){}
 /*=======================================================================================*/
-GraphSetup::GraphSetup(int width, int height, std::map<std::string, Function> &curvesData, std::vector<std::string> curvesNames, const double &displayYmin, const double &displayYmax, const double &displayXmin, const double &displayXmax, std::string label)
+GraphSetup::GraphSetup(std::map<std::string, Function> &curvesData, std::vector<std::string> curvesNames, const double &displayYmin, const double &displayYmax, const double &displayXmin, const double &displayXmax, std::string label)
 {
-    if (curvesNames[i].length() > 1) { //check if there is a curve
-        this.gotSomething = true;
+    if (curvesNames.length() > 0) { //check if there is a curve
 
-        //get widget size
-        this.winW = width - 495;
-        this.winH = height - 37;
+        //save the curves
+        curvesFunctions = curvesData;
 
         //set display intervals
         this.setDisplayYmin = displayYmin;
@@ -35,8 +28,8 @@ GraphSetup::GraphSetup(int width, int height, std::map<std::string, Function> &c
         this.setDisplayXmax = displayXmax;
 
         //set graph label
-        graphName = new char [curvesNames[i].length() + 1];
-        std::strcpy(this.graphName, curvesNames[i].c_str());
+        graphName = new char [label.length() + 1];
+        std::strcpy(this.graphName, label.c_str());
 
         //set curves data
         for (int i = 0; i < curvesNames.size(); ++i) {
@@ -48,13 +41,26 @@ GraphSetup::GraphSetup(int width, int height, std::map<std::string, Function> &c
             this.plotModes.push_back(currCurve.style);
             this.interXmins.push_back(currCurve.xInterval.first);
             this.interXmaxs.push_back(currCurve.xInterval.second);
+        }
+
+        this.gotSomething = true;
+    }
+}
+/*=======================================================================================*/
+void GraphSetup::updateCurves(int width)
+{
+    if (this.gotSomething) { //check if there is a curve
+
+        //set curves data
+        for (int i = 0; i < this.names.size(); ++i) {
+            Function currCurve = this.curvesFunctions.at(this.names[i]);
 
             //calculate each coordinates
             int tmp = 1;
-            if (std::strcmp(plotModes[i], "dotted") == 0 || std::strcmp(plotModes[i], "hist") == 0) {
+            if (std::strcmp(this.plotModes[i], "dotted") == 0 || std::strcmp(this.plotModes[i], "hist") == 0) {
                 tmp = 4;
             }
-            unsigned int sizeN = std::floor(width/tmp);
+            unsigned int sizeN = std::floor((width - 495)/tmp);
             std::vector<double> currCurveY;
             std::vector<double> currCurveX;
             currCurveY.reserve(sizeN);
@@ -74,9 +80,12 @@ GraphSetup::GraphSetup(int width, int height, std::map<std::string, Function> &c
     }
 }
 /*Implot Interface Related===============================================================*/
-void doGraph(GraphSetup setup)
+void doGraph(int width, int height, GraphSetup setup)
 {
-    if (ImPlot::BeginPlot(setup.graphName, ImVec2(setup.winW, setup.winH))) {
+    //get widget size
+    int winW = width - 495;
+    int winH = height - 37;
+    if (ImPlot::BeginPlot(setup.graphName, ImVec2(winW, winH))) {
         /* Init Axis */
         ImPlot::SetupAxes("x", "y");
         /*Always prevents movable axis + set the display frame*/
