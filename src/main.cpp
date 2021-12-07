@@ -99,19 +99,25 @@ static void doGraph(int *width, int *height, double interXmin, double interXmax,
  * @param[in]       window      Main SDL Window
  * @param[in,out]   filename    Name of the file to possibly save to/open from
  */
-static void ShowMainMenuBar(char *, SDL_Window *, std::string &);
+static void ShowMainMenuBar(char *, SDL_Window *, std::string &, SDL_Surface *, SDL_GLContext);
 /**
  * Display elements on the File option in the menu and their handlers
  * @param[in]       buff        buffer containing the code written
  * @param[in]       window      Main SDL Window
  * @param[in,out]   filename    Name of the file to possibly save to/open from
+ * @param[in]       window      the SDL_window
+ * @param[in]       logo        the sdl (logo)
+ * @param[in]       ctx         the sdl context
  */
-static void menuFile(char *, SDL_Window *, std::string &);
+static void menuFile(char *, SDL_Window *, std::string &, SDL_Surface *, SDL_GLContext);
 //TODO static void editFile();
 /**
  * Save a given text buffer to a file
  * @param[in]   buff        text to save
  * @param[in]   filename    path of the file to save to
+ * @param[in]   window      the SDL_window
+ * @param[in]   logo        the sdl logo
+ * @param[in]   ctx         the sdl context
  */
 static void save(char *, std::string &);
 /**
@@ -275,7 +281,7 @@ int main(int, char**)
         ImGui::NewFrame();
 
         /* Main Menu Bar */
-        ShowMainMenuBar(buf, window, opened_file);
+        ShowMainMenuBar(buf, window, opened_file, logo, gl_context);
 
         /* Code widget */
         ImGui::SetNextWindowSize(ImVec2(480, *height - 20), 0);
@@ -480,11 +486,11 @@ static void doGraph(int *width, int *height, double interXmin, double interXmax,
 }
 
 /*=======================================================================================*/
-static void ShowMainMenuBar(char *buff, SDL_Window *window, std::string &filename)
+static void ShowMainMenuBar(char *buff, SDL_Window *window, std::string &filename, SDL_Surface *logo, SDL_GLContext ctx)
 {
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
-            menuFile(buff, window, filename);
+            menuFile(buff, window, filename, logo, ctx);
             ImGui::EndMenu();
         }
 
@@ -505,7 +511,7 @@ static void ShowMainMenuBar(char *buff, SDL_Window *window, std::string &filenam
 }
 
 /*=======================================================================================*/
-static void menuFile(char *buff, SDL_Window *window, std::string &filename)
+static void menuFile(char *buff, SDL_Window *window, std::string &filename, SDL_Surface *logo, SDL_GLContext ctx)
 {
     std::string title = "MathematiC - ";
 
@@ -551,7 +557,9 @@ static void menuFile(char *buff, SDL_Window *window, std::string &filename)
     ImGui::Separator();
 
     if (ImGui::MenuItem("Quit", "")) {
-        SDL_Quit();
+        exitSDL(ctx, window, logo);
+        /*This is to avoid segmentation fault*/
+        exit(EXIT_SUCCESS);
     }
 }
 
