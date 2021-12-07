@@ -8,6 +8,7 @@
 3. [Functions](#iii-functions)
 4. [Display](#iv-display)
 5. [Index](#v-index)
+6. [Keyboard Shortcuts](#vi-keyboard-shortcuts)
 ---
 ## I. Structures
 ---
@@ -18,4 +19,22 @@
 ## IV. Display
 ---
 ## V. Index
+---
+## VI. Keyboard Shortcuts  
+You can of course use keyboard shortcuts in the program, some of them can be used everywhere, some other only work when you're typing code,  
+
+
+| keyboard input |   output    |
+|----------------|-------------|
+| CTRL + O       | open  file |
+| CTRL + S       | save file   |
+| CTRL + Q       | quit        |
+| CTRL + C       | copy        |
+| CTRL + V       | paste       |
+| CTRL + X       | cut         |
+| CTRL + Q       | select all  |
+| CTRL + W       | undo        |
+| CTRL + Y       | redo        |
+
+
 ---
