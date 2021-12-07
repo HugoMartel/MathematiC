@@ -28,7 +28,6 @@ You can of course use keyboard shortcuts in the program, some of them can be use
 |----------------|-------------|
 | CTRL + O       | open  file |
 | CTRL + S       | save file   |
-| CTRL + Q       | quit        |
 | CTRL + C       | copy        |
 | CTRL + V       | paste       |
 | CTRL + X       | cut         |
