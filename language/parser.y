@@ -11,6 +11,7 @@
     #include <stack>
     #include <vector>
     #include <iostream>
+    #include <tuple>
 
     //#include "inteface.hpp"
 
@@ -224,6 +225,7 @@
 %token <DOUBLE> EXP
 %token <STRING> VAR
 %token <ADDRESS> FOR
+%token <BOOL> PROCEEDFOR
 %token <ADDRESS> IF
 %token <ADDRESS> ELSE
 %token <ADDRESS> WHILE
@@ -509,41 +511,30 @@ instruction: %empty /* \epsilon */                      { /* No instructions lef
                 // Je mets à jour l'adresse du saut inconditionnel
                  functions[current_scope[0]].code[$1.jmp].value = functions[current_scope[0]].iic;
 }
-           | FOR VAR in '[' expr ':' expr ':' expr ']' '{'  { 
+           | FOR VAR in '[' expr ':' expr ':' expr ']' '{'  {
                                                                 if (!functions[$2].parameters.count($2)) {
                                                                     add_instruction(FOR,0,$2);
-                                                                    // Init FOR parameters
-                                                                    // functions[$2].parameters.at($2) = forArguments.at($2);
-                                                                    // add_instruction(ASSIGN, std::get<0>(forArguments.at($2)), $2); //! Check stack value
-                                                                    
                                                                     $1.jmp = functions[current_scope[0]].iic;
+                                                                    add_instruction(PROCEEDFOR,0,$2);
                                                                     $1.jc = functions[current_scope[0]].iic;
-                                                                    add_instruction(NOT);
-                                                                    add_instruction(JMPCOND);
+                                                                    add_instruction(JMPCOND, $1.jc);
                                                                 } else
                                                                     yyerror("Parameter already used...");
                                                              
                                                             }
-                instruction
+                instruction                                 {   add_instruction(JMP, $1.jmp);   }
              '}'                                            { 
                                                                 //! Check stack value
-                                                                add_instruction(VAR,0,$2);
-                                                                add_instruction(PLUS);
-                                                                add_instruction(ASSIGN,0,$2);
-                                                                add_instruction(JMP, $1.jc);
                                                                 functions[current_scope[0]].code[$1.jc].value = functions[current_scope[0]].iic;
                                                             }
            | WHILE logic '{'                                {   
                                                                 // Store instruction vector index of both jumps
-                                                                $1.jmp = functions[current_scope[0]].iic;
                                                                 $1.jc = functions[current_scope[0]].iic;
-                                                                add_instruction(NOT);
-                                                                add_instruction(JMPCOND);
+                                                                add_instruction(JMPCOND, $1.jc);
                                                             }
-                instruction                                 {   }
-             '}'                                            { 
-                                                                add_instruction(JMP, $1.jmp);
-                                                                functions[current_scope[0]].code[$1.jc].value = functions[current_scope[0]].iic;
+                instruction                                 {   add_instruction(JMP, 0); }
+             '}'                                            {   
+                                                                functions[current_scope[0]].code[$1.jc].value = functions[current_scope[0]].iic;  
                                                             }
 
 
@@ -802,6 +793,7 @@ string print_code(const int &ins) {
         case IF             : return "IF";
         case ELSE           : return "ELSE";
         case FOR            : return "FOR";
+        case PROCEEDFOR     : return "PROCEEDFOR";
         case WHILE          : return "WHILE";
         /* Operators */
         case PLUS           : return "+";
@@ -884,10 +876,10 @@ double Function::operator()(...)
 
         switch (ins.code) {
         case PLUS:
-            r1 = pile.top();    // Récupérer la tête de pile;
+            r2 = pile.top();    // Récupérer la tête de pile;
             pile.pop();
 
-            r2 = pile.top();    // Récupérer la tête de pile;
+            r1 = pile.top();    // Récupérer la tête de pile;
             pile.pop();
 
             pile.push(r1+r2);
@@ -895,10 +887,10 @@ double Function::operator()(...)
             break;
 
         case DIV:
-            r1 = pile.top();    // Récupérer la tête de pile;
+            r2 = pile.top();    // Récupérer la tête de pile;
             pile.pop();
 
-            r2 = pile.top();    // Récupérer la tête de pile;
+            r1 = pile.top();    // Récupérer la tête de pile;
             pile.pop();
 
             if (r2 != 0)
@@ -909,10 +901,10 @@ double Function::operator()(...)
             break;
 
         case MIN:
-            r1 = pile.top();    // Récupérer la tête de pile;
+            r2 = pile.top();    // Récupérer la tête de pile;
             pile.pop();
 
-            r2 = pile.top();    // Récupérer la tête de pile;
+            r1 = pile.top();    // Récupérer la tête de pile;
             pile.pop();
 
             pile.push(r1-r2);
@@ -920,10 +912,10 @@ double Function::operator()(...)
             break;
 
         case TIMES:
-            r1 = pile.top();    // Récupérer la tête de pile;
+            r2 = pile.top();    // Récupérer la tête de pile;
             pile.pop();
 
-            r2 = pile.top();    // Récupérer la tête de pile;
+            r1 = pile.top();    // Récupérer la tête de pile;
             pile.pop();
 
             pile.push(r1*r2);
@@ -931,68 +923,68 @@ double Function::operator()(...)
             break;
 
         case SUP:
-            r1 = pile.top();    // Récupérer la tête de pile;
-            pile.pop();
-
             r2 = pile.top();    // Récupérer la tête de pile;
             pile.pop();
 
-            pile.push((double)((bool)r1 >= (bool)r2));
+            r1 = pile.top();    // Récupérer la tête de pile;
+            pile.pop();
+
+            pile.push(r1 >= r2);
             ++ic;
             break;
 
         case INF:
-            r1 = pile.top();    // Récupérer la tête de pile;
-            pile.pop();
-
             r2 = pile.top();    // Récupérer la tête de pile;
             pile.pop();
 
-            pile.push((double)((bool)r1 <= (bool)r2));
+            r1 = pile.top();    // Récupérer la tête de pile;
+            pile.pop();
+
+            pile.push(r1 <= r2);
             ++ic;
             break;
 
         case SUP_STRICT:        // >
-             r1 = pile.top();
-            pile.pop();
-
             r2 = pile.top();
             pile.pop();
 
-            pile.push((double)((bool)r1 > (bool)r2));
+            r1 = pile.top();
+            pile.pop();
+
+            pile.push(r1 > r2);
             ++ic;
             break;
 
         case INF_STRICT:        // <
-            r1 = pile.top();
-            pile.pop();
-
             r2 = pile.top();
             pile.pop();
 
-            pile.push((double)((bool)r1 < (bool)r2));
+            r1 = pile.top();
+            pile.pop();
+
+            pile.push(r1 < r2);
             ++ic;
             break;
 
          case EQUAL:             // ==
-              r1 = pile.top();
-             pile.pop();
-
             r2 = pile.top();
             pile.pop();
 
-            pile.push((double)((bool)r1 == (bool)r2));
+            r1 = pile.top();
+            pile.pop();
+
+            pile.push(r1 == r2);
             ++ic;
             break;
 
         case NOT_EQ:            // !=
-             r1 = pile.top();
-            pile.pop();
-
             r2 = pile.top();
             pile.pop();
 
-            pile.push((double)((bool)r1 != (bool)r2));
+            r1 = pile.top();
+            pile.pop();
+
+            pile.push(r1 != r2);
             ++ic;
             break;
 
@@ -1007,7 +999,7 @@ double Function::operator()(...)
             ++ic;
             break;
 
-        case OR:
+        case OR:               // ||
             r1 = pile.top();
             pile.pop();
 
@@ -1018,7 +1010,7 @@ double Function::operator()(...)
             ++ic;
             break;
 
-        case NOT:
+        case NOT:              // !
             r1 = pile.top();
             pile.pop();
 
@@ -1154,11 +1146,15 @@ double Function::operator()(...)
 
         case JMPCOND:
             r1 = pile.top();     // Get the last logic value
+            
             pile.pop();
             if (r1)              // Logic true => go to next instruction
                ++ic;
             else                 // Otherwise  => go to the given address
                ic = (int)ins.value;
+#ifdef __DEBUG__
+            std::cout << "A JMPCONDI with logic : " << r1 << " and jump to : " << (int)ins.value <<" \n";
+#endif
             break;
 
         case CALL:  /* Recursive function */
@@ -1183,9 +1179,38 @@ double Function::operator()(...)
 
         case FOR:
             r1 = pile.top();
+            pile.pop();
             r2 = pile.top();
+            pile.pop();
             r4 = pile.top();
-            forArguments.at(ins.name) = std::make_tuple (r4,r2,r1);
+            pile.pop();
+            variables[ins.name] = r4 - r2;
+            forArguments[ins.name] = std::make_tuple (r4,r2,r1);
+            if (this->parameters.count(ins.name))
+                pile.push(this->parameters.at(ins.name));
+            else
+                pile.push(variables.at(ins.name));
+
+            ++ic;
+        break;
+
+        case PROCEEDFOR:
+            r1 = std::get<2>(forArguments[ins.name]);
+            r2 = std::get<1>(forArguments[ins.name]);
+            r4 = std::get<0>(forArguments[ins.name]);
+            variables[ins.name] = variables[ins.name] + r2;
+            if(r2>0){
+                pile.push(variables[ins.name] <= r1);
+            }else if(r2<0){
+                pile.push(variables[ins.name] >= r1);
+            }else{
+                pile.push(1);
+            }
+            ++ic;
+#ifdef __DEBUG__
+            std::cout << "value of FOR var init : " << r4 << " step : " << r2 << " stop : " << r1 << " variable : "<< variables[ins.name] << " logic :" << pile.top() << "\n";
+#endif
+        break;
         }
     }
 
@@ -1256,8 +1281,8 @@ int main(int argc, char* argv[])
 
     /* FUNCTION TEST */
     std::cout << "g(3) = " << functions["g"](3) << "\n\n";
-    std::cout << "fonction1(4) = " << functions["fonction1"](5.4) << "\n\n";
-
+    std::cout << "fonction1(4) = " << functions["fonction1"](4) << "\n\n";
+    std::cout << "h(5) = " << functions["h"](5) << "\n\n";
 
     return EXIT_SUCCESS;
 }
