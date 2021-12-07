@@ -43,7 +43,10 @@
 
 #include "interface.hpp"
 
+#ifndef BUFF_SIZE
 #define BUFF_SIZE 2000
+#endif
+
 #define MAX(a, b) (((a) < (b)) ? (b) : (a))
 
 struct MultilineScrollState
@@ -110,22 +113,7 @@ static void ShowMainMenuBar(char *, SDL_Window *, std::string &, SDL_Surface *, 
  * @param[in]       ctx         the sdl context
  */
 static void menuFile(char *, SDL_Window *, std::string &, SDL_Surface *, SDL_GLContext);
-//TODO static void editFile();
-/**
- * Save a given text buffer to a file
- * @param[in]   buff        text to save
- * @param[in]   filename    path of the file to save to
- * @param[in]   window      the SDL_window
- * @param[in]   logo        the sdl logo
- * @param[in]   ctx         the sdl context
- */
-static void save(char *, std::string &);
-/**
- * Open a given file to a text buffer
- * @param[in]   buff        buffer to write the text to
- * @param[in]   filename    path of the file to open
- */
-static void open(char *, std::string &);
+
 /**
  * Function to call when exiting the programm
  * @param[in]   ctx     OpenGL context to free
@@ -350,7 +338,6 @@ int main(int, char**)
         ImPlot::DestroyContext();
         ImGui::End();
 
-        
         /* detecting inputs */
         /* ctrl s, save  */
         if (io.KeyCtrl && ImGui::IsKeyDown(22)) {
@@ -367,6 +354,11 @@ int main(int, char**)
             opened_file = file_dialog({ {"matc", "MathematiC File"} }, false);
             if (opened_file != "")
                 open(buf, opened_file);
+        }
+        /* ctrl q, quit */
+        if (io.KeyCtrl && ImGui::IsKeyDown(20)) {
+            exitSDL(gl_context, window, logo);
+            exit(EXIT_SUCCESS);
         }
 
         // Rendering
@@ -561,58 +553,6 @@ static void menuFile(char *buff, SDL_Window *window, std::string &filename, SDL_
         /*This is to avoid segmentation fault*/
         exit(EXIT_SUCCESS);
     }
-}
-
-/*=======================================================================================*/
-static void open(char *buff, std::string &filename)
-{
-    std::string input("");
-    std::fstream file;
-    file.open(filename);
-    if (!file) {
-        printf("error, cannot open the file");
-        return;
-    } else {
-        std::string line;
-        while (getline(file, line)) {
-            input += line;
-            input += '\n';
-        }
-        if(input.size() < BUFF_SIZE){
-            for(unsigned long int i = 0; i < input.size(); ++i){
-                buff[i] = input[i];
-            }
-            buff[input.size()] = '\0';
-        } else {
-            buff[0] = '\0';
-            printf("cannot open this file, it's too large");
-        }
-    }
-}
-
-/*=======================================================================================*/
-static void save(char *buff, std::string &filename)
-{
-    /*removing all the '.' in the filename*/
-    filename.erase(std::remove(filename.begin(), filename.end(), '.'), filename.end());
-    /*if the last 4 chars are matc*/
-    if (std::string("matc") !=  filename.substr(filename.size() - 4)) {
-        /*then we insert the . in the filename*/
-        filename += ".matc";
-    } else {
-        /*else we're adding the file extension*/
-        filename.insert(filename.size() - 4, ".");
-    }
-    /*creating the file*/
-    std::ofstream file(filename);
-    /*Writing the file*/
-    int i = 0;
-    while (i < BUFF_SIZE && buff[i] != '\0') {
-        file << buff[i];
-        ++i;
-    }
-    /*closing the file*/
-    file.close();
 }
 
 /*=======================================================================================*/
