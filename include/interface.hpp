@@ -4,6 +4,7 @@
 
 #ifndef __INTERFACE__
 #define __INTERFACE__
+
 #include <fstream>
 #include <string>
 #include <algorithm>
@@ -46,6 +47,6 @@ void callingYYParse(std::string);
  *                          or if we're reading them, by default on false
  * @param[out]  isError     Retrieving if the code produced an error or note
  */
-bool verbose(std::string &, bool, bool = false);
+bool verbose(std::string &, bool = true, bool = false);
 
 #endif

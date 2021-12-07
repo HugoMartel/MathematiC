@@ -1,6 +1,7 @@
 /**
  * @file    interface.cpp
  */
+
 #include "interface.hpp"
 
 #include "lexer.yy.hpp"
@@ -13,6 +14,7 @@ void callingYYParse(std::string filename)
         compileCode(filename.c_str());
     }
 }
+
 
 bool verbose(std::string &mOutput, bool mIsError, bool read)
 {
@@ -30,6 +32,7 @@ bool verbose(std::string &mOutput, bool mIsError, bool read)
     }
     return isError;
 }
+
 
 void open(char *buff, std::string &filename)
 {
@@ -56,6 +59,7 @@ void open(char *buff, std::string &filename)
         }
     }
 }
+
 
 void save(char *buff, std::string &filename)
 {

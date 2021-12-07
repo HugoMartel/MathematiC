@@ -23,26 +23,36 @@ void display()
 /*------------------------*/
 /*       UNIT TESTS       */
 /*------------------------*/
+/*
 TEST_CASE( "name", "[object tested]" )
 {
 
     REQUIRE( functiontoTest == TheoricalResult );
 
 }
+*/
 
-TEST_CASE("verbose", "[rng?]")
+TEST_CASE("verbose function tests", "[verbose]")
 {
-    std::string output("");
-    bool isError1 = false;
+    std::string output;
+    bool isError;
+
+    output = "";
+    isError = verbose(output, false, true);
     /* reading the default value, output = "" and isError = false*/
-    isError = verbose(output, isError, true);
-    std::string output2 = "gaga";
-    bool isError2 = true;
+    REQUIRE( !isError );
+    REQUIRE( output == "" );
+
+    output = "gaga";
     /* writing, output2 = "gaga" and isError2 = true */
-    isError2 = verbose(output2, isError2);
-    std::string output3 = "";
-    bool isError3 = false;
+    isError = verbose(output, true, false);
+    REQUIRE( isError );
+    REQUIRE( output == "gaga" );
+
+
+    std::string output2 = "";
     /* reading again, output3 = "gaga" && isError3 = true  */
-    isError3 = verbose(output3, isError3, false);
-    REQUIRE(!isError1 && isError2 && isError3 && output == std::string("") && output2 == output3);
+    isError = verbose(output2);
+    REQUIRE( isError );
+    REQUIRE( output2 == output );
 }

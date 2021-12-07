@@ -124,7 +124,12 @@ all: bison flex $(EXE)
 	@echo Build complete for $(ECHO_MESSAGE)
 
 run: $(EXE)
+	@echo Build complete for $(ECHO_MESSAGE)
 	./$(EXE)
+
+unit_test: lang $(TEST)
+	@echo Unit Tests Build complete for $(ECHO_MESSAGE)
+	./$(TEST)
 
 
 # Main File
@@ -166,15 +171,13 @@ $(BUILD)/%.o: $(IMPLOT_DIR)/%.cpp
 
 
 # Build Executable File
-$(EXE): $(OBJS) $(SRC)/main.cpp
+$(EXE): $(OBJS) $(BUILD)/main.o
 	@echo $(OBJS)
 	@echo $(ZENITY)
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LIBS)
-	
-$(TEST): lang $(OBJS) $(SRC)/unit-tests.cpp
-	@echo Unit Tests
+
+$(TEST): $(OBJS) $(BUILD)/unit-tests.o
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LIBS)
-	./$(TEST)
 
 
 # Build Bison/Flex exe

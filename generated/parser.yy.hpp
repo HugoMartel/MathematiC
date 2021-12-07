@@ -1,4 +1,4 @@
-/* A Bison parser, made by GNU Bison 3.8.2.  */
+/* A Bison parser, made by GNU Bison 3.7.6.  */
 
 /* Bison interface for Yacc-like parsers in C
 
@@ -152,9 +152,7 @@ typedef union YYSTYPE YYSTYPE;
 
 extern YYSTYPE yylval;
 
-
 int yyparse (void);
-
 /* "%code provides" blocks.  */
 #line 111 "language/parser.y"
 
@@ -166,6 +164,6 @@ int yyparse (void);
      */
     int compileCode(const char *filename);
 
-#line 170 "generated/parser.yy.hpp"
+#line 168 "generated/parser.yy.hpp"
 
 #endif /* !YY_YY_GENERATED_PARSER_YY_HPP_INCLUDED  */
