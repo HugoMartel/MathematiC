@@ -1,3 +1,7 @@
+/**
+ * @file    interface.hpp
+ */
+
 #ifndef __INTERFACE__
 #define __INTERFACE__
 #include <string>
@@ -8,7 +12,7 @@
  * @param[in]   filename     the filename containing the buffer
  */
 
-void callingYYParse(std::string); 
+void callingYYParse(std::string);
 
 /**
  * getter & setter for the verbose output when running code
@@ -18,6 +22,6 @@ void callingYYParse(std::string);
  *                          or if we're reading them, by default on false
  * @param[out]  isError     Retrieving if the code produced an error or note
  */
-bool verbose(std::string &, bool, bool);
+bool verbose(std::string &, bool, bool = false);
 
 #endif

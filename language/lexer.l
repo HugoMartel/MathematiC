@@ -1,14 +1,22 @@
+/**
+ * @file    lexer.l
+ */
+
 %{
     #include <stdio.h>
     #include <stdlib.h>
-    #include "parser.bison.hpp"
+    #include <string>
+
+    #include "parser.yy.hpp"
+    #include "interface.hpp"
 %}
 
 
 /*-----------------
  -- Definitions --
 -----------------*/
-%option noyywrap
+%option noyywrap nounput
+%option yylineno
 
 variable        [a-zA-Z_][a-zA-Z0-9_]*
 /* /!\ color doesn't support [A-Fa-f0-9]{3} format */
@@ -16,7 +24,7 @@ color_arg       \"(blue|red|green|black|white|magenta|cyan|yellow|\#([A-Fa-f0-9]
 style_arg       \"(dashed|dotted|solid|hist)\"
 string          \"[a-zA-Z0-9\-\+\/\*\(\)\[\]\{\}\ \&\~\#\^\@\=\$\%\!\,\.\:\>\<]+\"
 number          [+-]?[0-9]+(\.[0-9]*)?([Ee][+-]?[0-9]+)?
-toskip          \n|\r|\t|\ |\/\/.*
+toskip          \r|\t|\ |\/\/.*
 
 /* Used to track line information */
 %x    IN_COMMENT
@@ -39,6 +47,7 @@ toskip          \n|\r|\t|\ |\/\/.*
     char *endptr;
     yylval.dvalue = std::strtod(yytext, &endptr); return NUM;
 }
+\n                                                          { /* flex rule for yylineno++ */ }
 {toskip}                                                    {  }
 and                                                         { return AND; }
 or                                                          { return OR; }
@@ -113,7 +122,18 @@ ymax                                                        { return ymax; }
 ","                                                         { return ','; }
 ";"                                                         { return ';'; }
 ":"                                                         { return ':'; }
-<<EOF>>                                                     { printf("File contains a valid source code\n"); return EOF; }
-.                                                           { fprintf(stderr, "lex error : %s\n", yytext); return 0; }
+<<EOF>>                                                     {
+                                                                std::string output("File contains a valid source code\n");
+                                                                verbose(output, false);/* false since no error */
+                                                                return EOF;
+                                                            }
+.                                                           {
+                                                                /* Char not supported in this language */
+                                                                char str[150];
+                                                                sprintf(str, "%d - Syntax error: %s\n", yylineno, yytext);
+                                                                std::string output(str);
+                                                                verbose(output, true);
+                                                                return 0;
+                                                            }
 
 %%

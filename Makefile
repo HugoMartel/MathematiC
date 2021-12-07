@@ -4,7 +4,9 @@
 #
 # You will need SDL2 (http://www.libsdl.org):
 # Linux:
-#   apt-get install libsdl2-dev
+#   apt-get install libsdl2-dev bison flex zenity
+#   dnf install sdl2-devel bison flex zenity
+#   pacman -S sdl2 bison flex zenity
 # Mac OS X:
 #   brew install sdl2
 # MSYS2:
@@ -27,9 +29,9 @@ BUILD := build
 
 
 # BISON/FLEX DIR
-SOURCES = $(GEN)/parser.bison.cpp $(GEN)/lexer.flex.cpp
+SOURCES = $(GEN)/parser.yy.cpp $(GEN)/lexer.yy.cpp
 # SRC
-SOURCES += $(SRC)/test.cpp
+SOURCES += $(SRC)/main.cpp
 # IMGUI_DIR
 SOURCES += $(IMGUI_DIR)/imgui.cpp $(IMGUI_DIR)/imgui_draw.cpp $(IMGUI_DIR)/imgui_tables.cpp $(IMGUI_DIR)/imgui_widgets.cpp
 # IMGUI_DIR/backends
@@ -42,7 +44,8 @@ SOURCES += $(INC)/zenity.cpp $(INC)/interface.cpp
 
 # Get generated objects names
 OBJS = $(addprefix $(BUILD)/, $(addsuffix .o, $(basename $(notdir $(SOURCES)))))
-CLEANABLE = $(EXE) $(OBJS) $(BUILD)/lexer.flex.o $(BUILD)/parser.bison.o $(BUILD)/lang $(GEN)/*.cpp $(GEN)/*.hpp
+
+CLEANABLE = $(EXE) $(OBJS) $(GEN)/paser.yy.* $(GEN)/lexer.yy.*
 
 
 # Get current config-d -p
@@ -56,11 +59,11 @@ LIBFLAGS = -I $(IMGUI_DIR) -I $(IMGUI_DIR)/backends -I $(IMPLOT_DIR) -I $(INC) -
 LDFLAGS := -g
 #LDFLAGS := -O3
 # Flex
-LFLAGS = -v --header-file=$(GEN)/lexer.flex.hpp
+LFLAGS = -v --header-file=$(GEN)/lexer.yy.hpp
 LFLAGS += -d -p
 # Bison /!\ 3.7.6 flags: -Wcounterexamples --color=yes
-BFLAGS = --warnings=all --defines=$(GEN)/parser.bison.hpp -v
-BFLAGS += -t
+BFLAGS = --warnings=all --defines=$(GEN)/parser.yy.hpp -v
+BFLAGS += -t --debug
 LIBS =
 ZENITY =
 
@@ -83,32 +86,32 @@ ifeq ($(UNAME_S), Linux) #LINUX
 ## use the following instead:
 # LINUX_GL_LIBS = -L/opt/vc/lib -lbrcmGLESv2
 
-	LIBS += $(LINUX_GL_LIBS) -ldl `sdl2-config --libs`
+	LIBS += $(LINUX_GL_LIBS) -ldl $(shell sdl2-config --libs)
 
 # Check for zenity
 	ZENITY = Zenity version :
 	ZENITY += $(shell zenity --version)
 
-	LIBFLAGS += `sdl2-config --cflags`
+	LIBFLAGS += $(shell sdl2-config --cflags)
 	CFLAGS = $(CXXFLAGS) $(LIBFLAGS)
 
 endif
 
 ifeq ($(UNAME_S), Darwin) #APPLE
 	ECHO_MESSAGE = "Mac OS X"
-	LIBS += -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo `sdl2-config --libs`
+	LIBS += -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo $(shell sdl2-config --libs)
 	LIBS += -L/usr/local/lib -L/opt/local/lib
 
-	LIBFLAGS += `sdl2-config --cflags`
+	LIBFLAGS += $(shell sdl2-config --cflags)
 	LIBFLAGS += -I/usr/local/include -I/opt/local/include
 	CFLAGS = -W -Wextra -Wformat $(LIBFLAGS)
 endif
 
 ifeq ($(OS), Windows_NT)
 	ECHO_MESSAGE = "MinGW"
-	LIBS += -lgdi32 -lopengl32 -limm32 `pkg-config --static --libs sdl2`
+	LIBS += -lgdi32 -lopengl32 -limm32 $(shell pkg-config --static --libs sdl2)
 
-	LIBFLAGS += `pkg-config --cflags sdl2`
+	LIBFLAGS += $(shell pkg-config --cflags sdl2)
 	CFLAGS = -W -Wextra -Wformat $(LIBFLAGS)
 endif
 
@@ -118,33 +121,35 @@ endif
 ##---------------------------------------------------------------------
 
 # Default rule
-all: $(EXE)
+all: bison flex $(EXE)
 	@echo Build complete for $(ECHO_MESSAGE)
 
 run: $(EXE)
 	./$(EXE)
 
 # Test File
-$(BUILD)/test.o: $(SRC)/test.cpp
-	$(CXX) $(CXXFLAGS) $(LIBFLAGS) -c $< -o $@
 
 # Main File
+$(BUILD)/main.o: $(SRC)/main.cpp
+	$(CXX) $(CXXFLAGS) $(LIBFLAGS) -c $< -o $@
 
 # Unit tests File
 
 
-# Include Files
-$(BUILD)/%.o: $(INC)/%.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Bison/Flex Files
-$(GEN)/parser.bison.cpp: $(LANG)/parser.y
-	bison $(BFLAGS) -o $@ $<
+bison: $(LANG)/parser.y
+	bison $(BFLAGS) -o $(GEN)/parser.yy.cpp $<
 
-$(GEN)/lexer.flex.cpp: $(LANG)/lexer.l
-	flex $(LFLAGS) -o $@ $<
+flex: $(LANG)/lexer.l
+	flex $(LFLAGS) -o $(GEN)/lexer.yy.cpp $<
 
 $(BUILD)/%.o: $(GEN)/%.cpp
+	$(CXX) $(CXXFLAGS) $(LIBFLAGS) -c $< -o $@
+
+
+# Include Files
+$(BUILD)/%.o: $(INC)/%.cpp
 	$(CXX) $(CXXFLAGS) $(LIBFLAGS) -c $< -o $@
 
 
@@ -155,13 +160,11 @@ $(BUILD)/%.o: $(IMGUI_DIR)/%.cpp
 $(BUILD)/%.o: $(IMGUI_DIR)/backends/%.cpp
 	$(CXX) $(CXXFLAGS) $(LIBFLAGS) -c $< -o $@
 
+
 # Implot Files
 $(BUILD)/%.o: $(IMPLOT_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) $(LIBFLAGS) -c $< -o $@
 
-# Include Files
-$(BUILD)/%.o: $(INC)/%.cpp
-	$(CXX) $(CXXFLAGS) $(LIBFLAGS) -c $< -o $@
 
 # Build Executable File
 $(EXE): $(OBJS)
@@ -169,11 +172,11 @@ $(EXE): $(OBJS)
 	@echo $(ZENITY)
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LIBS)
 
+
 # Build Bison/Flex exe
-lang: $(BUILD)/parser.bison.o $(BUILD)/lexer.flex.o
-	@echo Building Bison/Flex
-	$(CXX) -o $(BUILD)/lang $^
-	$(BUILD)/$@ $(LANG)/test.txt
+lang: bison flex
+	@echo Generating from Bison/Flex
 
 clean:
 	rm -vf $(CLEANABLE)
+

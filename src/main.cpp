@@ -1,5 +1,5 @@
 /**
- * @file    test.cpp
+ * @file    main.cpp
  */
 
 /* Imgui includes */
@@ -300,7 +300,7 @@ int main(int, char**)
             }
             /* saving the file  */
             save(buf, opened_file);
-            /* calling the yy parse function (still needs to be coded under includes/interface.hpp  */
+            /* calling the yy parse function (still needs to be coded under include/interface.hpp  */
             callingYYParse(opened_file);
             isError = verbose(output, isError, true);
             /* the button is clicked  */

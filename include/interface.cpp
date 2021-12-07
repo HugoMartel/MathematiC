@@ -1,13 +1,21 @@
+/**
+ * @file    interface.cpp
+ */
+
 #include "interface.hpp"
+
+#include "lexer.yy.hpp"
+#include "parser.yy.hpp"
+
 
 void callingYYParse(std::string filename)
 {
     if (filename != "") {
-        //TODO: call the lex etc
+        compileCode(filename.c_str());
     }
 }
 
-bool verbose(std::string &mOutput, bool mIsError, bool read = false)
+bool verbose(std::string &mOutput, bool mIsError, bool read)
 {
     /*local variables*/
     static std::string output("");

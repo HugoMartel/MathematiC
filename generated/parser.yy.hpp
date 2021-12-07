@@ -1,4 +1,4 @@
-/* A Bison parser, made by GNU Bison 3.7.6.  */
+/* A Bison parser, made by GNU Bison 3.8.2.  */
 
 /* Bison interface for Yacc-like parsers in C
 
@@ -35,8 +35,8 @@
    especially those whose name start with YY_ or yy_.  They are
    private implementation details that can be changed or removed.  */
 
-#ifndef YY_YY_GENERATED_PARSER_BISON_HPP_INCLUDED
-# define YY_YY_GENERATED_PARSER_BISON_HPP_INCLUDED
+#ifndef YY_YY_GENERATED_PARSER_YY_HPP_INCLUDED
+# define YY_YY_GENERATED_PARSER_YY_HPP_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 1
@@ -45,7 +45,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 178 "language/parser.y"
+#line 122 "language/parser.y"
 
     typedef struct adr {
         int jmp;  // adresse du jmp
@@ -53,7 +53,7 @@ extern int yydebug;
     } type_adresse;
   
 
-#line 57 "generated/parser.bison.hpp"
+#line 57 "generated/parser.yy.hpp"
 
 /* Token kinds.  */
 #ifndef YYTOKENTYPE
@@ -134,14 +134,14 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 185 "language/parser.y"
+#line 129 "language/parser.y"
 
     double dvalue;
     char svalue[50];
     bool bvalue;
     type_adresse adresse;
 
-#line 145 "generated/parser.bison.hpp"
+#line 145 "generated/parser.yy.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -152,6 +152,20 @@ typedef union YYSTYPE YYSTYPE;
 
 extern YYSTYPE yylval;
 
+
 int yyparse (void);
 
-#endif /* !YY_YY_GENERATED_PARSER_BISON_HPP_INCLUDED  */
+/* "%code provides" blocks.  */
+#line 111 "language/parser.y"
+
+    /**
+     * Compile the code to generate the functions to then use to draw
+     * @param[in]   filename    file to open to read the code from
+     * @param[out]  func        Function map storing generated functions in the use written code
+     * @return      0: success, 1: open error, 2: close error, 3: display interval error, 4: compilation error
+     */
+    int compileCode(const char *filename);
+
+#line 170 "generated/parser.yy.hpp"
+
+#endif /* !YY_YY_GENERATED_PARSER_YY_HPP_INCLUDED  */
