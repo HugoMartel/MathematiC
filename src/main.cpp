@@ -494,15 +494,15 @@ static void ShowMainMenuBar(char *buff, SDL_Window *window, std::string &filenam
             ImGui::EndMenu();
         }
 
-        //TODO: add ctrl + a
-
-        if (ImGui::BeginMenu("Edit")) {
-            if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
+        if (ImGui::BeginMenu("Shortcuts")) {
+            if (ImGui::MenuItem("Undo", "CTRL+W", false, false)) {}
             if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
             ImGui::Separator();
-            if (ImGui::MenuItem("Cut", "CTRL+X")) {}
-            if (ImGui::MenuItem("Copy", "CTRL+C")) {}
-            if (ImGui::MenuItem("Paste", "CTRL+V")) {}
+            if (ImGui::MenuItem("Cut", "CTRL+X", false, false)) {}
+            if (ImGui::MenuItem("Copy", "CTRL+C", false, false)) {}
+            if (ImGui::MenuItem("Paste", "CTRL+V", false, false)) {}
+            ImGui::Separator();
+            if(ImGui::MenuItem("Select all", "CTRL+Q", false, false)) {}
             ImGui::EndMenu();
         }
 
