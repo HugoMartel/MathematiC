@@ -2,7 +2,8 @@
 
 ![Logo](./img/banner.png)
 
-A small function visualizer langage to be able to quickly draw a Mathematical funtion.
+A small function visualizer langage to be able to quickly draw a Mathematical funtion.  
+In order to learn how to use it, check the [Wiki](wiki.md).
 
 # Libraries used
 - make
