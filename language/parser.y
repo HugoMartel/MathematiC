@@ -25,6 +25,8 @@
     extern int yylex();
     extern FILE *yyin;
     extern char *yytext;
+    //extern int yy_flush_buffer();
+    extern int yylex_destroy(void);
     extern int yylineno;
     int yyerror(const char *s);
 
@@ -1264,11 +1266,15 @@ int compileCode(const char *filename, GraphSetup *graph)
     /* Analyse the code */
     compileSuccess = yyparse();
 
+    //yy_flush_buffer();
+    yylex_destroy();
+
+/*
     if (fclose(yyin)) {
         fprintf(stderr, "Couldn't close the opened file...\n");
         return 2;
     }
-
+*/
     /* If the compilation was successful, display the graph */
     if (!compileSuccess) {
 

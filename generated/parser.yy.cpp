@@ -95,6 +95,8 @@
     extern int yylex();
     extern FILE *yyin;
     extern char *yytext;
+    //extern int yy_flush_buffer();
+    extern int yylex_destroy(void);
     extern int yylineno;
     int yyerror(const char *s);
 
@@ -174,7 +176,7 @@
         return 0;
     }
 
-#line 178 "generated/parser.yy.cpp"
+#line 180 "generated/parser.yy.cpp"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -685,15 +687,15 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   254,   254,   262,   267,   281,   295,   295,   331,   335,
-     338,   342,   355,   365,   369,   383,   397,   410,   423,   424,
-     425,   426,   427,   428,   429,   430,   431,   432,   436,   451,
-     455,   480,   484,   485,   486,   490,   498,   490,   514,   526,
-     514,   531,   536,   531,   545,   546,   547,   548,   549,   550,
-     551,   552,   553,   557,   563,   569,   575,   581,   587,   593,
-     599,   605,   611,   617,   623,   629,   635,   641,   647,   653,
-     654,   660,   666,   672,   683,   694,   705,   711,   717,   723,
-     732,   741,   752,   763,   774
+       0,   256,   256,   264,   269,   283,   297,   297,   333,   337,
+     340,   344,   357,   367,   371,   385,   399,   412,   425,   426,
+     427,   428,   429,   430,   431,   432,   433,   434,   438,   453,
+     457,   482,   486,   487,   488,   492,   500,   492,   516,   528,
+     516,   533,   538,   533,   547,   548,   549,   550,   551,   552,
+     553,   554,   555,   559,   565,   571,   577,   583,   589,   595,
+     601,   607,   613,   619,   625,   631,   637,   643,   649,   655,
+     656,   662,   668,   674,   685,   696,   707,   713,   719,   725,
+     734,   743,   754,   765,   776
 };
 #endif
 
@@ -1259,7 +1261,7 @@ yyparse (void)
   yychar = YYEMPTY; /* Cause a token to be read.  */
 
 /* User initialization code.  */
-#line 124 "language/parser.y"
+#line 126 "language/parser.y"
 {
     /* Reset to default values */
     argLabel = "Affichage";
@@ -1278,7 +1280,7 @@ yyparse (void)
 
 }
 
-#line 1282 "generated/parser.yy.cpp"
+#line 1284 "generated/parser.yy.cpp"
 
   goto yysetstate;
 
@@ -1478,27 +1480,27 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* code: declarations fonctions affichage  */
-#line 254 "language/parser.y"
+#line 256 "language/parser.y"
                                                     {
 #ifdef __DEBUG__
                 std::cout << "-- END OF COMPILATION --\n";
 #endif
                                                     }
-#line 1488 "generated/parser.yy.cpp"
+#line 1490 "generated/parser.yy.cpp"
     break;
 
   case 3: /* declarations: %empty  */
-#line 262 "language/parser.y"
+#line 264 "language/parser.y"
                                                     { /* End of declarations */
 #ifdef __DEBUG__
                 std::cout << "-- End of declarations --\n";
 #endif
                                                     }
-#line 1498 "generated/parser.yy.cpp"
+#line 1500 "generated/parser.yy.cpp"
     break;
 
   case 4: /* declarations: declarations var VAR '=' expr ';'  */
-#line 267 "language/parser.y"
+#line 269 "language/parser.y"
                                                     { /* Init Vars */
                                                         /* Check if already declared */
                                                         if (!variables.count((yyvsp[-3].STRING))) {
@@ -1513,11 +1515,11 @@ yyreduce:
                                                             verbose(error);
                                                         }
                                                     }
-#line 1517 "generated/parser.yy.cpp"
+#line 1519 "generated/parser.yy.cpp"
     break;
 
   case 5: /* declarations: declarations var VAR ';'  */
-#line 281 "language/parser.y"
+#line 283 "language/parser.y"
                                                     {
                                                         if (!variables.count((yyvsp[-1].STRING))) {
                                                             variables[(yyvsp[-1].STRING)] = 0;
@@ -1529,11 +1531,11 @@ yyreduce:
                                                             verbose(error);
                                                         }
                                                     }
-#line 1533 "generated/parser.yy.cpp"
+#line 1535 "generated/parser.yy.cpp"
     break;
 
   case 6: /* $@1: %empty  */
-#line 295 "language/parser.y"
+#line 297 "language/parser.y"
                                                         {
                                                                 /* Clear the current_scope vector */
                                                                 current_scope.clear();
@@ -1561,11 +1563,11 @@ yyreduce:
                                                             }
 
                                                         }
-#line 1565 "generated/parser.yy.cpp"
+#line 1567 "generated/parser.yy.cpp"
     break;
 
   case 7: /* fonctions: DEF VAR ':' '(' parameters ')' arrow '{' $@1 instruction '}' fonctions  */
-#line 323 "language/parser.y"
+#line 325 "language/parser.y"
                                                         {
                                                              /* Dequeue since we left the function scope */
                                                              if (current_scope.empty())
@@ -1574,31 +1576,31 @@ yyreduce:
                                                              while (!argQueue.empty())
                                                                  argQueue.pop();
                                                         }
-#line 1578 "generated/parser.yy.cpp"
+#line 1580 "generated/parser.yy.cpp"
     break;
 
   case 8: /* fonctions: %empty  */
-#line 331 "language/parser.y"
+#line 333 "language/parser.y"
                                                         { /* End of function declarations */ }
-#line 1584 "generated/parser.yy.cpp"
+#line 1586 "generated/parser.yy.cpp"
     break;
 
   case 9: /* parameters: VAR  */
-#line 335 "language/parser.y"
+#line 337 "language/parser.y"
                                                         {
                     argQueue.push((yyvsp[0].STRING));
                                                         }
-#line 1592 "generated/parser.yy.cpp"
+#line 1594 "generated/parser.yy.cpp"
     break;
 
   case 10: /* parameters: parameters ',' parameters  */
-#line 338 "language/parser.y"
+#line 340 "language/parser.y"
                                                         { /* Support multiple parameters */ }
-#line 1598 "generated/parser.yy.cpp"
+#line 1600 "generated/parser.yy.cpp"
     break;
 
   case 11: /* draw_func: VAR in '[' NUM ',' NUM ']'  */
-#line 342 "language/parser.y"
+#line 344 "language/parser.y"
                                                         {
                                                             /* Load function names to send to the front-end */
                                                             current_scope[0] = (yyvsp[-6].STRING);
@@ -1612,11 +1614,11 @@ yyreduce:
                                                                 verbose(error);
                                                             }
                                                         }
-#line 1616 "generated/parser.yy.cpp"
+#line 1618 "generated/parser.yy.cpp"
     break;
 
   case 12: /* draw_func: VAR  */
-#line 355 "language/parser.y"
+#line 357 "language/parser.y"
                                                         {
                                                             /* Load function names to send to the front-end */
                                                             current_scope.push_back((yyvsp[0].STRING));
@@ -1627,17 +1629,17 @@ yyreduce:
                                                                 verbose(error);
                                                             }
                                                         }
-#line 1631 "generated/parser.yy.cpp"
+#line 1633 "generated/parser.yy.cpp"
     break;
 
   case 13: /* draw_func: draw_func ',' draw_func  */
-#line 365 "language/parser.y"
+#line 367 "language/parser.y"
                                                         { /* Support multiple functions to draw at the same time */ }
-#line 1637 "generated/parser.yy.cpp"
+#line 1639 "generated/parser.yy.cpp"
     break;
 
   case 14: /* affichage: DRAW draw_func '{' draw_args '}'  */
-#line 371 "language/parser.y"
+#line 373 "language/parser.y"
                                                         {
                                                             if(!argQueue.empty()){
                                                                 error = "The number of function to draw doesn't match the number of arg";
@@ -1649,11 +1651,11 @@ yyreduce:
                                                             }
 #endif
                                                         }
-#line 1653 "generated/parser.yy.cpp"
+#line 1655 "generated/parser.yy.cpp"
     break;
 
   case 15: /* affichage: DRAW draw_func ';'  */
-#line 383 "language/parser.y"
+#line 385 "language/parser.y"
                                                         {
                                                             if(!argQueue.empty()){
                                                                 error = "The number of function to draw doesn't match the number of arg";
@@ -1665,11 +1667,11 @@ yyreduce:
                                                             }
 #endif
                                                         }
-#line 1669 "generated/parser.yy.cpp"
+#line 1671 "generated/parser.yy.cpp"
     break;
 
   case 16: /* draw_args: color ':' '[' color_args ']'  */
-#line 397 "language/parser.y"
+#line 399 "language/parser.y"
                                                         { /* getting the multiples color args (or not) */
                                                             if (current_scope.size() == argQueue.size()) { /* Check if the arg count matches the function count */
                                                                 functionToEdit = 0;
@@ -1683,11 +1685,11 @@ yyreduce:
                                                                 }
                                                             }
                                                         }
-#line 1687 "generated/parser.yy.cpp"
+#line 1689 "generated/parser.yy.cpp"
     break;
 
   case 17: /* draw_args: style ':' '[' style_args ']'  */
-#line 410 "language/parser.y"
+#line 412 "language/parser.y"
                                                         { /* getting the multiples style args (or not) */
                                                             if (current_scope.size() == argQueue.size()) { /* Check if the arg count matches the function count */
                                                                 functionToEdit = 0;
@@ -1701,71 +1703,71 @@ yyreduce:
                                                                 }
                                                             }
                                                         }
-#line 1705 "generated/parser.yy.cpp"
+#line 1707 "generated/parser.yy.cpp"
     break;
 
   case 18: /* draw_args: label ':' STRING  */
-#line 423 "language/parser.y"
+#line 425 "language/parser.y"
                                                         { argLabel = (yyvsp[0].STRING); argLabel = argLabel.substr(1, argLabel.size()-2); }
-#line 1711 "generated/parser.yy.cpp"
+#line 1713 "generated/parser.yy.cpp"
     break;
 
   case 19: /* draw_args: xmin ':' NUM  */
-#line 424 "language/parser.y"
+#line 426 "language/parser.y"
                                                         { argXmin = (yyvsp[0].DOUBLE); }
-#line 1717 "generated/parser.yy.cpp"
+#line 1719 "generated/parser.yy.cpp"
     break;
 
   case 20: /* draw_args: xmin ':' VAR  */
-#line 425 "language/parser.y"
+#line 427 "language/parser.y"
                                                         { argXmin = variables[(yyvsp[0].STRING)]; }
-#line 1723 "generated/parser.yy.cpp"
+#line 1725 "generated/parser.yy.cpp"
     break;
 
   case 21: /* draw_args: xmax ':' NUM  */
-#line 426 "language/parser.y"
+#line 428 "language/parser.y"
                                                         { argXmax = (yyvsp[0].DOUBLE); }
-#line 1729 "generated/parser.yy.cpp"
+#line 1731 "generated/parser.yy.cpp"
     break;
 
   case 22: /* draw_args: xmax ':' VAR  */
-#line 427 "language/parser.y"
+#line 429 "language/parser.y"
                                                         { argXmax = variables[(yyvsp[0].STRING)]; }
-#line 1735 "generated/parser.yy.cpp"
+#line 1737 "generated/parser.yy.cpp"
     break;
 
   case 23: /* draw_args: ymin ':' NUM  */
-#line 428 "language/parser.y"
+#line 430 "language/parser.y"
                                                         { argYmin = (yyvsp[0].DOUBLE); }
-#line 1741 "generated/parser.yy.cpp"
+#line 1743 "generated/parser.yy.cpp"
     break;
 
   case 24: /* draw_args: ymin ':' VAR  */
-#line 429 "language/parser.y"
+#line 431 "language/parser.y"
                                                         { argYmin = variables[(yyvsp[0].STRING)]; }
-#line 1747 "generated/parser.yy.cpp"
+#line 1749 "generated/parser.yy.cpp"
     break;
 
   case 25: /* draw_args: ymax ':' NUM  */
-#line 430 "language/parser.y"
+#line 432 "language/parser.y"
                                                         { argYmax = (yyvsp[0].DOUBLE); }
-#line 1753 "generated/parser.yy.cpp"
+#line 1755 "generated/parser.yy.cpp"
     break;
 
   case 26: /* draw_args: ymax ':' VAR  */
-#line 431 "language/parser.y"
+#line 433 "language/parser.y"
                                                         { argYmax = variables[(yyvsp[0].STRING)]; }
-#line 1759 "generated/parser.yy.cpp"
+#line 1761 "generated/parser.yy.cpp"
     break;
 
   case 27: /* draw_args: draw_args ',' draw_args  */
-#line 432 "language/parser.y"
+#line 434 "language/parser.y"
                                                         { /* Support multiple args */ }
-#line 1765 "generated/parser.yy.cpp"
+#line 1767 "generated/parser.yy.cpp"
     break;
 
   case 28: /* style_args: STYLE_PARAM  */
-#line 436 "language/parser.y"
+#line 438 "language/parser.y"
                                                         {
                                                             /* Check the value */
                                                             if (!strcmp((yyvsp[0].STRING), "\"dotted\"")) {
@@ -1781,17 +1783,17 @@ yyreduce:
                                                                 verbose(error);
                                                             }
                                                         }
-#line 1785 "generated/parser.yy.cpp"
+#line 1787 "generated/parser.yy.cpp"
     break;
 
   case 29: /* style_args: style_args ',' style_args  */
-#line 451 "language/parser.y"
+#line 453 "language/parser.y"
                                                         { /* Support multiple style_args */ }
-#line 1791 "generated/parser.yy.cpp"
+#line 1793 "generated/parser.yy.cpp"
     break;
 
   case 30: /* color_args: COLOR_PARAM  */
-#line 455 "language/parser.y"
+#line 457 "language/parser.y"
                                                         {
                                                             if (!strcmp((yyvsp[0].STRING),"\"blue\"")) {
                                                                 argQueue.push("#0000FF");
@@ -1817,38 +1819,38 @@ yyreduce:
                                                                 argQueue.push((yyvsp[0].STRING));
                                                             }
                                                         }
-#line 1821 "generated/parser.yy.cpp"
+#line 1823 "generated/parser.yy.cpp"
     break;
 
   case 31: /* color_args: color_args ',' color_args  */
-#line 480 "language/parser.y"
+#line 482 "language/parser.y"
                                                         { /* Support multiple color_args */ }
-#line 1827 "generated/parser.yy.cpp"
+#line 1829 "generated/parser.yy.cpp"
     break;
 
   case 32: /* instruction: %empty  */
-#line 484 "language/parser.y"
+#line 486 "language/parser.y"
                                                         { /* No instructions left */ }
-#line 1833 "generated/parser.yy.cpp"
+#line 1835 "generated/parser.yy.cpp"
     break;
 
   case 33: /* instruction: instruction expr ';'  */
-#line 485 "language/parser.y"
+#line 487 "language/parser.y"
                                                         { /* new line */ }
-#line 1839 "generated/parser.yy.cpp"
+#line 1841 "generated/parser.yy.cpp"
     break;
 
   case 34: /* instruction: instruction RETURN expr ';'  */
-#line 486 "language/parser.y"
+#line 488 "language/parser.y"
                                                         {
                /* The return instruction will jump to the main instruction (out of function) */
                add_instruction(JMP, -1);
             }
-#line 1848 "generated/parser.yy.cpp"
+#line 1850 "generated/parser.yy.cpp"
     break;
 
   case 35: /* $@2: %empty  */
-#line 490 "language/parser.y"
+#line 492 "language/parser.y"
                                                         {
 
                 // Je sauvegarde l'endroit actuel pour revenir mofifier l'adresse
@@ -1857,11 +1859,11 @@ yyreduce:
                 (yyvsp[-2].ADDRESS).jc = functions[current_scope[0]].iic;
                 add_instruction(JMPCOND);
 }
-#line 1861 "generated/parser.yy.cpp"
+#line 1863 "generated/parser.yy.cpp"
     break;
 
   case 36: /* $@3: %empty  */
-#line 498 "language/parser.y"
+#line 500 "language/parser.y"
                                                         {
                 // Je sauvegarde l'endroit actuel pour revenir mofifier l'adresse
                 // lorsqu'elle sera connue (celle du JMP)
@@ -1872,20 +1874,20 @@ yyreduce:
                 // Je mets à jour l'adresse du saut conditionnel
                 functions[current_scope[0]].code[(yyvsp[-4].ADDRESS).jc].value = functions[current_scope[0]].iic;
 }
-#line 1876 "generated/parser.yy.cpp"
+#line 1878 "generated/parser.yy.cpp"
     break;
 
   case 37: /* instruction: IF logic '{' $@2 instruction $@3 '}' ELSE '{' instruction '}'  */
-#line 510 "language/parser.y"
+#line 512 "language/parser.y"
                                                         {
                 // Je mets à jour l'adresse du saut inconditionnel
                  functions[current_scope[0]].code[(yyvsp[-10].ADDRESS).jmp].value = functions[current_scope[0]].iic;
 }
-#line 1885 "generated/parser.yy.cpp"
+#line 1887 "generated/parser.yy.cpp"
     break;
 
   case 38: /* $@4: %empty  */
-#line 514 "language/parser.y"
+#line 516 "language/parser.y"
                                                             {
                                                                 if (!functions[(yyvsp[-9].STRING)].parameters.count((yyvsp[-9].STRING))) {
                                                                     add_instruction(FOR,0,(yyvsp[-9].STRING));
@@ -1898,319 +1900,319 @@ yyreduce:
                                                                     verbose(error);
 
                                                             }
-#line 1902 "generated/parser.yy.cpp"
+#line 1904 "generated/parser.yy.cpp"
     break;
 
   case 39: /* $@5: %empty  */
-#line 526 "language/parser.y"
+#line 528 "language/parser.y"
                                                             {   add_instruction(JMP, (yyvsp[-12].ADDRESS).jmp);   }
-#line 1908 "generated/parser.yy.cpp"
+#line 1910 "generated/parser.yy.cpp"
     break;
 
   case 40: /* instruction: FOR VAR in '[' expr ':' expr ':' expr ']' '{' $@4 instruction $@5 '}'  */
-#line 527 "language/parser.y"
+#line 529 "language/parser.y"
                                                             {
                                                                 //! Check stack value
                                                                 functions[current_scope[0]].code[(yyvsp[-14].ADDRESS).jc].value = functions[current_scope[0]].iic;
                                                             }
-#line 1917 "generated/parser.yy.cpp"
+#line 1919 "generated/parser.yy.cpp"
     break;
 
   case 41: /* $@6: %empty  */
-#line 531 "language/parser.y"
+#line 533 "language/parser.y"
                                                             {
                                                                 // Store instruction vector index of both jumps
                                                                 (yyvsp[-2].ADDRESS).jc = functions[current_scope[0]].iic;
                                                                 add_instruction(JMPCOND, (yyvsp[-2].ADDRESS).jc);
                                                             }
-#line 1927 "generated/parser.yy.cpp"
+#line 1929 "generated/parser.yy.cpp"
     break;
 
   case 42: /* $@7: %empty  */
-#line 536 "language/parser.y"
+#line 538 "language/parser.y"
                                                             {   add_instruction(JMP, 0); }
-#line 1933 "generated/parser.yy.cpp"
+#line 1935 "generated/parser.yy.cpp"
     break;
 
   case 43: /* instruction: WHILE logic '{' $@6 instruction $@7 '}'  */
-#line 537 "language/parser.y"
+#line 539 "language/parser.y"
                                                             {
                                                                 functions[current_scope[0]].code[(yyvsp[-6].ADDRESS).jc].value = functions[current_scope[0]].iic;
                                                             }
-#line 1941 "generated/parser.yy.cpp"
+#line 1943 "generated/parser.yy.cpp"
     break;
 
   case 44: /* logic: expr SUP expr  */
-#line 545 "language/parser.y"
+#line 547 "language/parser.y"
                             { add_instruction(SUP); }
-#line 1947 "generated/parser.yy.cpp"
+#line 1949 "generated/parser.yy.cpp"
     break;
 
   case 45: /* logic: expr INF expr  */
-#line 546 "language/parser.y"
+#line 548 "language/parser.y"
                             { add_instruction(INF); }
-#line 1953 "generated/parser.yy.cpp"
+#line 1955 "generated/parser.yy.cpp"
     break;
 
   case 46: /* logic: expr SUP_STRICT expr  */
-#line 547 "language/parser.y"
+#line 549 "language/parser.y"
                             { add_instruction(SUP_STRICT); }
-#line 1959 "generated/parser.yy.cpp"
+#line 1961 "generated/parser.yy.cpp"
     break;
 
   case 47: /* logic: expr INF_STRICT expr  */
-#line 548 "language/parser.y"
+#line 550 "language/parser.y"
                             { add_instruction(INF_STRICT); }
-#line 1965 "generated/parser.yy.cpp"
+#line 1967 "generated/parser.yy.cpp"
     break;
 
   case 48: /* logic: expr EQUAL expr  */
-#line 549 "language/parser.y"
+#line 551 "language/parser.y"
                             { add_instruction(EQUAL); }
-#line 1971 "generated/parser.yy.cpp"
+#line 1973 "generated/parser.yy.cpp"
     break;
 
   case 49: /* logic: expr NOT_EQ expr  */
-#line 550 "language/parser.y"
+#line 552 "language/parser.y"
                             { add_instruction(NOT_EQ); }
-#line 1977 "generated/parser.yy.cpp"
+#line 1979 "generated/parser.yy.cpp"
     break;
 
   case 50: /* logic: logic AND logic  */
-#line 551 "language/parser.y"
+#line 553 "language/parser.y"
                             { add_instruction(AND); }
-#line 1983 "generated/parser.yy.cpp"
+#line 1985 "generated/parser.yy.cpp"
     break;
 
   case 51: /* logic: logic OR logic  */
-#line 552 "language/parser.y"
+#line 554 "language/parser.y"
                             { add_instruction(OR); }
-#line 1989 "generated/parser.yy.cpp"
+#line 1991 "generated/parser.yy.cpp"
     break;
 
   case 52: /* logic: NOT logic  */
-#line 553 "language/parser.y"
+#line 555 "language/parser.y"
                             { add_instruction(NOT); }
-#line 1995 "generated/parser.yy.cpp"
+#line 1997 "generated/parser.yy.cpp"
     break;
 
   case 53: /* expr: NUM  */
-#line 557 "language/parser.y"
+#line 559 "language/parser.y"
                             {
                                 if (!current_scope.empty())
                                     add_instruction(NUM, (yyvsp[0].DOUBLE));
                                 else
                                     (yyval.DOUBLE) = (yyvsp[0].DOUBLE);
                             }
-#line 2006 "generated/parser.yy.cpp"
+#line 2008 "generated/parser.yy.cpp"
     break;
 
   case 54: /* expr: PI  */
-#line 563 "language/parser.y"
+#line 565 "language/parser.y"
                             {
                                 if (!current_scope.empty())
                                     add_instruction(NUM, 3.14159265358979323846);
                                 else
                                     (yyval.DOUBLE) = 3.14159265358979323846;
                             }
-#line 2017 "generated/parser.yy.cpp"
+#line 2019 "generated/parser.yy.cpp"
     break;
 
   case 55: /* expr: E  */
-#line 569 "language/parser.y"
+#line 571 "language/parser.y"
                             {
                                 if (!current_scope.empty())
                                     add_instruction(NUM, 2.71828182845904523536);
                                 else
                                     (yyval.DOUBLE) = 2.71828182845904523536;
                             }
-#line 2028 "generated/parser.yy.cpp"
+#line 2030 "generated/parser.yy.cpp"
     break;
 
   case 56: /* expr: PHI  */
-#line 575 "language/parser.y"
+#line 577 "language/parser.y"
                             {
                                 if (!current_scope.empty())
                                     add_instruction(NUM, 1.61803398874989484820);
                                 else
                                     (yyval.DOUBLE) = 1.61803398874989484820;
                             }
-#line 2039 "generated/parser.yy.cpp"
+#line 2041 "generated/parser.yy.cpp"
     break;
 
   case 57: /* expr: SIN '(' expr ')'  */
-#line 581 "language/parser.y"
+#line 583 "language/parser.y"
                             {
                                 if (!current_scope.empty())
                                     add_instruction(SIN);
                                 else
                                     (yyval.DOUBLE) = sin((yyvsp[-1].DOUBLE));
                             }
-#line 2050 "generated/parser.yy.cpp"
+#line 2052 "generated/parser.yy.cpp"
     break;
 
   case 58: /* expr: COS '(' expr ')'  */
-#line 587 "language/parser.y"
+#line 589 "language/parser.y"
                             {
                                 if (!current_scope.empty())
                                     add_instruction(COS);
                                 else
                                     (yyval.DOUBLE) = cos((yyvsp[-1].DOUBLE));
                             }
-#line 2061 "generated/parser.yy.cpp"
+#line 2063 "generated/parser.yy.cpp"
     break;
 
   case 59: /* expr: TAN '(' expr ')'  */
-#line 593 "language/parser.y"
+#line 595 "language/parser.y"
                             {
                                 if (!current_scope.empty())
                                     add_instruction(TAN);
                                 else
                                     (yyval.DOUBLE) = tan((yyvsp[-1].DOUBLE));
                             }
-#line 2072 "generated/parser.yy.cpp"
+#line 2074 "generated/parser.yy.cpp"
     break;
 
   case 60: /* expr: ARCCOS '(' expr ')'  */
-#line 599 "language/parser.y"
+#line 601 "language/parser.y"
                             {
                                 if (!current_scope.empty())
                                     add_instruction(ARCCOS);
                                 else
                                     (yyval.DOUBLE) = acos((yyvsp[-1].DOUBLE));
                             }
-#line 2083 "generated/parser.yy.cpp"
+#line 2085 "generated/parser.yy.cpp"
     break;
 
   case 61: /* expr: ARCSIN '(' expr ')'  */
-#line 605 "language/parser.y"
+#line 607 "language/parser.y"
                             {
                                 if (!current_scope.empty())
                                     add_instruction(ARCSIN);
                                 else
                                     (yyval.DOUBLE) = asin((yyvsp[-1].DOUBLE));
                             }
-#line 2094 "generated/parser.yy.cpp"
+#line 2096 "generated/parser.yy.cpp"
     break;
 
   case 62: /* expr: ARCTAN '(' expr ')'  */
-#line 611 "language/parser.y"
+#line 613 "language/parser.y"
                             {
                                 if (!current_scope.empty())
                                     add_instruction(ARCTAN);
                                 else
                                     (yyval.DOUBLE) = atan((yyvsp[-1].DOUBLE));
                             }
-#line 2105 "generated/parser.yy.cpp"
+#line 2107 "generated/parser.yy.cpp"
     break;
 
   case 63: /* expr: COSH '(' expr ')'  */
-#line 617 "language/parser.y"
+#line 619 "language/parser.y"
                             {
                                 if (!current_scope.empty())
                                     add_instruction(COSH);
                                 else
                                     (yyval.DOUBLE) = cosh((yyvsp[-1].DOUBLE));
                             }
-#line 2116 "generated/parser.yy.cpp"
+#line 2118 "generated/parser.yy.cpp"
     break;
 
   case 64: /* expr: SINH '(' expr ')'  */
-#line 623 "language/parser.y"
+#line 625 "language/parser.y"
                             {
                                 if (!current_scope.empty())
                                     add_instruction(SINH);
                                 else
                                     (yyval.DOUBLE) = sinh((yyvsp[-1].DOUBLE));
                             }
-#line 2127 "generated/parser.yy.cpp"
+#line 2129 "generated/parser.yy.cpp"
     break;
 
   case 65: /* expr: TANH '(' expr ')'  */
-#line 629 "language/parser.y"
+#line 631 "language/parser.y"
                             {
                                 if (!current_scope.empty())
                                     add_instruction(TANH);
                                 else
                                     (yyval.DOUBLE) = tanh((yyvsp[-1].DOUBLE));
                             }
-#line 2138 "generated/parser.yy.cpp"
+#line 2140 "generated/parser.yy.cpp"
     break;
 
   case 66: /* expr: ARCCOSH '(' expr ')'  */
-#line 635 "language/parser.y"
+#line 637 "language/parser.y"
                             {
                                 if (!current_scope.empty())
                                     add_instruction(ARCCOSH);
                                 else
                                     (yyval.DOUBLE) = acosh((yyvsp[-1].DOUBLE));
                             }
-#line 2149 "generated/parser.yy.cpp"
+#line 2151 "generated/parser.yy.cpp"
     break;
 
   case 67: /* expr: ARCSINH '(' expr ')'  */
-#line 641 "language/parser.y"
+#line 643 "language/parser.y"
                             {
                                 if (!current_scope.empty())
                                     add_instruction(ARCSINH);
                                 else
                                     (yyval.DOUBLE) = asinh((yyvsp[-1].DOUBLE));
                             }
-#line 2160 "generated/parser.yy.cpp"
+#line 2162 "generated/parser.yy.cpp"
     break;
 
   case 68: /* expr: ARCTANH '(' expr ')'  */
-#line 647 "language/parser.y"
+#line 649 "language/parser.y"
                             {
                                 if (!current_scope.empty())
                                     add_instruction(ARCTANH);
                                 else
                                     (yyval.DOUBLE) = atanh((yyvsp[-1].DOUBLE));
                             }
-#line 2171 "generated/parser.yy.cpp"
+#line 2173 "generated/parser.yy.cpp"
     break;
 
   case 69: /* expr: '(' expr ')'  */
-#line 653 "language/parser.y"
+#line 655 "language/parser.y"
                             { (yyval.DOUBLE) = (yyvsp[-1].DOUBLE); }
-#line 2177 "generated/parser.yy.cpp"
+#line 2179 "generated/parser.yy.cpp"
     break;
 
   case 70: /* expr: expr PLUS expr  */
-#line 654 "language/parser.y"
+#line 656 "language/parser.y"
                             {
                                 if (!current_scope.empty())
                                     add_instruction(PLUS);
                                 else
                                     (yyval.DOUBLE) = (yyvsp[-2].DOUBLE) + (yyvsp[0].DOUBLE);
                             }
-#line 2188 "generated/parser.yy.cpp"
+#line 2190 "generated/parser.yy.cpp"
     break;
 
   case 71: /* expr: expr MIN expr  */
-#line 660 "language/parser.y"
+#line 662 "language/parser.y"
                             {
                                 if (!current_scope.empty())
                                     add_instruction(PLUS);
                                 else
                                     (yyval.DOUBLE) = (yyvsp[-2].DOUBLE) - (yyvsp[0].DOUBLE);
                             }
-#line 2199 "generated/parser.yy.cpp"
+#line 2201 "generated/parser.yy.cpp"
     break;
 
   case 72: /* expr: expr TIMES expr  */
-#line 666 "language/parser.y"
+#line 668 "language/parser.y"
                             {
                                 if (!current_scope.empty())
                                     add_instruction(PLUS);
                                 else
                                     (yyval.DOUBLE) = (yyvsp[-2].DOUBLE) * (yyvsp[0].DOUBLE);
                             }
-#line 2210 "generated/parser.yy.cpp"
+#line 2212 "generated/parser.yy.cpp"
     break;
 
   case 73: /* expr: expr DIV expr  */
-#line 672 "language/parser.y"
+#line 674 "language/parser.y"
                             {
                                 if (!current_scope.empty())
                                     add_instruction(PLUS);
@@ -2222,11 +2224,11 @@ yyreduce:
                                         (yyval.DOUBLE) = (yyvsp[-2].DOUBLE) / (yyvsp[0].DOUBLE);
                                 }
                             }
-#line 2226 "generated/parser.yy.cpp"
+#line 2228 "generated/parser.yy.cpp"
     break;
 
   case 74: /* expr: expr '^' expr  */
-#line 683 "language/parser.y"
+#line 685 "language/parser.y"
                                     {
                                         if (!current_scope.empty())
                                             add_instruction(POW);
@@ -2238,11 +2240,11 @@ yyreduce:
                                                 (yyval.DOUBLE) = pow((yyvsp[-2].DOUBLE),(yyvsp[0].DOUBLE));
                                         }
                                     }
-#line 2242 "generated/parser.yy.cpp"
+#line 2244 "generated/parser.yy.cpp"
     break;
 
   case 75: /* expr: POW '(' expr ',' expr ')'  */
-#line 694 "language/parser.y"
+#line 696 "language/parser.y"
                                     {
                                         if (!current_scope.empty())
                                             add_instruction(POW);
@@ -2254,44 +2256,44 @@ yyreduce:
                                                 (yyval.DOUBLE) = pow((yyvsp[-3].DOUBLE),(yyvsp[-1].DOUBLE));
                                         }
                                     }
-#line 2258 "generated/parser.yy.cpp"
+#line 2260 "generated/parser.yy.cpp"
     break;
 
   case 76: /* expr: EXP '(' expr ')'  */
-#line 705 "language/parser.y"
+#line 707 "language/parser.y"
                                     {
                                         if (!current_scope.empty())
                                             add_instruction(EXP);
                                         else
                                             (yyval.DOUBLE) = exp((yyvsp[-1].DOUBLE));
                                     }
-#line 2269 "generated/parser.yy.cpp"
+#line 2271 "generated/parser.yy.cpp"
     break;
 
   case 77: /* expr: LOG '(' expr ')'  */
-#line 711 "language/parser.y"
+#line 713 "language/parser.y"
                                     {
                                         if (!current_scope.empty())
                                             add_instruction(LOG);
                                         else
                                             (yyval.DOUBLE) = log((yyvsp[-1].DOUBLE));
                                     }
-#line 2280 "generated/parser.yy.cpp"
+#line 2282 "generated/parser.yy.cpp"
     break;
 
   case 78: /* expr: SQRT '(' expr ')'  */
-#line 717 "language/parser.y"
+#line 719 "language/parser.y"
                                     {
                                         if (!current_scope.empty())
                                             add_instruction(SQRT);
                                         else
                                             (yyval.DOUBLE) = sqrt((yyvsp[-1].DOUBLE));
                                     }
-#line 2291 "generated/parser.yy.cpp"
+#line 2293 "generated/parser.yy.cpp"
     break;
 
   case 79: /* expr: VAR  */
-#line 723 "language/parser.y"
+#line 725 "language/parser.y"
                                     {
                                         /* Only add to the ins vector if we are in a function */
                                         if (!current_scope.empty()) {
@@ -2301,11 +2303,11 @@ yyreduce:
                                                 (yyval.DOUBLE) = variables.at((yyvsp[0].STRING));
                                         }
                                     }
-#line 2305 "generated/parser.yy.cpp"
+#line 2307 "generated/parser.yy.cpp"
     break;
 
   case 80: /* expr: VAR '=' expr  */
-#line 732 "language/parser.y"
+#line 734 "language/parser.y"
                                     {
                                         /* Only add to the ins vector if we are in a function */
                                         if (!current_scope.empty()) {
@@ -2315,11 +2317,11 @@ yyreduce:
                                             verbose(error);
                                         }
                                     }
-#line 2319 "generated/parser.yy.cpp"
+#line 2321 "generated/parser.yy.cpp"
     break;
 
   case 81: /* expr: VAR PLUS_EQUAL expr  */
-#line 741 "language/parser.y"
+#line 743 "language/parser.y"
                                     {
                                         /* Only add to the ins vector if we are in a function */
                                         if (!current_scope.empty()) {
@@ -2331,11 +2333,11 @@ yyreduce:
                                             verbose(error);
                                         }
                                     }
-#line 2335 "generated/parser.yy.cpp"
+#line 2337 "generated/parser.yy.cpp"
     break;
 
   case 82: /* expr: VAR MIN_EQUAL expr  */
-#line 752 "language/parser.y"
+#line 754 "language/parser.y"
                                     {
                                         /* Only add to the ins vector if we are in a function */
                                         if (current_scope.empty()) {
@@ -2347,11 +2349,11 @@ yyreduce:
                                             verbose(error);
                                         }
                                     }
-#line 2351 "generated/parser.yy.cpp"
+#line 2353 "generated/parser.yy.cpp"
     break;
 
   case 83: /* expr: VAR TIMES_EQUAL expr  */
-#line 763 "language/parser.y"
+#line 765 "language/parser.y"
                                     {
                                         /* Only add to the ins vector if we are in a function */
                                         if (current_scope.empty()) {
@@ -2363,11 +2365,11 @@ yyreduce:
                                             verbose(error);
                                         }
                                     }
-#line 2367 "generated/parser.yy.cpp"
+#line 2369 "generated/parser.yy.cpp"
     break;
 
   case 84: /* expr: VAR DIV_EQUAL expr  */
-#line 774 "language/parser.y"
+#line 776 "language/parser.y"
                                     {
                                         /* Only add to the ins vector if we are in a function */
                                         if (current_scope.empty()) {
@@ -2379,11 +2381,11 @@ yyreduce:
                                             verbose(error);
                                         }
                                     }
-#line 2383 "generated/parser.yy.cpp"
+#line 2385 "generated/parser.yy.cpp"
     break;
 
 
-#line 2387 "generated/parser.yy.cpp"
+#line 2389 "generated/parser.yy.cpp"
 
       default: break;
     }
@@ -2577,7 +2579,7 @@ yyreturn:
   return yyresult;
 }
 
-#line 786 "language/parser.y"
+#line 788 "language/parser.y"
 
 
 
@@ -3059,11 +3061,15 @@ int compileCode(const char *filename, GraphSetup *graph)
     /* Analyse the code */
     compileSuccess = yyparse();
 
+    //yy_flush_buffer();
+    yylex_destroy();
+
+/*
     if (fclose(yyin)) {
         fprintf(stderr, "Couldn't close the opened file...\n");
         return 2;
     }
-
+*/
     /* If the compilation was successful, display the graph */
     if (!compileSuccess) {
 
