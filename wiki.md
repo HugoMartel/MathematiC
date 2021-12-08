@@ -136,7 +136,7 @@ draw f in [-8,8], g {
     color: ["red", "#00FF00"],
     // Set the style of your curve
     style: ["dashed", "solid"],
-    // Set a label on your curve
+    // Set a label on your graphe
     label: "Fonction 1",
     // Set xmin, ymin, xmax and ymax for your drawing window
     xmin: -5,
