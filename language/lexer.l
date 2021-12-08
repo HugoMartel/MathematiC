@@ -108,7 +108,6 @@ ymax                                                        { return ymax; }
 "-"                                                         { return MIN; }
 "*"                                                         { return TIMES; }
 "/"                                                         { return DIV; }
-"%"                                                         { return '%'; }
 \(                                                          { return '('; }
 \)                                                          { return ')'; }
 \{                                                          { return '{'; }
