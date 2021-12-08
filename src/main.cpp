@@ -371,11 +371,6 @@ int main(int, char**)
             if (opened_file != "")
                 open(buf, opened_file);
         }
-        /* ctrl q, quit */
-        if (io.KeyCtrl && ImGui::IsKeyDown(20)) {
-            exitSDL(gl_context, window, logo);
-            exit(EXIT_SUCCESS);
-        }
 
         // Rendering
         ImGui::Render();
