@@ -19,19 +19,25 @@
 
 ## I. Structures
 
-Our language follows three step to work efficiently :
+Our language is built around **3** parts:
 
-### 1. First you need to declare your variables
+### 1. Variables declaration
 
 ```
 // Declarations
 var a = 1;
+var b = cos(0);
+var c = 4 / 3;
+var y;
+var z;
 ```
 
-### 2. Second you need to write your functions and your main code
+### 2. Functions definition
 
 ```
-/   if z<y {
+// Functions
+def f: (x) => {
+   if z<y {
         if y > 0 {
             y = sin(2);
             z = x + y + pi;
@@ -50,21 +56,22 @@ def g: (x) => {
 }
 ```
 
-### 3. Third you declare the style and intervalle for the curve
+### 3. Drawing parameters
 
 ```
-// Draw Functions
+// Draw
 draw fonction1 in [-8,8], g {
     color: ["red", "#00FF00"],
     style: ["dashed", "solid"],
     label: "Fonction 1"
 }
 ```
+
 ---
 
 ## II. Variables
 
-To declare a variable in our language you need to use `'var ='`
+To declare a variable in our language you need to use `var <name> = <value>;`
 
 You can then name your variable and give it the value you want :
 
@@ -74,10 +81,10 @@ var anotherVariable = 3;
 var variable3;
 ```
 
-You can only use alphanumerical character and you end the line with `';'`.
-You will notice that you can also cho0se to not assign any value to your variable it will be **0** as default.
+You can only use alphanumerical characters and must end a line with `';'`.
+You will notice that you can also choose not to assign any value to your variable, it will then take **0** as a default value.
 
-There is also some variables already defined such as :
+There also are some variables predefined such as :
 
 ```
 e = 2.71828182845904523536
@@ -89,27 +96,27 @@ pi = 3.14159265358979323846
 
 ## III. Functions
 
-To declare a function you need to first use the key word `'def'`
+To declare a function, you firstly need to use the key word `def`
 
-Then you put the **name** of your function followed by `'functionName : (x) => {'`
+Then you put the **name** of your function followed by `functionName : (x) => {`
 
-You can put your function's instructions and end it with your `'return'` and `'}'`
+You can put your function's instructions and end it with a `}`
 
-A full exemple will looks like that :
+*Full example:*
 
 ```
 def fonction1: (x) => {
-	// Function Instructions
-	if z<y and y>0 {
-		if y > 0 {
-			y = sin(2);
-			z = x + y + pi;
-		} else {
-			z = cos(3);
-		}
+    // Function Instructions
+    if z<y and y>0 {
+        if y > 0 {
+	    y = sin(2);
+	    z = x + y + pi;
 	} else {
-		z =  6*7;
+	    z = cos(3);
 	}
+    } else {
+        z =  6*7;
+    }
     return a*x^2 + b*x + c;/* simple polynomial */
 }
 ```
@@ -118,20 +125,20 @@ def fonction1: (x) => {
 
 ## IV. Display
 
-To display all the function you created you will have to call `'draw'` and then set all the parameters you want.
+To display the functions you have created you will have to call `draw` and then set the optional parameters.
 
-Here is an example for every parameter you can set :
+Here is an example for every parameter you can set with two functions :
 
 ```
-//if the interval isn't declare default interval will be [-10,10]
-draw fonctionName in [-8,8], g {
-    //set color by using name or hexadecimal code
+// If the interval isn't declare default interval will be [-10,10]
+draw f in [-8,8], g {
+    // Set color by using basic names or RGB hexadecimal code
     color: ["red", "#00FF00"],
-    //set the style of your curve
+    // Set the style of your curve
     style: ["dashed", "solid"],
-    //set a label on your curve
+    // Set a label on your curve
     label: "Fonction 1",
-    //set xmin, ymin, xmax and ymax for your window
+    // Set xmin, ymin, xmax and ymax for your drawing window
     xmin: -5,
     ymin: -5,
     xmax: 5,
@@ -139,62 +146,75 @@ draw fonctionName in [-8,8], g {
 }
 ```
 
+*Here we draw f and g, we specify an interval for f which means that the function will only be drawable on this interval, however g is drawable everywhere ([`[DBL_MIN,DBL_MAX]`](https://www.cplusplus.com/reference/cfloat/))*
+
 ### List of parameter you can set in **draw** :
 
-- `color` : you can choose the color using the color name or the hexadecimal code
+- `color` : Color of the curves using the color name or the hexadecimal code
 
-- `style` : you can choose the style of your courb between `"solid", "filled", "dotted", "hist"`
+- `style` : Style of the curves { `"solid"`, `"filled"`, `"dotted"`, `"hist"` }
 
+- `label` : Label of the function widget
 
-- `label` : you can choose to put a label on your curve
+- `xmin, xmax, ymin, ymax` : Rectangle dimensions in which to draw the curve
 
-- `xmin, xmax, ymin, ymax` : you can decide the size of the window
+*`color` and `style` parameters will be called using `[ arg1, arg2, ... ]` matching the number of curves chosen to be drawn.*
 
 ---
 
 ## V. Index
 
+### /!\ Reserved words
+
+- in
+- var
+- def
+- return
+
+***Can't be used in variable names, same goes words defined after this list***
+
+### Predefined variables
+
+- pi
+- phi
+- e
+
+### Basic Operators
+
+- \+ / +=
+- \- / -=
+- \* / *=
+- \/ / /=
+- \^
+- or
+- and
+- !
+- \<
+- \>
+- \<=
+- \>=
+- ==
+- !=
+
 ### Mathematical function :
-
-- sin
-
 - cos
-
+- sin
 - tan 
-
+- arccos
 - arcsin
-
-- arcos
-
 - arctan
-
 - cosh
-
 - sinh
-
 - tanh
-
-- arcosh
-
+- arccosh
 - arcsinh
-
 - arctanh
-
 - pow
-
-- exp
-
 - sqrt
-
+- exp
 - log
 
 ### Logical function
-
-**FOR**
-
-```
-
-```
 
 **IF**
 
@@ -216,6 +236,12 @@ if condition {
 }
 ```
 
+**FOR**
+
+```
+
+```
+
 **WHILE**
 
 ```
@@ -234,6 +260,11 @@ draw functionName in [interval], otherFunctionName, ... {
 }
 ```
 
+
+### Comments
+- multiline: /\*\*/
+- singleline: // 
+
 ---
 
 ## VI. Keyboard Shortcuts  
@@ -250,5 +281,3 @@ You can of course use keyboard shortcuts in the program, some of them can be use
 | CTRL + Q       | select all  |
 | CTRL + W       | undo        |
 | CTRL + Y       | redo        |
-
----
