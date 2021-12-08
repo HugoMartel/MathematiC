@@ -43,10 +43,8 @@
 
 #include "interface.hpp"
 
-#ifndef BUFF_SIZE
-#define BUFF_SIZE 2000
-#endif
 
+/** Useful max macro */
 #define MAX(a, b) (((a) < (b)) ? (b) : (a))
 
 struct MultilineScrollState
@@ -292,30 +290,42 @@ int main(int, char**)
                 /* if the file has no name then we save it  */
                 opened_file = file_dialog({ {"matc", "MathematiC File"} }, true);
             }
-            /* saving the file  */
-            save(buf, opened_file);
-            /* calling the yy parse function (still needs to be coded under include/interface.hpp  */
-            callingYYParse(opened_file);
-            isError = verbose(output, isError, true);
-            /* the button is clicked  */
-            clicked = 1;
+
+            if (opened_file != "") {
+
+                std::string title = "MathematiC - " + opened_file;
+                title.resize(100);
+                SDL_SetWindowTitle(window, title.c_str());
+                /* saving the file  */
+                save(buf, opened_file);
+                /* calling the yy parse function (still needs to be coded under include/interface.hpp  */
+                callingYYParse(opened_file);
+                isError = verbose(output, isError, true);
+                /* the button is clicked  */
+                clicked = 1;
+
+            }
+
         }
 
         /* Output Console  */
         ImDrawList* draw_list = ImGui::GetWindowDrawList();
-        ImGui::Text("Output Console:"); 
+        ImGui::Text("Output Console:");
         if (clicked & 1) {
+
             /* if we have error & output, text red and showing the lex error message  */
             if (isError && output != ""){
                 ImGui::TextColored((ImVec4)ImColor::HSV(0, 0.8f, 0.8f), ("ERROR ...\n" + output).c_str());
                 /* drawing the rectangle  */
                 draw_list->AddRect(ImVec2(ImGui::GetItemRectMin().x - 2, ImGui::GetItemRectMin().y - 2), ImVec2(ImGui::GetWindowSize().x -15, ImGui::GetItemRectMax().y + 2), IM_COL32(255, 255, 255, 255));
+
             /* if not an error and we have output, so the code runned successfully  */
             } else if (!isError && output != "") {
                 /* green text */
-                ImGui::TextColored((ImVec4)ImColor::HSV(2 / 7.0f, 0.8f, 0.8f), ("Running ...\n" + output).c_str()); 
+                ImGui::TextColored((ImVec4)ImColor::HSV(2 / 7.0f, 0.8f, 0.8f), ("Running ...\n" + output).c_str());
                 /* rectangle arround the output */
                 draw_list->AddRect(ImVec2(ImGui::GetItemRectMin().x - 2, ImGui::GetItemRectMin().y - 2), ImVec2(ImGui::GetWindowSize().x -15, ImGui::GetItemRectMax().y + 2), IM_COL32(255, 255, 255, 255));
+
             /* strange case: no output  */
             } else if (output == "") {
                 /* red text and explanation  */
@@ -323,6 +333,7 @@ int main(int, char**)
                 /* rectangle arround it again  */
                 draw_list->AddRect(ImVec2(ImGui::GetItemRectMin().x - 2, ImGui::GetItemRectMin().y - 2), ImVec2(ImGui::GetWindowSize().x -15, ImGui::GetItemRectMax().y + 2), IM_COL32(255, 255, 255, 255));
             }
+
         }
         /* console output */
         ImGui::End();

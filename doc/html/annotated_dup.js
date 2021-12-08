@@ -1,9 +1,11 @@
 var annotated_dup =
 [
-    [ "Curve", "classCurve.html", "classCurve" ],
-    [ "FloatBox", "classFloatBox.html", null ],
-    [ "Fps", "classFps.html", null ],
-    [ "IntBox", "classIntBox.html", null ],
-    [ "MainWindow", "classMainWindow.html", "classMainWindow" ],
-    [ "MultiBox", "classMultiBox.html", "classMultiBox" ]
+    [ "adr", "structadr.html", "structadr" ],
+    [ "Function", "classFunction.html", "classFunction" ],
+    [ "Instruction", "classInstruction.html", "classInstruction" ],
+    [ "MultilineScrollState", "structMultilineScrollState.html", "structMultilineScrollState" ],
+    [ "yy_buffer_state", "structyy__buffer__state.html", "structyy__buffer__state" ],
+    [ "yy_trans_info", "structyy__trans__info.html", "structyy__trans__info" ],
+    [ "yyalloc", "unionyyalloc.html", "unionyyalloc" ],
+    [ "YYSTYPE", "unionYYSTYPE.html", "unionYYSTYPE" ]
 ];

@@ -20,7 +20,10 @@
 #include "./zenity.hpp"
 
 #if !defined(__APPLE__)
-std::string file_dialog(const std::vector<std::pair<std::string, std::string>> &filetypes, bool save) {
+std::string
+file_dialog(const std::vector<std::pair<std::string, std::string>> &filetypes, bool save)
+{
+/** Max buffer size of the path selected with the dialog */
 #define FILE_DIALOG_MAX_BUFFER 1024
 #if defined(_WIN32)
     OPENFILENAME ofn;

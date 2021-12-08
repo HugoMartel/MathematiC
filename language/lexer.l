@@ -1,7 +1,3 @@
-/**
- * @file    lexer.l
- */
-
 %{
     #include <stdio.h>
     #include <stdlib.h>

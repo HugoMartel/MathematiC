@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['intbox_0',['IntBox',['../classIntBox.html',1,'']]]
+  ['multilinescrollstate_41',['MultilineScrollState',['../structMultilineScrollState.html',1,'']]]
 ];

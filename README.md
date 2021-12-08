@@ -34,12 +34,12 @@ draw fonction1 in [-8..8] {
 
 ```
 def f: (x) => {
-    
+
     return cos(x);
 }
 
 def g: (x) => {
-    
+
     return sin(x);
 }
 
@@ -63,8 +63,21 @@ draw sg in [-1..1];
 ```
 
 # Compile
+
+**Use commands in the root folder of the cloned repo**
+
+*Main Program:*
 ```
-make clean all
-./test
+make all
+./MathematiC
 ```
 
+*Unit Testing:*
+```
+make unit_test
+```
+
+*Generate Documentation for the source code:*
+```
+doxygen && cp -rv img doc/html/
+```

@@ -1,5 +1,5 @@
 /**
- * @file    test.cpp
+ * @file    unit-tests.cpp
  * @brief   Test file to tryout our function
  */
 

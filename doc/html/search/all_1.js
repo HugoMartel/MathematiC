@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['callback_0',['callback',['../classMultiBox.html#ad572790a49ac1c271a7e40b1b6db6f47',1,'MultiBox']]],
-  ['curve_1',['Curve',['../classCurve.html',1,'']]]
+  ['buff_5fsize_2',['BUFF_SIZE',['../interface_8hpp.html#a6c7cd32e1bac137f05e4a752b4ad10af',1,'interface.hpp']]]
 ];

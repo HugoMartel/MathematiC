@@ -1,7 +1,3 @@
-/**
- * @file    parser.y
- */
-
 %debug
 
 %{
@@ -20,6 +16,7 @@
 
     #include "interface.hpp"
     #include "function.hpp"
+    //#include "manou.hpp"
 
     /* \/ Uncomment to enable debug output */
     #define __DEBUG__
@@ -44,16 +41,16 @@
     /*===================*/
 
     /* Draw function Variables */
-    std::string argLabel = "Affichage";
-    double argXmin = -10;
-    double argXmax = 10;
-    double argYmin = -10;
-    double argYmax = 10;
+    std::string argLabel;
+    double argXmin;
+    double argXmax;
+    double argYmin;
+    double argYmax;
 
 
     /* Variables only used during parsing */
     /** Function currently modified index */
-    unsigned int functionToEdit = 0;
+    unsigned int functionToEdit;
     int i;
 
 
@@ -117,6 +114,25 @@
      */
     int compileCode(const char *filename);
 }
+
+
+%initial-action
+{
+    /* Reset to default values */
+    argLabel = "Affichage";
+    argXmin = -10;
+    argXmax = 10;
+    argYmin = -10;
+    argYmax = 10;
+
+    /* Empty variables and maps */
+    functionToEdit = 0;
+    variables.clear();
+    current_scope.clear();
+    functions.clear();
+
+}
+
 
 %code requires
   {
