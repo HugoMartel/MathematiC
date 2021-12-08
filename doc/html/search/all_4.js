@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['file_5fdialog_7',['file_dialog',['../zenity_8cpp.html#a2948d78ff12ef014370b00998b917a38',1,'zenity.cpp']]],
-  ['function_8',['Function',['../classFunction.html',1,'Function'],['../classFunction.html#ae206568fd4fd4c885e3ccff76345c4e6',1,'Function::Function()']]],
-  ['function_2ehpp_9',['function.hpp',['../function_8hpp.html',1,'']]]
+  ['exitsdl_9',['exitSDL',['../main_8cpp.html#a1f563659b3ea29164c271282f17ab6bb',1,'main.cpp']]]
 ];

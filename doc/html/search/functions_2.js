@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['exitsdl_54',['exitSDL',['../main_8cpp.html#a1f563659b3ea29164c271282f17ab6bb',1,'main.cpp']]]
+  ['dograph_71',['doGraph',['../mathGraph_8cpp.html#ace5638ce415b976fb3e3746e77225a46',1,'doGraph(int width, int height, GraphSetup setup):&#160;mathGraph.cpp'],['../mathGraph_8hpp.html#ace5638ce415b976fb3e3746e77225a46',1,'doGraph(int width, int height, GraphSetup setup):&#160;mathGraph.cpp']]]
 ];

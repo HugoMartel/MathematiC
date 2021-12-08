@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['open_59',['open',['../interface_8cpp.html#a07e9fc11656fb4a99b8313a003ca7a97',1,'open(char *buff, std::string &amp;filename):&#160;interface.cpp'],['../interface_8hpp.html#a341cb0bff4822a1b784b62a7e81387a6',1,'open(char *, std::string &amp;):&#160;interface.cpp']]],
-  ['operator_28_29_60',['operator()',['../classFunction.html#a84e23d5a5f14a59bfa9c8878743e7bcd',1,'Function']]]
+  ['instruction_76',['Instruction',['../classInstruction.html#ada8d04d1f6a443f6f78d54b255955486',1,'Instruction::Instruction(const int &amp;c, const double &amp;v=0, const std::string &amp;n=&quot;&quot;)'],['../classInstruction.html#aebd15229c1651af49dcb203707e7a2d5',1,'Instruction::Instruction()']]]
 ];

@@ -8,10 +8,12 @@
 #include "parser.yy.hpp"
 
 
-void callingYYParse(std::string filename)
+void callingYYParse(std::string filename, GraphSetup *graph, int width)
 {
     if (filename != "") {
-        compileCode(filename.c_str());
+        compileCode(filename.c_str(), graph);
+
+        graph->updateCurves(width);
     }
 }
 

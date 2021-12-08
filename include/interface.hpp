@@ -9,6 +9,8 @@
 #include <string>
 #include <algorithm>
 
+#include "mathGraph.hpp"
+
 
 #ifndef BUFF_SIZE
 /**
@@ -37,10 +39,12 @@ void open(char *, std::string &);
 
 /**
  * Calls YYParse with the filename
- * @param[in]   filename     the filename containing the buffer
+ * @param[in]   filename    the filename containing the buffer
+ * @param[out]  graph       Pointer to the main GraphSetup object to change after a successful compilation
+ * @param[in]   width       Graph widget width, used to compute the right amount of points
  */
+void callingYYParse(std::string, GraphSetup *, int width);
 
-void callingYYParse(std::string);
 
 /**
  * getter & setter for the verbose output when running code

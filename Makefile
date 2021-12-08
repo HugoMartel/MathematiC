@@ -38,7 +38,7 @@ SOURCES += $(IMGUI_DIR)/backends/imgui_impl_sdl.cpp $(IMGUI_DIR)/backends/imgui_
 # IMPLOT DIR
 SOURCES += $(IMPLOT_DIR)/implot.cpp $(IMPLOT_DIR)/implot_items.cpp
 # INCLUDE DIR
-SOURCES += $(INC)/zenity.cpp $(INC)/interface.cpp
+SOURCES += $(INC)/zenity.cpp $(INC)/interface.cpp $(INC)/mathGraph.cpp
 
 
 # Get generated objects names

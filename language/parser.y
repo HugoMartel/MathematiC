@@ -16,7 +16,6 @@
 
     #include "interface.hpp"
     #include "function.hpp"
-    //#include "manou.hpp"
 
     /* \/ Uncomment to enable debug output */
     #define __DEBUG__
@@ -106,13 +105,15 @@
 
 
 %code provides {
+    #include "mathGraph.hpp"
+
     /**
      * Compile the code to generate the functions to then use to draw
      * @param[in]   filename    file to open to read the code from
-     * @param[out]  func        Function map storing generated functions in the use written code
+     * @param[out]  graph       GraphSetup object to set after a successful compilation
      * @return      0: success, 1: open error, 2: close error, 3: display interval error, 4: compilation error
      */
-    int compileCode(const char *filename);
+    int compileCode(const char *filename, GraphSetup *graph);
 }
 
 
@@ -288,7 +289,7 @@ fonctions: DEF VAR ':' '(' parameters ')' arrow '{'           {
                     current_scope.clear();
 
                     /* Check if the function wasn't already declared */
-                    if(!functions.count($2)) {
+                    if (!functions.count($2)) {
                         functions[$2] = Function();
                         /* Enqueue to keep it in memory */
                         current_scope.push_back($2);
@@ -353,10 +354,11 @@ draw_func: VAR in '[' NUM ',' NUM ']'                   {
 
 /*===========================================================================================*/
 affichage: DRAW draw_func '{'                           {
-                                                          /* On vide le scope */
-                                                            while(!current_scope.empty()){
-                                                                current_scope.pop_back();
+#ifdef __DEBUG__
+                                                            for (size_t i = 0; i < current_scope.size(); ++i) {
+                                                                std::cout << i << ": " << current_scope[i] << "\n";
                                                             }
+#endif
                                                         }
                 draw_args
            '}'
@@ -364,8 +366,8 @@ affichage: DRAW draw_func '{'                           {
 
 
 /*===========================================================================================*/
-draw_args: color ':' '[' color_args ']'                 { /* getting the multiples color args (or not) */ 
-                                                          if(current_scope.size() == argQueue.size()){ // on vérifie qu'il y a suffisament d'arguments
+draw_args: color ':' '[' color_args ']'                 { /* getting the multiples color args (or not) */
+                                                          if (current_scope.size() == argQueue.size()){ // on vérifie qu'il y a suffisament d'arguments
                                                                 functionToEdit = current_scope.size();
                                                                 while (!argQueue.empty()){ // on attribue chaque argument à sa fonction
                                                                     --functionToEdit;
@@ -375,7 +377,7 @@ draw_args: color ':' '[' color_args ']'                 { /* getting the multipl
                                                             }
                                                         }
          | style ':' '[' style_args ']'                 { /* getting the multiples style args (or not) */
-                                                            if(current_scope.size() == argQueue.size()){ // on vérifie qu'il y a suffisament d'arguments
+                                                            if (current_scope.size() == argQueue.size()){ // on vérifie qu'il y a suffisament d'arguments
                                                                 functionToEdit = current_scope.size();
                                                                 while (!argQueue.empty()) { // on attribue chaque argument à sa fonction
                                                                     --functionToEdit;
@@ -1125,7 +1127,7 @@ double Function::operator()(...)
 
 
 /*====================================================================================*/
-int compileCode(const char *filename)
+int compileCode(const char *filename, GraphSetup *graph)
 {
     int compileSuccess;
 
@@ -1152,7 +1154,17 @@ int compileCode(const char *filename)
             yyerror("Wrong display window size values...");
             return 3;
         } else {
-            //TODO CALL MANOU FUNCTION
+            /* Construct the GraphSetup object */
+            graph = new GraphSetup(
+                functions,
+                current_scope,
+                argYmin,
+                argYmax,
+                argXmin,
+                argYmax,
+                argLabel
+            );
+
             return EXIT_SUCCESS;
         }
 

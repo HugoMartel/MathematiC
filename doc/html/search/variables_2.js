@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['name_68',['name',['../classInstruction.html#abfd1615a8bb140e70b3724214deee7df',1,'Instruction']]]
+  ['iic_90',['iic',['../classFunction.html#aa8753b780e97130526ce56af81b412ac',1,'Function']]],
+  ['interxmins_91',['interXmins',['../classGraphSetup.html#ac4d72c311b4753a808912e3ee07287e9',1,'GraphSetup']]]
 ];

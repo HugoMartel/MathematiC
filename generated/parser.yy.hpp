@@ -45,7 +45,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 138 "language/parser.y"
+#line 139 "language/parser.y"
 
     typedef struct adr {
         int jmp;  // adresse du jmp
@@ -134,7 +134,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 145 "language/parser.y"
+#line 146 "language/parser.y"
 
     double dvalue;
     char svalue[50];
@@ -154,16 +154,18 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 /* "%code provides" blocks.  */
-#line 108 "language/parser.y"
+#line 107 "language/parser.y"
+
+    #include "mathGraph.hpp"
 
     /**
      * Compile the code to generate the functions to then use to draw
      * @param[in]   filename    file to open to read the code from
-     * @param[out]  func        Function map storing generated functions in the use written code
+     * @param[out]  graph       GraphSetup object to set after a successful compilation
      * @return      0: success, 1: open error, 2: close error, 3: display interval error, 4: compilation error
      */
-    int compileCode(const char *filename);
+    int compileCode(const char *filename, GraphSetup *graph);
 
-#line 168 "generated/parser.yy.hpp"
+#line 170 "generated/parser.yy.hpp"
 
 #endif /* !YY_YY_GENERATED_PARSER_YY_HPP_INCLUDED  */

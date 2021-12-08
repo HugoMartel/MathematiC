@@ -95,8 +95,8 @@ $(document).ready(function(){initNavTree('interface_8cpp.html',''); initResizabl
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a1d1ab07f10cd495538c992ab35eddf98"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_8cpp.html#a1d1ab07f10cd495538c992ab35eddf98">callingYYParse</a> (std::string filename)</td></tr>
-<tr class="separator:a1d1ab07f10cd495538c992ab35eddf98"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acde54865e389f23b562f497ab3596699"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_8cpp.html#acde54865e389f23b562f497ab3596699">callingYYParse</a> (std::string filename, <a class="el" href="classGraphSetup.html">GraphSetup</a> *graph, int width)</td></tr>
+<tr class="separator:acde54865e389f23b562f497ab3596699"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad4e5d1eabb3afd2cecffe5ca8f0b22f1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_8cpp.html#ad4e5d1eabb3afd2cecffe5ca8f0b22f1">verbose</a> (std::string &amp;mOutput, bool mIsError, bool read)</td></tr>
 <tr class="separator:ad4e5d1eabb3afd2cecffe5ca8f0b22f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a07e9fc11656fb4a99b8313a003ca7a97"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_8cpp.html#a07e9fc11656fb4a99b8313a003ca7a97">open</a> (char *buff, std::string &amp;filename)</td></tr>
@@ -105,8 +105,8 @@ Functions</h2></td></tr>
 <tr class="separator:aa93a225cf130aae76a9ad277ee025c4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a1d1ab07f10cd495538c992ab35eddf98"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1d1ab07f10cd495538c992ab35eddf98">&#9670;&nbsp;</a></span>callingYYParse()</h2>
+<a id="acde54865e389f23b562f497ab3596699"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acde54865e389f23b562f497ab3596699">&#9670;&nbsp;</a></span>callingYYParse()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -115,14 +115,32 @@ Functions</h2></td></tr>
           <td class="memname">void callingYYParse </td>
           <td>(</td>
           <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>filename</em></td><td>)</td>
+          <td class="paramname"><em>filename</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="classGraphSetup.html">GraphSetup</a> *&#160;</td>
+          <td class="paramname"><em>graph</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>width</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 <p>Calls YYParse with the filename </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>the filename containing the buffer </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">graph</td><td>Pointer to the main <a class="el" href="classGraphSetup.html">GraphSetup</a> object to change after a successful compilation </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">width</td><td>Graph widget width, used to compute the right amount of points </td></tr>
   </table>
   </dd>
 </dl>

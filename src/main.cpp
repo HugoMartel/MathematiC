@@ -27,6 +27,7 @@
 
 /* Custom includes */
 #include "zenity.hpp"
+#include "mathGraph.hpp"
 
 /* STD includes */
 #if defined(_WIN32)
@@ -82,18 +83,6 @@ static bool ImGuiInputTextMultiline(const char* label, char* buf, size_t buf_siz
  * Function to add background color & style to the window and Imgui elements
  */
 static void doStyle();
-/**
- * Function used to draw a Graph
- * @param[in]       width       Window width
- * @param[in]       height      Window height
- * @param[in]       interXmin   Min x value of the drawn functions, will become a table of values
- * @param[in]       interXmax   Max x value of the drawn functions
- * @param[in]       displayYmin Min y value of the function display
- * @param[in]       displayYmax Max y value of the function display
- * @param[in]       displayXmin Min x value of the function display
- * @param[in]       displayXmax Max x value of the function display
- */
-static void doGraph(int *width, int *height, double interXmin, double interXmax, const double &displayYmin, const double &displayYmax, const double &displayXmin, const double &displayXmax);
 /**
  * Function to display the menu bar
  * @param[in]       buff        buffer containing the code written
@@ -225,6 +214,10 @@ int main(int, char**)
     unsigned int clicked = 0;
     /* the string shown in the console output  */
     std::string output("");
+    /* Setup our graph object */
+    GraphSetup ourGraph = GraphSetup();
+
+
     /*-----------------*/
     /* -- Main loop -- */
     /*-----------------*/
@@ -298,8 +291,8 @@ int main(int, char**)
                 SDL_SetWindowTitle(window, title.c_str());
                 /* saving the file  */
                 save(buf, opened_file);
-                /* calling the yy parse function (still needs to be coded under include/interface.hpp  */
-                callingYYParse(opened_file);
+                /* calling the yy parse function */
+                callingYYParse(opened_file, &ourGraph, *width);
                 isError = verbose(output, isError, true);
                 /* the button is clicked  */
                 clicked = 1;
@@ -345,7 +338,8 @@ int main(int, char**)
 
         ImGui::Begin("graphe", NULL, windowFlags);
         ImPlot::CreateContext();
-        doGraph(width, height, -2.0, 12.5, -10.0, 10.0, -2.0, 12.5);
+        ourGraph.updateCurves(*width);
+        doGraph(*width, *height, ourGraph);
         ImPlot::DestroyContext();
         ImGui::End();
 
@@ -429,11 +423,9 @@ static bool ImGuiInputTextMultiline(const char* label, char* buf, size_t buf_siz
     scrollState.storage = ImGui::GetStateStorage();
     ImGuiStyle &style = ImGui::GetStyle();
     style.Colors[ImGuiCol_FrameBg] = ImColor(69, 71, 91, 255);
-    /* if we want the horizontal scroll bar, we need to comment the SCROLL_WIDTH and replace with it ImGui::WindowSize().x, line bool changed .... 
+    /* if we want the horizontal scroll bar, we need to comment the SCROLL_WIDTH and replace with it ImGui::WindowSize().x, line bool changed ...
      * also, we need to change labelWidth with ImGui::CalcTextSize(label).x;
-     * and finaly we need to set scrollbarSize = ImGui::GetStyle().ScrollbarSize;
-     * TODO: find better conditions to allow horizontal scroll, cause now it's a bit broken, you can only use keyboard arrows
-     *       to scroll the text */
+     * and finaly we need to set scrollbarSize = ImGui::GetStyle().ScrollbarSize; */
     bool changed = ImGui::InputTextMultiline(label, buf, buf_size, ImVec2(SCROLL_WIDTH, MAX(0.0f, height - scrollbarSize)),
                                              flags | ImGuiInputTextFlags_CallbackAlways, MultilineScrollCallback, &scrollState);
 
@@ -452,40 +444,6 @@ static void doStyle()
 {
     ImGuiStyle &style = ImGui::GetStyle();
     style.Colors[ImGuiCol_WindowBg] = ImColor(40, 43, 55, 255);
-}
-
-/*=======================================================================================*/
-//TODO   add the function as parameters
-static void doGraph(int *width, int *height, double interXmin, double interXmax, const double &displayYmin, const double &displayYmax, const double &displayXmin, const double &displayXmax)
-{
-    /* Get widget's width */
-    const unsigned int sizeN = *width - 480;
-    /* Points to plot coords (x,y) */
-    double arrX[sizeN];
-    double arrY[sizeN];
-
-    /* step between two points plotted */
-    double step1 = (1.0/sizeN) * (interXmax - interXmin);
-    /* Compute coords on the interval [interXmin, interXmax] */
-    for (unsigned int i = 0; i < sizeN; ++i) {
-        arrY[i] = 10 * (cos(interXmin)*exp(-0.5 * interXmin));//! will change
-        arrX[i] = interXmin;
-        interXmin += step1;/* Corresponds to 1px *///? to check
-    }
-
-    if (ImPlot::BeginPlot("Line Plot", ImVec2(*width - 480 - 15,*height - 37))) {//! will change (label)
-        /* Init Axis */
-        ImPlot::SetupAxes("x", "y");
-        /*Always prevents movable axis*/
-        ImPlot::SetupAxesLimits(displayXmin, displayXmax, displayYmin, displayYmax, ImGuiCond_Always);
-
-        /* PlotLine(label, x values, y values, arrays length = # of points to draw) */
-        //! will change to be able to plot n functions from lexer/parser
-        ImPlot::PlotLine("y=10*cos(20*x)*e^(-0.5*x)", arrX, arrY, sizeN);// First func
-        ImPlot::PlotLine("y=x", arrX, arrX, sizeN);// Second func
-        ImPlot::EndPlot();
-    }
-
 }
 
 /*=======================================================================================*/

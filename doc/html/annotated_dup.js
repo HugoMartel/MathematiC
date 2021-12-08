@@ -2,6 +2,7 @@ var annotated_dup =
 [
     [ "adr", "structadr.html", "structadr" ],
     [ "Function", "classFunction.html", "classFunction" ],
+    [ "GraphSetup", "classGraphSetup.html", "classGraphSetup" ],
     [ "Instruction", "classInstruction.html", "classInstruction" ],
     [ "MultilineScrollState", "structMultilineScrollState.html", "structMultilineScrollState" ],
     [ "yy_buffer_state", "structyy__buffer__state.html", "structyy__buffer__state" ],

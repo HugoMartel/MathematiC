@@ -1,8 +1,6 @@
 var searchData=
 [
-  ['main_14',['main',['../main_8cpp.html#a2c3f6775325c30275d11c6abee2db6a0',1,'main.cpp']]],
-  ['main_2ecpp_15',['main.cpp',['../main_8cpp.html',1,'']]],
-  ['mathematic_16',['MathematiC',['../index.html',1,'']]],
-  ['max_17',['MAX',['../main_8cpp.html#afa99ec4acc4ecb2dc3c2d05da15d0e3f',1,'main.cpp']]],
-  ['multilinescrollstate_18',['MultilineScrollState',['../structMultilineScrollState.html',1,'']]]
+  ['gotsomething_13',['gotSomething',['../classGraphSetup.html#a6b22d041087ba995e5f437bfe191449e',1,'GraphSetup']]],
+  ['graphname_14',['graphName',['../classGraphSetup.html#aa0dd5ec8027b75ffa6d40f9f74a9219b',1,'GraphSetup']]],
+  ['graphsetup_15',['GraphSetup',['../classGraphSetup.html',1,'GraphSetup'],['../classGraphSetup.html#a96aca3f9a33cd35d9df9974fa26b0012',1,'GraphSetup::GraphSetup()'],['../classGraphSetup.html#a657d23c54bfd3d4a83cd0f56f1db0851',1,'GraphSetup::GraphSetup(std::map&lt; std::string, Function &gt; &amp;curvesData, std::vector&lt; std::string &gt; curvesNames, const double &amp;displayYmin, const double &amp;displayYmax, const double &amp;displayXmin, const double &amp;displayXmax, std::string &amp;label)']]]
 ];

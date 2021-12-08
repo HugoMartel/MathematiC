@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['instruction_57',['Instruction',['../classInstruction.html#ada8d04d1f6a443f6f78d54b255955486',1,'Instruction::Instruction(const int &amp;c, const double &amp;v=0, const std::string &amp;n=&quot;&quot;)'],['../classInstruction.html#aebd15229c1651af49dcb203707e7a2d5',1,'Instruction::Instruction()']]]
+  ['file_5fdialog_73',['file_dialog',['../zenity_8cpp.html#a2948d78ff12ef014370b00998b917a38',1,'zenity.cpp']]],
+  ['function_74',['Function',['../classFunction.html#ae206568fd4fd4c885e3ccff76345c4e6',1,'Function']]]
 ];
