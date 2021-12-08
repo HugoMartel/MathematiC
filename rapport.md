@@ -47,9 +47,13 @@ Une fois à la fin du projet, il y a eu une semaine de mise en commun où toutes
 
 ## IV. Organisation
 
-Concernant l'organisation du projet nous avons pendant la première séance réalisé une réunion afin de séparer le projet en différentes tâches bien précises, pour se les répartir. Nous avons pu ainsi attribuer les rôles de chacun et nous avons décider de créer un serveur discord afin de tenir compte de nos avancées et ou de nos retards. Nous nous sommes aussi tenu à un rythme de une réunion hébdomadaire afin de bien s'assurer que tous le monde réussissait à progresser dans le projet.
+Concernant l'organisation du projet nous avons pendant la première séance réalisé une réunion afin de séparer le projet en différentes tâches bien précises, pour se les répartir. Nous avons pu ainsi attribuer les rôles de chacun et nous avons décidé de créer un serveur Discord afin de tenir compte de nos avancées et ou de nos retards. Nous nous sommes aussi tenus à un rythme de une réunion hébdomadaire afin de bien s'assurer que tous le monde réussissait à progresser dans le projet.
 
-Cette façon de faire nous a donc permis à tous d'avoir une vue d'ensemble sur l'avancée global du projet du toute la periode de production. Elle nous permettait aussi de bien garder à l'esprit les deadlines de chaque partie.
+Cette façon de faire nous a donc permis à tous d'avoir une vue d'ensemble sur l'avancée du projet pendant toute la periode de production. Elle nous permettait aussi de bien garder à l'esprit les deadlines pour chaque branche. Nous avons principalement utilisé 4 branches: 
+- main pour les versions fonctionnelles
+- implot pour l'affichage des fonctions
+- front pour l'interface
+- language pour bison/flex
 
 ---
 
