@@ -47,7 +47,7 @@ void open(char *buff, std::string &filename)
     std::fstream file;
     file.open(filename);
     if (!file) {
-        printf("error, cannot open the file");
+        fprintf(stderr, "error, cannot open the file");
         return;
     } else {
         std::string line;
@@ -62,7 +62,7 @@ void open(char *buff, std::string &filename)
             buff[input.size()] = '\0';
         } else {
             buff[0] = '\0';
-            printf("cannot open this file, it's too large");
+            fprintf(stderr, "cannot open this file, it's too large");
         }
     }
 }

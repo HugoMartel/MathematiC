@@ -119,8 +119,6 @@ void doGraph(int width, int height, GraphSetup *setup)
 
             for (size_t n = 0; n < setup->names.size(); n++) {
 
-                printf("Current plotmode %s\n", setup->plotModes[n]);
-
                 if (std::strcmp(setup->plotModes[n], "solid") == 0) {
 
                     /* PlotLine(label, x values, y values, arrays length = # of points to draw) */
