@@ -47,7 +47,7 @@ Une fois à la fin du projet, il y a eu une semaine de mise en commun où toutes
 
 ## IV. Organisation
 
-Concernant l'organisation du projet nous avons pendant la première séance réalisé une réunion afin de séparer le projet en différentes tâches bien précises afin de se les répartir. Nous avons pu ainsi attribuer les rôles de chacun et nous avons décider de créer un serveur discord afin de tenir compte de nos avancées et ou de nos retards. Nous nous sommes aussi tenu à un rythme de une réunion hébdomadaire afin de bien s'assurer que tous le monde réussissait à progresser dans le projet.
+Concernant l'organisation du projet nous avons pendant la première séance réalisé une réunion afin de séparer le projet en différentes tâches bien précises, pour se les répartir. Nous avons pu ainsi attribuer les rôles de chacun et nous avons décider de créer un serveur discord afin de tenir compte de nos avancées et ou de nos retards. Nous nous sommes aussi tenu à un rythme de une réunion hébdomadaire afin de bien s'assurer que tous le monde réussissait à progresser dans le projet.
 
 Cette façon de faire nous a donc permis à tous d'avoir une vue d'ensemble sur l'avancée global du projet du toute la periode de production. Elle nous permettait aussi de bien garder à l'esprit les deadlines de chaque partie.
 
