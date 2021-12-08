@@ -9,6 +9,7 @@ var b = 2;
 var c = 3 * b;
 var z = 5.5 - 6;
 var y = phi;
+var d = 10;
 
 
 
@@ -32,9 +33,17 @@ def g: (x) => {
 	return 2*sin(x);
 }
 
-draw fonction1 in [-8,8], g {
-    color: ["red", "#00FF00"],
-	style: ["dotted", "solid"],
+def h: (x) => {
+	while d <= 58 {
+		d += 2;
+	}
+	z = 45;
+	return x;
+}
+
+draw fonction1 in [-8,8], g, h {
+    color: ["red", "#00FF00", "cyan"],
+	style: ["dotted", "solid", "solid"],
     label: "Fonction 1",
 	xmin: -8
 }

@@ -45,7 +45,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 139 "language/parser.y"
+#line 141 "language/parser.y"
 
     typedef struct adr {
         int jmp;  // adresse du jmp
@@ -89,43 +89,44 @@ extern int yydebug;
     EXP = 280,                     /* EXP  */
     VAR = 281,                     /* VAR  */
     FOR = 282,                     /* FOR  */
-    IF = 283,                      /* IF  */
-    ELSE = 284,                    /* ELSE  */
-    WHILE = 285,                   /* WHILE  */
-    TAN = 286,                     /* TAN  */
-    ARCCOS = 287,                  /* ARCCOS  */
-    ARCSIN = 288,                  /* ARCSIN  */
-    ARCTAN = 289,                  /* ARCTAN  */
-    COSH = 290,                    /* COSH  */
-    SINH = 291,                    /* SINH  */
-    TANH = 292,                    /* TANH  */
-    ARCSINH = 293,                 /* ARCSINH  */
-    ARCCOSH = 294,                 /* ARCCOSH  */
-    ARCTANH = 295,                 /* ARCTANH  */
-    SQRT = 296,                    /* SQRT  */
-    LOG = 297,                     /* LOG  */
-    DRAW = 298,                    /* DRAW  */
-    JMP = 299,                     /* JMP  */
-    JMPCOND = 300,                 /* JMPCOND  */
-    ASSIGN = 301,                  /* ASSIGN  */
-    CALL = 302,                    /* CALL  */
-    PLUS = 303,                    /* PLUS  */
-    MIN = 304,                     /* MIN  */
-    TIMES = 305,                   /* TIMES  */
-    DIV = 306,                     /* DIV  */
-    PLUS_EQUAL = 307,              /* PLUS_EQUAL  */
-    MIN_EQUAL = 308,               /* MIN_EQUAL  */
-    TIMES_EQUAL = 309,             /* TIMES_EQUAL  */
-    DIV_EQUAL = 310,               /* DIV_EQUAL  */
-    EQUAL = 311,                   /* EQUAL  */
-    NOT_EQ = 312,                  /* NOT_EQ  */
-    INF_STRICT = 313,              /* INF_STRICT  */
-    SUP_STRICT = 314,              /* SUP_STRICT  */
-    INF = 315,                     /* INF  */
-    SUP = 316,                     /* SUP  */
-    AND = 317,                     /* AND  */
-    OR = 318,                      /* OR  */
-    NOT = 319                      /* NOT  */
+    PROCEEDFOR = 283,              /* PROCEEDFOR  */
+    IF = 284,                      /* IF  */
+    ELSE = 285,                    /* ELSE  */
+    WHILE = 286,                   /* WHILE  */
+    TAN = 287,                     /* TAN  */
+    ARCCOS = 288,                  /* ARCCOS  */
+    ARCSIN = 289,                  /* ARCSIN  */
+    ARCTAN = 290,                  /* ARCTAN  */
+    COSH = 291,                    /* COSH  */
+    SINH = 292,                    /* SINH  */
+    TANH = 293,                    /* TANH  */
+    ARCSINH = 294,                 /* ARCSINH  */
+    ARCCOSH = 295,                 /* ARCCOSH  */
+    ARCTANH = 296,                 /* ARCTANH  */
+    SQRT = 297,                    /* SQRT  */
+    LOG = 298,                     /* LOG  */
+    DRAW = 299,                    /* DRAW  */
+    JMP = 300,                     /* JMP  */
+    JMPCOND = 301,                 /* JMPCOND  */
+    ASSIGN = 302,                  /* ASSIGN  */
+    CALL = 303,                    /* CALL  */
+    PLUS = 304,                    /* PLUS  */
+    MIN = 305,                     /* MIN  */
+    TIMES = 306,                   /* TIMES  */
+    DIV = 307,                     /* DIV  */
+    PLUS_EQUAL = 308,              /* PLUS_EQUAL  */
+    MIN_EQUAL = 309,               /* MIN_EQUAL  */
+    TIMES_EQUAL = 310,             /* TIMES_EQUAL  */
+    DIV_EQUAL = 311,               /* DIV_EQUAL  */
+    EQUAL = 312,                   /* EQUAL  */
+    NOT_EQ = 313,                  /* NOT_EQ  */
+    INF_STRICT = 314,              /* INF_STRICT  */
+    SUP_STRICT = 315,              /* SUP_STRICT  */
+    INF = 316,                     /* INF  */
+    SUP = 317,                     /* SUP  */
+    AND = 318,                     /* AND  */
+    OR = 319,                      /* OR  */
+    NOT = 320                      /* NOT  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -134,14 +135,14 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 146 "language/parser.y"
+#line 148 "language/parser.y"
 
     double dvalue;
     char svalue[50];
     bool bvalue;
     type_adresse adresse;
 
-#line 145 "generated/parser.yy.hpp"
+#line 146 "generated/parser.yy.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -154,7 +155,7 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 /* "%code provides" blocks.  */
-#line 107 "language/parser.y"
+#line 109 "language/parser.y"
 
     #include "mathGraph.hpp"
 
@@ -166,6 +167,6 @@ int yyparse (void);
      */
     int compileCode(const char *filename, GraphSetup *graph);
 
-#line 170 "generated/parser.yy.hpp"
+#line 171 "generated/parser.yy.hpp"
 
 #endif /* !YY_YY_GENERATED_PARSER_YY_HPP_INCLUDED  */

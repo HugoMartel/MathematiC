@@ -13,6 +13,7 @@
     #include <stack>
     #include <vector>
     #include <iostream>
+    #include <tuple>
 
     #include "interface.hpp"
     #include "function.hpp"
@@ -46,12 +47,13 @@
     double argYmin;
     double argYmax;
 
+    /* Map with FOR variables */
+    std::map<std::string, std::tuple<double, double, double>> forArguments;
 
     /* Variables only used during parsing */
     /** Function currently modified index */
     unsigned int functionToEdit;
     int i;
-
 
 
     /**
@@ -184,6 +186,7 @@
 %token <DOUBLE> EXP
 %token <STRING> VAR
 %token <ADDRESS> FOR
+%token <BOOL> PROCEEDFOR
 %token <ADDRESS> IF
 %token <ADDRESS> ELSE
 %token <ADDRESS> WHILE
@@ -330,7 +333,7 @@ parameters: VAR                                         {
 /*===========================================================================================*/
 draw_func: VAR in '[' NUM ',' NUM ']'                   {
                     /* Load function names to send to the front-end */
-                    current_scope.push_back($1);
+                    current_scope[0] = $1;
 
                     /* Check if the function is already drawn */
                     if (functions.count($1)) {
@@ -353,36 +356,49 @@ draw_func: VAR in '[' NUM ',' NUM ']'                   {
 
 
 /*===========================================================================================*/
-affichage: DRAW draw_func '{'                           {
+affichage: DRAW draw_func '{'
+                draw_args
+          '}'                                           {
 #ifdef __DEBUG__
                                                             for (size_t i = 0; i < current_scope.size(); ++i) {
                                                                 std::cout << i << ": " << current_scope[i] << "\n";
                                                             }
 #endif
                                                         }
-                draw_args
-           '}'
-         | DRAW draw_func ';'                           { /* TODO: load default args */ }
+
+         | DRAW draw_func ';'                           {
+#ifdef __DEBUG__
+                                                            for (size_t i = 0; i < current_scope.size(); ++i) {
+                                                                std::cout << i << ": " << current_scope[i] << "\n";
+                                                            }
+#endif
+                                                        }
 
 
 /*===========================================================================================*/
 draw_args: color ':' '[' color_args ']'                 { /* getting the multiples color args (or not) */
-                                                          if (current_scope.size() == argQueue.size()){ // on vérifie qu'il y a suffisament d'arguments
-                                                                functionToEdit = current_scope.size();
-                                                                while (!argQueue.empty()){ // on attribue chaque argument à sa fonction
-                                                                    --functionToEdit;
+                                                            if (current_scope.size() == argQueue.size()) { /* Check if the arg count matches the function count */
+                                                                functionToEdit = 0;
+                                                                while (!argQueue.empty()) { /* Assign each attribute to its function */
+#ifdef __DEBUG__
+                                                                    std::cout << "arg : " << argQueue.front() << " in " << current_scope[functionToEdit] << "\n";
+#endif
                                                                     functions[current_scope[functionToEdit]].color = argQueue.front();
                                                                     argQueue.pop();
+                                                                    ++functionToEdit;
                                                                 }
                                                             }
                                                         }
          | style ':' '[' style_args ']'                 { /* getting the multiples style args (or not) */
-                                                            if (current_scope.size() == argQueue.size()){ // on vérifie qu'il y a suffisament d'arguments
-                                                                functionToEdit = current_scope.size();
-                                                                while (!argQueue.empty()) { // on attribue chaque argument à sa fonction
-                                                                    --functionToEdit;
+                                                            if (current_scope.size() == argQueue.size()) { /* Check if the arg count matches the function count */
+                                                                functionToEdit = 0;
+                                                                while (!argQueue.empty()) { /* Assign each attribute to its function */
+#ifdef __DEBUG__
+                                                                    std::cout << "arg : " << argQueue.front() << " in " << current_scope[functionToEdit] << "\n";
+#endif
                                                                     functions[current_scope[functionToEdit]].style = argQueue.front();
                                                                     argQueue.pop();
+                                                                    ++functionToEdit;
                                                                 }
                                                             }
                                                         }
@@ -463,15 +479,33 @@ instruction: %empty /* \epsilon */                      { /* No instructions lef
                 // Je mets à jour l'adresse du saut inconditionnel
                  functions[current_scope[0]].code[$1.jmp].value = functions[current_scope[0]].iic;
 }
-           | FOR VAR in '[' expr ':' expr ':' expr ']' '{'
-                instruction
-             '}'                                        { add_instruction(FOR); }
-           | WHILE logic '{'                            {
-                                                $1.jc = functions[current_scope[0]].iic;
-                                                add_instruction(JMPCOND);
-                                                        }
-                instruction
-             '}'                                        { add_instruction(WHILE); }
+           | FOR VAR in '[' expr ':' expr ':' expr ']' '{'  {
+                                                                if (!functions[$2].parameters.count($2)) {
+                                                                    add_instruction(FOR,0,$2);
+                                                                    $1.jmp = functions[current_scope[0]].iic;
+                                                                    add_instruction(PROCEEDFOR,0,$2);
+                                                                    $1.jc = functions[current_scope[0]].iic;
+                                                                    add_instruction(JMPCOND, $1.jc);
+                                                                } else
+                                                                    yyerror("Parameter already used...");
+
+                                                            }
+                instruction                                 {   add_instruction(JMP, $1.jmp);   }
+             '}'                                            {
+                                                                //! Check stack value
+                                                                functions[current_scope[0]].code[$1.jc].value = functions[current_scope[0]].iic;
+                                                            }
+           | WHILE logic '{'                                {
+                                                                // Store instruction vector index of both jumps
+                                                                $1.jc = functions[current_scope[0]].iic;
+                                                                add_instruction(JMPCOND, $1.jc);
+                                                            }
+                instruction                                 {   add_instruction(JMP, 0); }
+             '}'                                            {
+                                                                functions[current_scope[0]].code[$1.jc].value = functions[current_scope[0]].iic;
+                                                            }
+
+
 
 
 /*===========================================================================================*/
@@ -735,6 +769,7 @@ string print_code(const int &ins) {
         case IF             : return "IF";
         case ELSE           : return "ELSE";
         case FOR            : return "FOR";
+        case PROCEEDFOR     : return "PROCEEDFOR";
         case WHILE          : return "WHILE";
         /* Operators */
         case PLUS           : return "+";
@@ -791,7 +826,7 @@ double Function::operator()(...)
     stack<double> pile;
     va_list params;
     long unsigned int ic = 0;  /* Instruction Counter */
-    double r1, r2;  /* double registers */
+    double r1, r2, r4;  /* double registers */
     std::string r3; /* string register */
     Instruction ins; /* Current instruction */
 
@@ -817,10 +852,10 @@ double Function::operator()(...)
 
         switch (ins.code) {
         case PLUS:
-            r1 = pile.top();    // Récupérer la tête de pile;
+            r2 = pile.top();    // Récupérer la tête de pile;
             pile.pop();
 
-            r2 = pile.top();    // Récupérer la tête de pile;
+            r1 = pile.top();    // Récupérer la tête de pile;
             pile.pop();
 
             pile.push(r1+r2);
@@ -828,10 +863,10 @@ double Function::operator()(...)
             break;
 
         case DIV:
-            r1 = pile.top();    // Récupérer la tête de pile;
+            r2 = pile.top();    // Récupérer la tête de pile;
             pile.pop();
 
-            r2 = pile.top();    // Récupérer la tête de pile;
+            r1 = pile.top();    // Récupérer la tête de pile;
             pile.pop();
 
             if (r2 != 0)
@@ -842,10 +877,10 @@ double Function::operator()(...)
             break;
 
         case MIN:
-            r1 = pile.top();    // Récupérer la tête de pile;
+            r2 = pile.top();    // Récupérer la tête de pile;
             pile.pop();
 
-            r2 = pile.top();    // Récupérer la tête de pile;
+            r1 = pile.top();    // Récupérer la tête de pile;
             pile.pop();
 
             pile.push(r1-r2);
@@ -853,10 +888,10 @@ double Function::operator()(...)
             break;
 
         case TIMES:
-            r1 = pile.top();    // Récupérer la tête de pile;
+            r2 = pile.top();    // Récupérer la tête de pile;
             pile.pop();
 
-            r2 = pile.top();    // Récupérer la tête de pile;
+            r1 = pile.top();    // Récupérer la tête de pile;
             pile.pop();
 
             pile.push(r1*r2);
@@ -864,68 +899,68 @@ double Function::operator()(...)
             break;
 
         case SUP:
-            r1 = pile.top();    // Récupérer la tête de pile;
-            pile.pop();
-
             r2 = pile.top();    // Récupérer la tête de pile;
             pile.pop();
 
-            pile.push((double)((bool)r1 >= (bool)r2));
+            r1 = pile.top();    // Récupérer la tête de pile;
+            pile.pop();
+
+            pile.push(r1 >= r2);
             ++ic;
             break;
 
         case INF:
-            r1 = pile.top();    // Récupérer la tête de pile;
-            pile.pop();
-
             r2 = pile.top();    // Récupérer la tête de pile;
             pile.pop();
 
-            pile.push((double)((bool)r1 <= (bool)r2));
+            r1 = pile.top();    // Récupérer la tête de pile;
+            pile.pop();
+
+            pile.push(r1 <= r2);
             ++ic;
             break;
 
         case SUP_STRICT:        // >
-             r1 = pile.top();
-            pile.pop();
-
             r2 = pile.top();
             pile.pop();
 
-            pile.push((double)((bool)r1 > (bool)r2));
+            r1 = pile.top();
+            pile.pop();
+
+            pile.push(r1 > r2);
             ++ic;
             break;
 
         case INF_STRICT:        // <
-            r1 = pile.top();
-            pile.pop();
-
             r2 = pile.top();
             pile.pop();
 
-            pile.push((double)((bool)r1 < (bool)r2));
+            r1 = pile.top();
+            pile.pop();
+
+            pile.push(r1 < r2);
             ++ic;
             break;
 
          case EQUAL:             // ==
-              r1 = pile.top();
-             pile.pop();
-
             r2 = pile.top();
             pile.pop();
 
-            pile.push((double)((bool)r1 == (bool)r2));
+            r1 = pile.top();
+            pile.pop();
+
+            pile.push(r1 == r2);
             ++ic;
             break;
 
         case NOT_EQ:            // !=
-             r1 = pile.top();
-            pile.pop();
-
             r2 = pile.top();
             pile.pop();
 
-            pile.push((double)((bool)r1 != (bool)r2));
+            r1 = pile.top();
+            pile.pop();
+
+            pile.push(r1 != r2);
             ++ic;
             break;
 
@@ -940,7 +975,7 @@ double Function::operator()(...)
             ++ic;
             break;
 
-        case OR:
+        case OR:               // ||
             r1 = pile.top();
             pile.pop();
 
@@ -951,7 +986,7 @@ double Function::operator()(...)
             ++ic;
             break;
 
-        case NOT:
+        case NOT:              // !
             r1 = pile.top();
             pile.pop();
 
@@ -1087,11 +1122,15 @@ double Function::operator()(...)
 
         case JMPCOND:
             r1 = pile.top();     // Get the last logic value
+            
             pile.pop();
             if (r1)              // Logic true => go to next instruction
                ++ic;
             else                 // Otherwise  => go to the given address
                ic = (int)ins.value;
+#ifdef __DEBUG__
+            std::cout << "A JMPCONDI with logic : " << r1 << " and jump to : " << (int)ins.value <<" \n";
+#endif
             break;
 
         case CALL:  /* Recursive function */
@@ -1114,6 +1153,40 @@ double Function::operator()(...)
             ++ic;
             break;
 
+        case FOR:
+            r1 = pile.top();
+            pile.pop();
+            r2 = pile.top();
+            pile.pop();
+            r4 = pile.top();
+            pile.pop();
+            variables[ins.name] = r4 - r2;
+            forArguments[ins.name] = std::make_tuple (r4,r2,r1);
+            if (this->parameters.count(ins.name))
+                pile.push(this->parameters.at(ins.name));
+            else
+                pile.push(variables.at(ins.name));
+
+            ++ic;
+        break;
+
+        case PROCEEDFOR:
+            r1 = std::get<2>(forArguments[ins.name]);
+            r2 = std::get<1>(forArguments[ins.name]);
+            r4 = std::get<0>(forArguments[ins.name]);
+            variables[ins.name] = variables[ins.name] + r2;
+            if(r2>0){
+                pile.push(variables[ins.name] <= r1);
+            }else if(r2<0){
+                pile.push(variables[ins.name] >= r1);
+            }else{
+                pile.push(1);
+            }
+            ++ic;
+#ifdef __DEBUG__
+            std::cout << "value of FOR var init : " << r4 << " step : " << r2 << " stop : " << r1 << " variable : "<< variables[ins.name] << " logic :" << pile.top() << "\n";
+#endif
+        break;
         }
     }
 
@@ -1124,6 +1197,13 @@ double Function::operator()(...)
     /* return the last value contained in the stack */
     return pile.top();
 }
+
+
+/* FUNCTION USAGE EXAMPLE
+    functions["g"](3);
+    functions["fonction1"](4);
+These lines return a signe double value: g(params) = <double>
+*/
 
 
 /*====================================================================================*/
