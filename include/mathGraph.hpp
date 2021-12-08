@@ -32,10 +32,13 @@ public:
     std::vector<ImVec4> colors;
     /** Plot type (solid, filled, dotted, hist) */
     std::vector<const char *> plotModes;
-    /** Display intervals */
+    /** Display intervals Y minimun*/
     double setDisplayYmin;
+    /** Display intervals Y maximum*/
     double setDisplayYmax;
+    /** Display intervals X minimal*/
     double setDisplayXmin;
+    /** Display intervals X maximal*/
     double setDisplayXmax;
     /** Definition interval minimums of each curves */
     std::vector<double> interXmins;

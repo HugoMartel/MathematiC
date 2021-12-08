@@ -199,7 +199,7 @@ draw f in [-8,8], g {
 ### Mathematical function :
 - cos
 - sin
-- tan 
+- tan
 - arccos
 - arcsin
 - arctan
@@ -221,7 +221,7 @@ draw f in [-8,8], g {
 ```
 if condition {
     instruction
-} 
+}
 ```
 It can also be used with multiple condition using `'and'` or `'or'` between two conditions
 
@@ -267,12 +267,12 @@ draw functionName in [interval], otherFunctionName, ... {
 
 ### Comments
 - multiline: /\*\*/
-- singleline: // 
+- singleline: //
 
 ---
 
 ## VI. Keyboard Shortcuts  
-You can of course use keyboard shortcuts in the program, some of them can be used everywhere, some other only work when you're typing code,  
+You can of course use keyboard shortcuts in the program, some of them can be used everywhere, some other only work when you're typing code, **the following is for AZERTY keyboard**. 
 
 
 | keyboard input |   output    |
