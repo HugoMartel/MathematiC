@@ -239,13 +239,17 @@ if condition {
 **FOR**
 
 ```
-
+for i in [start:step:end] {
+    instruction;
+}
 ```
 
 **WHILE**
 
 ```
-
+while condition {
+    instruction;
+}
 ```
 
 ### Display function
