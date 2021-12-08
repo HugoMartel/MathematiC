@@ -17,7 +17,7 @@
 variable        [a-zA-Z_][a-zA-Z0-9_]*
 /* /!\ color doesn't support [A-Fa-f0-9]{3} format */
 color_arg       \"(blue|red|green|black|white|magenta|cyan|yellow|\#([A-Fa-f0-9]{6}))\"
-style_arg       \"(dashed|dotted|solid|hist)\"
+style_arg       \"(filled|dotted|solid|hist)\"
 string          \"[a-zA-Z0-9\-\+\/\*\(\)\[\]\{\}\ \&\~\#\^\@\=\$\%\!\,\.\:\>\<]+\"
 number          [+-]?[0-9]+(\.[0-9]*)?([Ee][+-]?[0-9]+)?
 toskip          \r|\t|\ |\/\/.*

@@ -97,8 +97,8 @@ $(document).ready(function(){initNavTree('interface_8cpp.html',''); initResizabl
 Functions</h2></td></tr>
 <tr class="memitem:acde54865e389f23b562f497ab3596699"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_8cpp.html#acde54865e389f23b562f497ab3596699">callingYYParse</a> (std::string filename, <a class="el" href="classGraphSetup.html">GraphSetup</a> *graph, int width)</td></tr>
 <tr class="separator:acde54865e389f23b562f497ab3596699"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad4e5d1eabb3afd2cecffe5ca8f0b22f1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_8cpp.html#ad4e5d1eabb3afd2cecffe5ca8f0b22f1">verbose</a> (std::string &amp;mOutput, bool mIsError, bool read)</td></tr>
-<tr class="separator:ad4e5d1eabb3afd2cecffe5ca8f0b22f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa5173624fc07510bc994c09e0f06e7a9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_8cpp.html#aa5173624fc07510bc994c09e0f06e7a9">verbose</a> (std::string &amp;mOutput, bool mIsError, bool read, bool reset)</td></tr>
+<tr class="separator:aa5173624fc07510bc994c09e0f06e7a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a07e9fc11656fb4a99b8313a003ca7a97"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_8cpp.html#a07e9fc11656fb4a99b8313a003ca7a97">open</a> (char *buff, std::string &amp;filename)</td></tr>
 <tr class="separator:a07e9fc11656fb4a99b8313a003ca7a97"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa93a225cf130aae76a9ad277ee025c4c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_8cpp.html#aa93a225cf130aae76a9ad277ee025c4c">save</a> (char *buff, std::string &amp;filename)</td></tr>
@@ -217,8 +217,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ad4e5d1eabb3afd2cecffe5ca8f0b22f1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad4e5d1eabb3afd2cecffe5ca8f0b22f1">&#9670;&nbsp;</a></span>verbose()</h2>
+<a id="aa5173624fc07510bc994c09e0f06e7a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa5173624fc07510bc994c09e0f06e7a9">&#9670;&nbsp;</a></span>verbose()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -239,7 +239,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>read</em> = <code>false</code>&#160;</td>
+          <td class="paramname"><em>read</em> = <code>false</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>reset</em> = <code>false</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -248,11 +254,12 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>getter &amp; setter for the verbose output when running code </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Getter &amp; Setter for the verbose output when running code </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in,out]</td><td class="paramname">mOutput</td><td>passed by reference, the string containing the output </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">mIsError</td><td>bool telling if the output is an error message, defaults to true </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">read</td><td>bool telling if we're using our param to edit the local var, or if we're reading them, by default on false </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">reset</td><td>bool telling if we're reseting the output </td></tr>
   </table>
   </dd>
 </dl>

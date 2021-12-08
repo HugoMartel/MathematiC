@@ -47,12 +47,13 @@ void callingYYParse(std::string, GraphSetup *, int width);
 
 
 /**
- * getter & setter for the verbose output when running code
+ * Getter & Setter for the verbose output when running code
  * @param[in,out]   mOutput     passed by reference, the string containing the output
  * @param[in,out]   mIsError    bool telling if the output is an error message, defaults to true
  * @param[in]       read        bool telling if we're using our param to edit the local var, or if we're reading them, by default on false
+ * @param[in]       reset       bool telling if we're reseting the output
  * @return          Retrieving if the code produced an error or note
  */
-bool verbose(std::string &, bool = true, bool = false);
+bool verbose(std::string &, bool = true, bool = false, bool = false);
 
 #endif

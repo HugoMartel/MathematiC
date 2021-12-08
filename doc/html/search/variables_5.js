@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['setdisplayymin_96',['setDisplayYmin',['../classGraphSetup.html#aad3ffa4c044bc3232b6360ef65614567',1,'GraphSetup']]],
-  ['style_97',['style',['../classFunction.html#a6ceff32e8c4e4c7f54eded000fafcf1a',1,'Function']]]
+  ['parameters_104',['parameters',['../classFunction.html#a88fb5b81bcc314873dde57a5c24fc920',1,'Function']]],
+  ['plotmodes_105',['plotModes',['../classGraphSetup.html#af0f81f2f7378aac5213cacb1e4615ab7',1,'GraphSetup']]]
 ];

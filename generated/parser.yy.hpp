@@ -39,13 +39,13 @@
 # define YY_YY_GENERATED_PARSER_YY_HPP_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 1
+# define YYDEBUG 0
 #endif
 #if YYDEBUG
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 141 "language/parser.y"
+#line 144 "language/parser.y"
 
     typedef struct adr {
         int jmp;  // adresse du jmp
@@ -135,7 +135,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 148 "language/parser.y"
+#line 151 "language/parser.y"
 
     double dvalue;
     char svalue[50];

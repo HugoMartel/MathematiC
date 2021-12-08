@@ -204,7 +204,7 @@ int main(int, char**)
     char *buf = (char *) malloc((BUFF_SIZE+1) * sizeof(char));//! Multiline input max length
     if(buf == NULL) exit(1);
     buf[0] = '\0';
-    strcat(buf, "/**\n * @file      example.matc\n * @version 1.0.0\n */\n\n// Declarations\nvar a = 1;\nvar b = 2;\nvar c = 3;\nvar z = 5;\nvar y = 4;\n\n\n// Functions\ndef fonction1: (x) => {\n    // Function Instructions\n    if z<y {\n        if y > 0 {\n            y = sin(2);\n            z = x + y + pi;\n        } else {\n            z = cos(3);\n        }\n    } else {\n        z =  6*7;\n    }\n    return a*x^2 + b*x + c;/* simple polynomial */\n}\n\ndef g: (x) => {\n    x += 2;\n    return 2*sin(x);\n}\n\n// Draw Functions\ndraw fonction1 in [-8,8], g {\n    color: [\"red\", \"#00FF00\"],\n    style: [\"dashed\", \"solid\"],\n    label: \"Fonction 1\"\n}\n");
+    strcat(buf, "/**\n * @file      example.matc\n * @version 1.0.0\n */\n\n// Declarations\nvar a = 1;\nvar b = 2;\nvar c = 3;\nvar z = 5;\nvar y = 4;\n\n\n// Functions\ndef fonction1: (x) => {\n    // Function Instructions\n    if z<y {\n        if y > 0 {\n            y = sin(2);\n            z = x + y + pi;\n        } else {\n            z = cos(3);\n        }\n    } else {\n        z =  6*7;\n    }\n    return a*x^2 + b*x + c;/* simple polynomial */\n}\n\ndef g: (x) => {\n    x += 2;\n    return 2*sin(x);\n}\n\n// Draw Functions\ndraw fonction1 in [-8,8], g {\n    color: [\"red\", \"#00FF00\"],\n    style: [\"dotted\", \"solid\"],\n    label: \"Fonction 1\"\n}\n");
     /* definitions used in main loop */
     /* if true then the prog quit  */
     bool done = false;
@@ -215,7 +215,7 @@ int main(int, char**)
     /* the string shown in the console output  */
     std::string output("");
     /* Setup our graph object */
-    GraphSetup ourGraph = GraphSetup();
+    GraphSetup *ourGraph = new GraphSetup;
 
 
     /*-----------------*/
@@ -241,6 +241,8 @@ int main(int, char**)
                     /* Window Resize Handler */
                     *width = event.window.data1;
                     *height = event.window.data2;
+
+                    ourGraph->updateCurves(*width);
                 }
 
                 break;
@@ -289,14 +291,23 @@ int main(int, char**)
                 std::string title = "MathematiC - " + opened_file;
                 title.resize(100);
                 SDL_SetWindowTitle(window, title.c_str());
+
                 /* saving the file  */
                 save(buf, opened_file);
+
+                /* Clear verbose output */
+                verbose(output, false, false, true);
+
+                /* Reset ourGraph values */
+                ourGraph->clear();
+
                 /* calling the yy parse function */
-                callingYYParse(opened_file, &ourGraph, *width);
+                callingYYParse(opened_file, ourGraph, *width);
+
+                /* Get error status and output string */
                 isError = verbose(output, isError, true);
                 /* the button is clicked  */
                 clicked = 1;
-
             }
 
         }
@@ -305,7 +316,6 @@ int main(int, char**)
         ImDrawList* draw_list = ImGui::GetWindowDrawList();
         ImGui::Text("Output Console:");
         if (clicked & 1) {
-
             /* if we have error & output, text red and showing the lex error message  */
             if (isError && output != ""){
                 ImGui::TextColored((ImVec4)ImColor::HSV(0, 0.8f, 0.8f), ("ERROR ...\n" + output).c_str());
@@ -326,7 +336,6 @@ int main(int, char**)
                 /* rectangle arround it again  */
                 draw_list->AddRect(ImVec2(ImGui::GetItemRectMin().x - 2, ImGui::GetItemRectMin().y - 2), ImVec2(ImGui::GetWindowSize().x -15, ImGui::GetItemRectMax().y + 2), IM_COL32(255, 255, 255, 255));
             }
-
         }
         /* console output */
         ImGui::End();
@@ -338,8 +347,10 @@ int main(int, char**)
 
         ImGui::Begin("graphe", NULL, windowFlags);
         ImPlot::CreateContext();
-        ourGraph.updateCurves(*width);
+
+        /* Draw the graph */
         doGraph(*width, *height, ourGraph);
+
         ImPlot::DestroyContext();
         ImGui::End();
 

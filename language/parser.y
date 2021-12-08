@@ -1,5 +1,3 @@
-%debug
-
 %{
     #include <cstdio>
     #include <cstdlib>
@@ -14,12 +12,13 @@
     #include <vector>
     #include <iostream>
     #include <tuple>
+    #include <algorithm>
 
     #include "interface.hpp"
     #include "function.hpp"
 
     /* \/ Uncomment to enable debug output */
-    #define __DEBUG__
+    //#define __DEBUG__
 
     using namespace std;//? useful ?
 
@@ -47,7 +46,10 @@
     double argYmin;
     double argYmax;
 
-    /* Map with FOR variables */
+    /** Error message */
+    std::string error;
+
+    /** Map with FOR variables */
     std::map<std::string, std::tuple<double, double, double>> forArguments;
 
     /* Variables only used during parsing */
@@ -68,16 +70,13 @@
     std::queue<std::string> argQueue;
 
     /**
-     * Temporary stack to store values on the fly for the declarations
-     */
-    std::stack<double> onTheFly;
-
-    /**
      * Map storing variables declared gloabally
      */
     std::map<std::string,double> variables;
 
-    //  Map storing functions instructions, access them by their name (string)
+    /**
+     * Map storing functions instructions, access them by their name (string)
+     */
     std::map<std::string,Function> functions;
 
 
@@ -91,12 +90,13 @@
     string print_code(const int &ins);
 
     /**
-     *
+     * Function to easily add instruction to the appropriate function without having to care about the current function
      */
     int add_instruction(const int &c, const double &v=0, const string &n="") {
         /* Check where this instruction should be put */
         if (current_scope.empty()) {
-            yyerror("Instructions not placed in a function...");
+            error = "Instructions not placed in a function...";
+            verbose(error);
         } else {
             /* Write to the appropriated function stack */
             functions[current_scope[0]].add_instruction(c, v, n);
@@ -119,6 +119,7 @@
 }
 
 
+/* Reset containers on compilation start */
 %initial-action
 {
     /* Reset to default values */
@@ -133,6 +134,8 @@
     variables.clear();
     current_scope.clear();
     functions.clear();
+    while (!argQueue.empty())
+        argQueue.pop();
 
 }
 
@@ -174,7 +177,7 @@
 %token <DOUBLE> xmax
 %token <DOUBLE> ymin
 %token <DOUBLE> ymax
-%token <STRING> COLOR_PARAM /* "#F0F0F0" or "blue" */
+%token <STRING> COLOR_PARAM /* "#F0F0F0" or simple colors */
 %token <STRING> STYLE_PARAM /* "solid", "filled", "dotted", "hist" */
 %token <STRING> STRING /* "text" */
 
@@ -262,63 +265,68 @@ declarations: %empty /* \epsilon */                 { /* End of declarations */
 #endif
                                                     }
             | declarations var VAR '=' expr ';'     { /* Init Vars */
-                /* Check if already declared */
-                if (!variables.count($3)) {
-                    variables[$3] = $5;
+                                                        /* Check if already declared */
+                                                        if (!variables.count($3)) {
+                                                            variables[$3] = $5;
 
 #ifdef __DEBUG__
-                    printf("Declared %s = %lf\n", $3, $5);
+                                                            printf("Declared %s = %lf\n", $3, $5);
 #endif
 
-                } else {
-                    yyerror(("Variable " + std::string($3) + " has already been declared...").c_str());
-                }
+                                                        } else {
+                                                            error = "Variable " + std::string($3) + " has already been declared...";
+                                                            verbose(error);
+                                                        }
                                                     }
             | declarations var VAR ';'              {
-                if (!variables.count($3)) {
-                    variables[$3] = 0;
+                                                        if (!variables.count($3)) {
+                                                            variables[$3] = 0;
 #ifdef __DEBUG__
-                    printf("Declared %s (=0)\n", $3);
+                                                            printf("Declared %s (=0)\n", $3);
 #endif
-                } else {
-                    yyerror(("Variable " + std::string($3) + " has already been declared...").c_str());
-                }
+                                                        } else {
+                                                            error = "Variable " + std::string($3) + " has already been declared...";
+                                                            verbose(error);
+                                                        }
                                                     }
 
 
 /*===========================================================================================*/
-fonctions: DEF VAR ':' '(' parameters ')' arrow '{'           {
-                    /* Clear the current_scope vector */
-                    current_scope.clear();
+fonctions: DEF VAR ':' '(' parameters ')' arrow '{'     {
+                                                                /* Clear the current_scope vector */
+                                                                current_scope.clear();
 
-                    /* Check if the function wasn't already declared */
-                    if (!functions.count($2)) {
-                        functions[$2] = Function();
-                        /* Enqueue to keep it in memory */
-                        current_scope.push_back($2);
+                                                                /* Check if the function wasn't already declared */
+                                                                if (!functions.count($2)) {
+                                                                    functions[$2] = Function();
+                                                                    /* Enqueue to keep it in memory */
+                                                                    current_scope.push_back($2);
 
-                        /* Declare parameters */
-                        while (!argQueue.empty()) {
-                            if (!functions[$2].parameters.count(argQueue.front()))
-                                functions[$2].parameters[argQueue.front()] = 0;
-                            else
-                                yyerror("Parameter already used...");
+                                                                /* Declare parameters */
+                                                                while (!argQueue.empty()) {
+                                                                    if (!functions[$2].parameters.count(argQueue.front()))
+                                                                        functions[$2].parameters[argQueue.front()] = 0;
+                                                                    else {
+                                                                        error = "Parameter already used...";
+                                                                        verbose(error);
+                                                                    }
 
-                            argQueue.pop();
-                        }
-                    } else {
-                        yyerror("Function already declared...");
-                    }
+                                                                    argQueue.pop();
+                                                                }
+                                                            } else {
+                                                                error = "Function already declared...";
+                                                                verbose(error);
+                                                            }
 
-}
+                                                        }
                 instruction
           '}' fonctions                                 {
-                    /* Dequeue since we left the function scope */
-                    if (current_scope.empty())
-                        current_scope.pop_back();
-                    /*Clear the queue in case it is not empty*/
-                    while (!argQueue.empty())
-                        argQueue.pop();
+                                                             /* Dequeue since we left the function scope */
+                                                             if (current_scope.empty())
+                                                                 current_scope.pop_back();
+                                                             /*Clear the queue in case it is not empty*/
+                                                             while (!argQueue.empty())
+                                                                 argQueue.pop();
                                                         }
          | %empty /* \epsilon */                        { /* End of function declarations */ }
 
@@ -332,25 +340,27 @@ parameters: VAR                                         {
 
 /*===========================================================================================*/
 draw_func: VAR in '[' NUM ',' NUM ']'                   {
-                    /* Load function names to send to the front-end */
-                    current_scope[0] = $1;
+                                                            /* Load function names to send to the front-end */
+                                                            current_scope[0] = $1;
 
-                    /* Check if the function is already drawn */
-                    if (functions.count($1)) {
-                        functions[$1].xInterval.first = $4;
-                        functions[$1].xInterval.second = $6;
-                    } else {
-                        yyerror("Function already drawn...");
-                    }
+                                                            /* Check if the function is already drawn */
+                                                            if (functions.count($1)) {
+                                                                functions[$1].xInterval.first = $4;
+                                                                functions[$1].xInterval.second = $6;
+                                                            } else {
+                                                                error = "Function already drawn...";
+                                                                verbose(error);
+                                                            }
                                                         }
          | VAR                                          {
-                    /* Load function names to send to the front-end */
-                    current_scope.push_back($1);
+                                                            /* Load function names to send to the front-end */
+                                                            current_scope.push_back($1);
 
-                    /* Check if the function is already drawn */
-                    if (!functions.count($1)) {
-                        yyerror("Function already drawn...");
-                    }
+                                                            /* Check if the function is already drawn */
+                                                            if (!functions.count($1)) {
+                                                                error = "Function already drawn...";
+                                                                verbose(error);
+                                                            }
                                                         }
          | draw_func ',' draw_func                      { /* Support multiple functions to draw at the same time */ }
 
@@ -359,6 +369,10 @@ draw_func: VAR in '[' NUM ',' NUM ']'                   {
 affichage: DRAW draw_func '{'
                 draw_args
           '}'                                           {
+                                                            if(!argQueue.empty()){
+                                                                error = "The number of function to draw doesn't match the number of arg";
+                                                                verbose(error);
+                                                            }
 #ifdef __DEBUG__
                                                             for (size_t i = 0; i < current_scope.size(); ++i) {
                                                                 std::cout << i << ": " << current_scope[i] << "\n";
@@ -367,6 +381,10 @@ affichage: DRAW draw_func '{'
                                                         }
 
          | DRAW draw_func ';'                           {
+                                                            if(!argQueue.empty()){
+                                                                error = "The number of function to draw doesn't match the number of arg";
+                                                                verbose(error);
+                                                            }
 #ifdef __DEBUG__
                                                             for (size_t i = 0; i < current_scope.size(); ++i) {
                                                                 std::cout << i << ": " << current_scope[i] << "\n";
@@ -402,7 +420,7 @@ draw_args: color ':' '[' color_args ']'                 { /* getting the multipl
                                                                 }
                                                             }
                                                         }
-         | label ':' STRING                             { argLabel = $3;}
+         | label ':' STRING                             { argLabel = $3; argLabel = argLabel.substr(1, argLabel.size()-2); }
          | xmin ':' NUM                                 { argXmin = $3; }
          | xmin ':' VAR                                 { argXmin = variables[$3]; }
          | xmax ':' NUM                                 { argXmax = $3; }
@@ -415,35 +433,49 @@ draw_args: color ':' '[' color_args ']'                 { /* getting the multipl
 
 
 /*===========================================================================================*/
-style_args: STYLE_PARAM                                 { argQueue.push($1); }
+style_args: STYLE_PARAM                                 {
+                                                            /* Check the value */
+                                                            if (!strcmp($1, "\"dotted\"")) {
+                                                                argQueue.push("dotted");
+                                                            } else if (!strcmp($1, "\"hist\"")) {
+                                                                argQueue.push("hist");
+                                                            } else if (!strcmp($1, "\"solid\"")) {
+                                                                argQueue.push("solid");
+                                                            } else if (!strcmp($1, "\"filled\"")) {
+                                                                argQueue.push("filled");
+                                                            } else {
+                                                                error = std::to_string(yylineno) + "Wrong curve style value...";
+                                                                verbose(error);
+                                                            }
+                                                        }
           | style_args ',' style_args                   { /* Support multiple style_args */ }
 
 
 /*===========================================================================================*/
 color_args: COLOR_PARAM                                 {
-                                if (!strcmp($1,"\"blue\"")) {
-                                    argQueue.push("#0000FF");
-                                } else if (!strcmp($1,"\"red\"")) {
-                                    argQueue.push("#FF0000");
-                                } else if (!strcmp($1,"\"green\"")) {
-                                    argQueue.push("#00FF00");
-                                } else if (!strcmp($1,"\"black\"")) {
-                                    argQueue.push("#000000");
-                                } else if (!strcmp($1,"\"white\"")) {
-                                    argQueue.push("#FFFFFF");
-                                } else if (!strcmp($1,"\"magenta\"")) {
-                                    argQueue.push("#FF00FF");
-                                } else if (!strcmp($1,"\"cyan\"")) {
-                                    argQueue.push("#00FFFF");
-                                } else if (!strcmp($1,"\"yellow\"")) {
-                                    argQueue.push("#FFFF00");
-                                } else {
-                                    /* Remove the head and tail '"' */
-                                    for (i = 0; i <= 6; ++i)
-                                        $1 [i] = $1 [i+1];
-                                    $1[i] = '\0';
-                                    argQueue.push($1);
-                                }
+                                                            if (!strcmp($1,"\"blue\"")) {
+                                                                argQueue.push("#0000FF");
+                                                            } else if (!strcmp($1,"\"red\"")) {
+                                                                argQueue.push("#FF0000");
+                                                            } else if (!strcmp($1,"\"green\"")) {
+                                                                argQueue.push("#00FF00");
+                                                            } else if (!strcmp($1,"\"black\"")) {
+                                                                argQueue.push("#000000");
+                                                            } else if (!strcmp($1,"\"white\"")) {
+                                                                argQueue.push("#FFFFFF");
+                                                            } else if (!strcmp($1,"\"magenta\"")) {
+                                                                argQueue.push("#FF00FF");
+                                                            } else if (!strcmp($1,"\"cyan\"")) {
+                                                                argQueue.push("#00FFFF");
+                                                            } else if (!strcmp($1,"\"yellow\"")) {
+                                                                argQueue.push("#FFFF00");
+                                                            } else {
+                                                                /* Remove the head and tail '"' */
+                                                                for (i = 0; i <= 6; ++i)
+                                                                    $1 [i] = $1 [i+1];
+                                                                $1[i] = '\0';
+                                                                argQueue.push($1);
+                                                            }
                                                         }
           | color_args ',' color_args                   { /* Support multiple color_args */ }
 
@@ -487,7 +519,8 @@ instruction: %empty /* \epsilon */                      { /* No instructions lef
                                                                     $1.jc = functions[current_scope[0]].iic;
                                                                     add_instruction(JMPCOND, $1.jc);
                                                                 } else
-                                                                    yyerror("Parameter already used...");
+                                                                    error = "Parameter already used...";
+                                                                    verbose(error);
 
                                                             }
                 instruction                                 {   add_instruction(JMP, $1.jmp);   }
@@ -640,9 +673,10 @@ expr: NUM                   {
                                 if (!current_scope.empty())
                                     add_instruction(PLUS);
                                 else {
-                                    if ($3 == 0.)
-                                        yyerror("Dividing by 0...");
-                                    else
+                                    if ($3 == 0.) {
+                                        error = "Dividing by 0...";
+                                        verbose(error);
+                                    } else
                                         $$ = $1 / $3;
                                 }
                             }
@@ -650,9 +684,10 @@ expr: NUM                   {
                                         if (!current_scope.empty())
                                             add_instruction(POW);
                                         else {
-                                            if ($1 == 0. && $3 == 0.)
-                                                yyerror("Can't put 0 to the power 0...");
-                                            else
+                                            if ($1 == 0. && $3 == 0.) {
+                                                error = "Can't put 0 to the power 0...";
+                                                verbose(error);
+                                            } else
                                                 $$ = pow($1,$3);
                                         }
                                     }
@@ -660,9 +695,10 @@ expr: NUM                   {
                                         if (!current_scope.empty())
                                             add_instruction(POW);
                                         else {
-                                            if ($3 == 0. && $5 == 0.)
-                                                yyerror("Can't put 0 to the power 0...");
-                                            else
+                                            if ($3 == 0. && $5 == 0.) {
+                                                error = "Can't put 0 to the power 0...";
+                                                verbose(error);
+                                            } else
                                                 $$ = pow($3,$5);
                                         }
                                     }
@@ -698,7 +734,8 @@ expr: NUM                   {
                                         if (!current_scope.empty()) {
                                             add_instruction(ASSIGN,0,$1);
                                         } else {
-                                            yyerror("Can only assign to an already declared variable when in a function...");
+                                            error = "Can only assign to an already declared variable when in a function...";
+                                            verbose(error);
                                         }
                                     }
     | VAR PLUS_EQUAL expr           {
@@ -708,7 +745,8 @@ expr: NUM                   {
                                             add_instruction(PLUS);
                                             add_instruction(ASSIGN,0,$1);
                                         } else {
-                                            yyerror("Can only assign to an already declared variable when in a function...");
+                                            error ="Can only assign to an already declared variable when in a function...";
+                                            verbose(error);
                                         }
                                     }
     | VAR MIN_EQUAL expr            {
@@ -718,7 +756,8 @@ expr: NUM                   {
                                             add_instruction(MIN);
                                             add_instruction(ASSIGN,0,$1);
                                         } else {
-                                            yyerror("Can only assign to an already declared variable when in a function...");
+                                            error = "Can only assign to an already declared variable when in a function...";
+                                            verbose(error);
                                         }
                                     }
     | VAR TIMES_EQUAL expr          {
@@ -728,7 +767,8 @@ expr: NUM                   {
                                             add_instruction(TIMES);
                                             add_instruction(ASSIGN,0,$1);
                                         } else {
-                                            yyerror("Can only assign to an already declared variable when in a function...");
+                                            error = "Can only assign to an already declared variable when in a function...";
+                                            verbose(error);
                                         }
                                     }
     | VAR DIV_EQUAL expr            {
@@ -738,7 +778,8 @@ expr: NUM                   {
                                             add_instruction(DIV);
                                             add_instruction(ASSIGN,0,$1);
                                         } else {
-                                            yyerror("Can only assign to an already declared variable when in a function...");
+                                            error = "Can only assign to an already declared variable when in a function...";
+                                            verbose(error);
                                         }
                                     }
 
@@ -872,7 +913,8 @@ double Function::operator()(...)
             if (r2 != 0)
                 pile.push(r1/r2);
             else
-                yyerror("Division by 0...");
+                error = "Division by 0...";
+                verbose(error);
             ++ic;
             break;
 
@@ -1122,14 +1164,14 @@ double Function::operator()(...)
 
         case JMPCOND:
             r1 = pile.top();     // Get the last logic value
-            
+
             pile.pop();
             if (r1)              // Logic true => go to next instruction
                ++ic;
             else                 // Otherwise  => go to the given address
                ic = (int)ins.value;
 #ifdef __DEBUG__
-            std::cout << "A JMPCONDI with logic : " << r1 << " and jump to : " << (int)ins.value <<" \n";
+            std::cout << "A JMPCOND with logic : " << r1 << " and JMP to : " << (int)ins.value <<" \n";
 #endif
             break;
 
@@ -1191,6 +1233,7 @@ double Function::operator()(...)
     }
 
 #ifdef __DEBUG__
+    printf("RETURN %lf;", pile.top());
     printf("\n------- FUNCTION RETURNED OR ENDED ---------\n");
 #endif
 
@@ -1231,26 +1274,53 @@ int compileCode(const char *filename, GraphSetup *graph)
 
         /* Check interval values */
         if (argXmin >= argXmax || argYmin >= argYmax) {
-            yyerror("Wrong display window size values...");
+            error = "Wrong display window size values...";
+            verbose(error);
             return 3;
         } else {
+
             /* Construct the GraphSetup object */
-            graph = new GraphSetup(
-                functions,
-                current_scope,
-                argYmin,
-                argYmax,
-                argXmin,
-                argYmax,
-                argLabel
-            );
+            if (current_scope.size() > 0) { //check if there is a curve
+
+                //save the curves
+                graph->curvesFunctions = functions;
+
+                //set display intervals
+                graph->setDisplayYmin = argYmin;
+                graph->setDisplayYmax = argYmax;
+                graph->setDisplayXmin = argXmin;
+                graph->setDisplayXmax = argXmax;
+
+                //set graph label
+                graph->graphName = argLabel.c_str();
+
+                //set curves data
+                for (size_t i = 0; i < current_scope.size(); ++i) {
+                    graph->names.push_back(current_scope[i].c_str());
+                    graph->colors.push_back(convertHexToRGBA(functions.at(current_scope[i]).color));
+                    graph->plotModes.push_back(functions.at(current_scope[i]).style.c_str());
+                    graph->interXmins.push_back(functions.at(current_scope[i]).xInterval.first);
+                    graph->interXmaxs.push_back(functions.at(current_scope[i]).xInterval.second);
+                }
+
+                /* Add a white color to prevent size 1 colormap */
+                graph->colors.push_back(convertHexToRGBA("#FFFFFF"));
+
+                /* Set the boolean, so that the curve points can be computed */
+                graph->gotSomething = true;
+
+            } else {
+                std::string output("No function to draw...\n");
+                verbose(output);
+                return 5;
+            }
 
             return EXIT_SUCCESS;
         }
 
     } else {
-        std::string output("Compilation unsuccessful...");
-        verbose(output, true);
+        std::string output("Compilation unsuccessful...\n");
+        verbose(output);
         return 4;
     }
 

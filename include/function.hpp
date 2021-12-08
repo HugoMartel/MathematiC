@@ -1,5 +1,5 @@
 /**
- * @file    function.hpp 
+ * @file    function.hpp
  */
 
 #ifndef __FUNCTION__
@@ -66,7 +66,7 @@ public:
     {
         color = "#FF0000";
         style = "solid";
-        xInterval.first = DBL_MIN;
+        xInterval.first = -DBL_MAX;/*lol*/
         xInterval.second = DBL_MAX;
         iic = 0;
     }

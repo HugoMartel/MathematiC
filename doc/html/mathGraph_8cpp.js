@@ -1,5 +1,5 @@
 var mathGraph_8cpp =
 [
-    [ "convertHexToRGBA", "mathGraph_8cpp.html#a305f88d9540f2ecc2cbdf2505303e09f", null ],
-    [ "doGraph", "mathGraph_8cpp.html#ace5638ce415b976fb3e3746e77225a46", null ]
+    [ "convertHexToRGBA", "mathGraph_8cpp.html#a81f8dbb55c076c6c244fcd85d2095b28", null ],
+    [ "doGraph", "mathGraph_8cpp.html#a9706f01696bac45531b29da7906d855f", null ]
 ];

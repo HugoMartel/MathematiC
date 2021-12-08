@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['iic_90',['iic',['../classFunction.html#aa8753b780e97130526ce56af81b412ac',1,'Function']]],
-  ['interxmins_91',['interXmins',['../classGraphSetup.html#ac4d72c311b4753a808912e3ee07287e9',1,'GraphSetup']]]
+  ['gotsomething_97',['gotSomething',['../classGraphSetup.html#a6b22d041087ba995e5f437bfe191449e',1,'GraphSetup']]],
+  ['graphname_98',['graphName',['../classGraphSetup.html#aa0dd5ec8027b75ffa6d40f9f74a9219b',1,'GraphSetup']]]
 ];

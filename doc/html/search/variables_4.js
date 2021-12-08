@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['parameters_94',['parameters',['../classFunction.html#a88fb5b81bcc314873dde57a5c24fc920',1,'Function']]],
-  ['plotmodes_95',['plotModes',['../classGraphSetup.html#aac2073e966b9fd1514a044589fc618bc',1,'GraphSetup']]]
+  ['name_102',['name',['../classInstruction.html#abfd1615a8bb140e70b3724214deee7df',1,'Instruction']]],
+  ['names_103',['names',['../classGraphSetup.html#a4a203c8575179f43bdbea786315fa0c5',1,'GraphSetup']]]
 ];

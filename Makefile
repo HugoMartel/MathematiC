@@ -59,10 +59,10 @@ LDFLAGS := -g
 #LDFLAGS := -O3
 # Flex
 LFLAGS = -v --header-file=$(GEN)/lexer.yy.hpp
-LFLAGS += -d -p
+# LFLAGS += -d -p
 # Bison /!\ 3.7.6 flags: -Wcounterexamples --color=yes
 BFLAGS = --warnings=all --defines=$(GEN)/parser.yy.hpp -v
-BFLAGS += -t --debug
+# BFLAGS += -t --debug
 LIBS =
 ZENITY =
 

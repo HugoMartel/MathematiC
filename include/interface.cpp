@@ -18,19 +18,24 @@ void callingYYParse(std::string filename, GraphSetup *graph, int width)
 }
 
 
-bool verbose(std::string &mOutput, bool mIsError, bool read)
+bool verbose(std::string &mOutput, bool mIsError, bool read, bool reset)
 {
     /*local variables*/
     static std::string output("");
     static bool isError = false;
-    /*we're writing the mOuput and mIsError into the local variables*/
-    if (!read) {
-        output = mOutput;
-        isError = mIsError;
-    /*we're reading the output and the isError, copying it into the parameters*/
+    /* reseting the output */
+    if (reset) {
+        output = "";
     } else {
-        mOutput = output;
-        mIsError = isError;
+        /*we're writing the mOuput and mIsError into the local variables*/
+        if (!read) {
+            output += mOutput;
+            isError = mIsError;
+        /*we're reading the output and the isError, copying it into the parameters*/
+        } else {
+            mOutput = output;
+            mIsError = isError;
+        }
     }
     return isError;
 }
