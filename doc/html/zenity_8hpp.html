@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>MathematiC: File Members</title>
+<title>MathematiC: include/zenity.hpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -64,7 +64,7 @@ $(function() {
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
-$(document).ready(function(){initNavTree('globals.html',''); initResizable(); });
+$(document).ready(function(){initNavTree('zenity_8hpp.html',''); initResizable(); });
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -82,54 +82,69 @@ $(document).ready(function(){initNavTree('globals.html',''); initResizable(); })
 </iframe>
 </div>
 
+<div class="header">
+  <div class="summary">
+<a href="#func-members">Functions</a>  </div>
+  <div class="headertitle">
+<div class="title">zenity.hpp File Reference</div>  </div>
+</div><!--header-->
 <div class="contents">
-<div class="textblock">Here is a list of all documented file members with links to the documentation:</div><ul>
-<li>BUFF_SIZE
-: <a class="el" href="interface_8hpp.html#a6c7cd32e1bac137f05e4a752b4ad10af">interface.hpp</a>
-</li>
-<li>callingYYParse()
-: <a class="el" href="interface_8cpp.html#acde54865e389f23b562f497ab3596699">interface.cpp</a>
-, <a class="el" href="interface_8hpp.html#a15872e57ec84819fd23c5c6351d0d514">interface.hpp</a>
-</li>
-<li>convertHexToRGBA()
-: <a class="el" href="mathGraph_8cpp.html#a81f8dbb55c076c6c244fcd85d2095b28">mathGraph.cpp</a>
-, <a class="el" href="mathGraph_8hpp.html#a81f8dbb55c076c6c244fcd85d2095b28">mathGraph.hpp</a>
-</li>
-<li>doGraph()
-: <a class="el" href="mathGraph_8cpp.html#a9706f01696bac45531b29da7906d855f">mathGraph.cpp</a>
-, <a class="el" href="mathGraph_8hpp.html#a9706f01696bac45531b29da7906d855f">mathGraph.hpp</a>
-</li>
-<li>exitSDL()
-: <a class="el" href="main_8cpp.html#a1f563659b3ea29164c271282f17ab6bb">main.cpp</a>
-</li>
-<li>file_dialog()
-: <a class="el" href="zenity_8cpp.html#a2948d78ff12ef014370b00998b917a38">zenity.cpp</a>
-, <a class="el" href="zenity_8hpp.html#a2948d78ff12ef014370b00998b917a38">zenity.hpp</a>
-</li>
-<li>main()
-: <a class="el" href="main_8cpp.html#a2c3f6775325c30275d11c6abee2db6a0">main.cpp</a>
-</li>
-<li>MAX
-: <a class="el" href="main_8cpp.html#afa99ec4acc4ecb2dc3c2d05da15d0e3f">main.cpp</a>
-</li>
-<li>open()
-: <a class="el" href="interface_8cpp.html#a07e9fc11656fb4a99b8313a003ca7a97">interface.cpp</a>
-, <a class="el" href="interface_8hpp.html#a341cb0bff4822a1b784b62a7e81387a6">interface.hpp</a>
-</li>
-<li>save()
-: <a class="el" href="interface_8cpp.html#aa93a225cf130aae76a9ad277ee025c4c">interface.cpp</a>
-, <a class="el" href="interface_8hpp.html#a27f13d9baecfb3e465096f1b9a7fbd88">interface.hpp</a>
-</li>
-<li>verbose()
-: <a class="el" href="interface_8cpp.html#aa5173624fc07510bc994c09e0f06e7a9">interface.cpp</a>
-, <a class="el" href="interface_8hpp.html#a23817805866240b9728ba40e45c44612">interface.hpp</a>
-</li>
-</ul>
+<div class="textblock"><code>#include &lt;string&gt;</code><br />
+<code>#include &lt;vector&gt;</code><br />
+</div>
+<p><a href="zenity_8hpp_source.html">Go to the source code of this file.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a2948d78ff12ef014370b00998b917a38"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zenity_8hpp.html#a2948d78ff12ef014370b00998b917a38">file_dialog</a> (const std::vector&lt; std::pair&lt; std::string, std::string &gt;&gt; &amp;filetypes, bool <a class="el" href="interface_8hpp.html#a27f13d9baecfb3e465096f1b9a7fbd88">save</a>)</td></tr>
+<tr class="separator:a2948d78ff12ef014370b00998b917a38"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="a2948d78ff12ef014370b00998b917a38"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2948d78ff12ef014370b00998b917a38">&#9670;&nbsp;</a></span>file_dialog()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string file_dialog </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; std::pair&lt; std::string, std::string &gt;&gt; &amp;&#160;</td>
+          <td class="paramname"><em>filetypes</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>save</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p><a class="el" href="classFunction.html">Function</a> to open a File Dialog using Zenity (Linux) or the Windows API </p><dl class="section note"><dt>Note</dt><dd>heavily inspired by <a href="https://github.com/dalerank/nanogui-sdl">https://github.com/dalerank/nanogui-sdl</a> open/close implementation </dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">filetypes</td><td>Files types to get and their full names </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">save</td><td>0: Open, 1: Save </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Absolute path of the selected file </dd></dl>
+<p>Max buffer size of the path selected with the dialog</p>
+<p>Only supports /usr/bin location</p>
+
+</div>
+</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
+    <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="zenity_8hpp.html">zenity.hpp</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

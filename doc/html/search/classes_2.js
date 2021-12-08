@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['graphsetup_58',['GraphSetup',['../classGraphSetup.html',1,'']]]
+  ['graphsetup_59',['GraphSetup',['../classGraphSetup.html',1,'']]]
 ];

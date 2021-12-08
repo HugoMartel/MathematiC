@@ -121,5 +121,7 @@ var NAVTREEINDEX0 =
 "zenity_8cpp.html":[5,0,1,5],
 "zenity_8cpp.html#a2948d78ff12ef014370b00998b917a38":[5,0,1,5,1],
 "zenity_8cpp.html#aebfdcd257128a883259e25d230bed3c5":[5,0,1,5,0],
+"zenity_8hpp.html":[5,0,1,6],
+"zenity_8hpp.html#a2948d78ff12ef014370b00998b917a38":[5,0,1,6,0],
 "zenity_8hpp_source.html":[5,0,1,6]
 };

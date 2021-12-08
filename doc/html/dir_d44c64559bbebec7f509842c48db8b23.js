@@ -9,5 +9,5 @@ var dir_d44c64559bbebec7f509842c48db8b23 =
     [ "mathGraph.cpp", "mathGraph_8cpp.html", "mathGraph_8cpp" ],
     [ "mathGraph.hpp", "mathGraph_8hpp.html", "mathGraph_8hpp" ],
     [ "zenity.cpp", "zenity_8cpp.html", "zenity_8cpp" ],
-    [ "zenity.hpp", "zenity_8hpp_source.html", null ]
+    [ "zenity.hpp", "zenity_8hpp.html", "zenity_8hpp" ]
 ];

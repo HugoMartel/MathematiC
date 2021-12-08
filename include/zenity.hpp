@@ -1,3 +1,7 @@
+/**
+ * @file    zenity.hpp
+ */
+
 #ifndef __ZENITY__
 #define __ZENITY__
 
