@@ -1,4 +1,4 @@
-# WIKI
+# MANUAL
 
 ---
 
