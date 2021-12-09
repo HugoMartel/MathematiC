@@ -85,7 +85,8 @@ $(document).ready(function(){initNavTree('unit-tests_8cpp.html',''); initResizab
 <div class="header">
   <div class="summary">
 <a href="#define-members">Macros</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">unit-tests.cpp File Reference</div>  </div>
 </div><!--header-->
@@ -96,19 +97,108 @@ $(document).ready(function(){initNavTree('unit-tests_8cpp.html',''); initResizab
 <div class="textblock"><code>#include &lt;iostream&gt;</code><br />
 <code>#include &quot;../lib/catch.hpp&quot;</code><br />
 <code>#include &quot;<a class="el" href="interface_8hpp_source.html">interface.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="mathGraph_8hpp_source.html">mathGraph.hpp</a>&quot;</code><br />
+<code>#include &quot;parser.yy.hpp&quot;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a1e5b20fed15743656bb6d2e6a6ea6269"><td class="memItemLeft" align="right" valign="top"><a id="a1e5b20fed15743656bb6d2e6a6ea6269"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>display</b> ()</td></tr>
-<tr class="separator:a1e5b20fed15743656bb6d2e6a6ea6269"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af9b8902ce30a56fe75b743f4aa12cbc5"><td class="memItemLeft" align="right" valign="top"><a id="af9b8902ce30a56fe75b743f4aa12cbc5"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>TEST_CASE</b> (&quot;verbose function tests&quot;, &quot;[<a class="el" href="interface_8hpp.html#a23817805866240b9728ba40e45c44612">verbose</a>]&quot;)</td></tr>
 <tr class="separator:af9b8902ce30a56fe75b743f4aa12cbc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f804fc4dd73cb6f4838b6c98baecf43"><td class="memItemLeft" align="right" valign="top"><a id="a0f804fc4dd73cb6f4838b6c98baecf43"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>TEST_CASE</b> (&quot;expr PLUS expr&quot;, &quot;[plus]&quot;)</td></tr>
+<tr class="separator:a0f804fc4dd73cb6f4838b6c98baecf43"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a84c07361b6e7d7ceb5a0b3b9d6557c78"><td class="memItemLeft" align="right" valign="top"><a id="a84c07361b6e7d7ceb5a0b3b9d6557c78"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>TEST_CASE</b> (&quot;expr MIN expr&quot;, &quot;[moins]&quot;)</td></tr>
+<tr class="separator:a84c07361b6e7d7ceb5a0b3b9d6557c78"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56f816f1d860522730febf6bd7e29ea1"><td class="memItemLeft" align="right" valign="top"><a id="a56f816f1d860522730febf6bd7e29ea1"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>TEST_CASE</b> (&quot;MIN expr&quot;, &quot;[negatif]&quot;)</td></tr>
+<tr class="separator:a56f816f1d860522730febf6bd7e29ea1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a33d2ad5083286bc4eac08fba67af77db"><td class="memItemLeft" align="right" valign="top"><a id="a33d2ad5083286bc4eac08fba67af77db"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>TEST_CASE</b> (&quot;expr TIMES expr&quot;, &quot;[fois]&quot;)</td></tr>
+<tr class="separator:a33d2ad5083286bc4eac08fba67af77db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ac96a474c764297a383b1ef3e2e1c7d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="unit-tests_8cpp.html#a3ac96a474c764297a383b1ef3e2e1c7d">TEST_CASE</a> (&quot;expr DIV expr&quot;, &quot;[DIV]&quot;)</td></tr>
+<tr class="separator:a3ac96a474c764297a383b1ef3e2e1c7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a08018fd3d574f806e3dbf79e6cae8011"><td class="memItemLeft" align="right" valign="top"><a id="a08018fd3d574f806e3dbf79e6cae8011"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>TEST_CASE</b> (&quot;expr ^ expr&quot;, &quot;[POW]&quot;)</td></tr>
+<tr class="separator:a08018fd3d574f806e3dbf79e6cae8011"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7a75a69f0399bc7515444a78c22ae340"><td class="memItemLeft" align="right" valign="top"><a id="a7a75a69f0399bc7515444a78c22ae340"></a>
+file&#160;</td><td class="memItemRight" valign="bottom"><b>close</b> ()</td></tr>
+<tr class="separator:a7a75a69f0399bc7515444a78c22ae340"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56291db6635c76d3ca178ebf715b983d"><td class="memItemLeft" align="right" valign="top"><a id="a56291db6635c76d3ca178ebf715b983d"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>compileCode</b> (&quot;build/test.matc&quot;, &amp;testGraph)</td></tr>
+<tr class="separator:a56291db6635c76d3ca178ebf715b983d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4cb49ca3a0ade20c911595496634dc94"><td class="memItemLeft" align="right" valign="top"><a id="a4cb49ca3a0ade20c911595496634dc94"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>REQUIRE</b> (testGraph.curvesFunctions[&quot;f&quot;](2.)==4.)</td></tr>
+<tr class="separator:a4cb49ca3a0ade20c911595496634dc94"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e3ec860b7bdd5646a95888a39e89589"><td class="memItemLeft" align="right" valign="top"><a id="a8e3ec860b7bdd5646a95888a39e89589"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>REQUIRE</b> (testGraph.curvesFunctions[&quot;f&quot;](-2.)==4.)</td></tr>
+<tr class="separator:a8e3ec860b7bdd5646a95888a39e89589"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d379e5736940cad2c12242c48f69262"><td class="memItemLeft" align="right" valign="top"><a id="a4d379e5736940cad2c12242c48f69262"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>REQUIRE</b> (testGraph.curvesFunctions[&quot;f&quot;](0.)==0.)</td></tr>
+<tr class="separator:a4d379e5736940cad2c12242c48f69262"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4052dce227c3496c222f4560554a769e"><td class="memItemLeft" align="right" valign="top"><a id="a4052dce227c3496c222f4560554a769e"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>REQUIRE</b> (testGraph.curvesFunctions[&quot;f&quot;](1.)==0.)</td></tr>
+<tr class="separator:a4052dce227c3496c222f4560554a769e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c5e00d368ab7a0b45fc85bb4bb3a45a"><td class="memItemLeft" align="right" valign="top"><a id="a0c5e00d368ab7a0b45fc85bb4bb3a45a"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>REQUIRE</b> (testGraph.curvesFunctions[&quot;f&quot;](4.)==2.)</td></tr>
+<tr class="separator:a0c5e00d368ab7a0b45fc85bb4bb3a45a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a54b90c9ac396cc3730ac5a4b5f7b3531"><td class="memItemLeft" align="right" valign="top"><a id="a54b90c9ac396cc3730ac5a4b5f7b3531"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="unit-tests_8cpp.html#a54b90c9ac396cc3730ac5a4b5f7b3531">TEST_CASE</a> (&quot;IF logic '{' instruction '}' ELSE '{' instruction '}'&quot;, &quot;[if]&quot;)</td></tr>
+<tr class="memdesc:a54b90c9ac396cc3730ac5a4b5f7b3531"><td class="mdescLeft">&#160;</td><td class="mdescRight">should return error <br /></td></tr>
+<tr class="separator:a54b90c9ac396cc3730ac5a4b5f7b3531"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a27fde93863d66285bf1b63142d4e2430"><td class="memItemLeft" align="right" valign="top"><a id="a27fde93863d66285bf1b63142d4e2430"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>TEST_CASE</b> (&quot;FOR VAR in '[' expr ':' expr ':' expr ']' '{' instruction '}'&quot;, &quot;[for]&quot;)</td></tr>
+<tr class="separator:a27fde93863d66285bf1b63142d4e2430"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac78b9e40e792eb63b53d2c779bc71972"><td class="memItemLeft" align="right" valign="top"><a id="ac78b9e40e792eb63b53d2c779bc71972"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>TEST_CASE</b> (&quot;WHILE logic '{' instruction '}'&quot;, &quot;[while]&quot;)</td></tr>
+<tr class="separator:ac78b9e40e792eb63b53d2c779bc71972"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a2576b7583e3bb4a817452f579884a095"><td class="memItemLeft" align="right" valign="top"><a id="a2576b7583e3bb4a817452f579884a095"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>file&lt;&lt; &quot;def f: (x) =&gt;</b> { return pow( x , 2 )</td></tr>
+<tr class="separator:a2576b7583e3bb4a817452f579884a095"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2663edf6e3b43761c10ef64233d7493e"><td class="memItemLeft" align="right" valign="top"><a id="a2663edf6e3b43761c10ef64233d7493e"></a>
+draw&#160;</td><td class="memItemRight" valign="bottom"><b>f</b></td></tr>
+<tr class="separator:a2663edf6e3b43761c10ef64233d7493e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6cf06c36668402abd381fcfb42ae0d3c"><td class="memItemLeft" align="right" valign="top"><a id="a6cf06c36668402abd381fcfb42ae0d3c"></a>
+<a class="el" href="classGraphSetup.html">GraphSetup</a>&#160;</td><td class="memItemRight" valign="bottom"><b>testGraph</b></td></tr>
+<tr class="separator:a6cf06c36668402abd381fcfb42ae0d3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Test file to tryout our function. </p>
-</div></div><!-- contents -->
+</div><h2 class="groupheader">Function Documentation</h2>
+<a id="a3ac96a474c764297a383b1ef3e2e1c7d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3ac96a474c764297a383b1ef3e2e1c7d">&#9670;&nbsp;</a></span>TEST_CASE()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TEST_CASE </td>
+          <td>(</td>
+          <td class="paramtype">&quot;expr DIV expr&quot;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&quot;&quot;&#160;</td>
+          <td class="paramname">[DIV]&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>should return error</p>
+
+</div>
+</div>
+</div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

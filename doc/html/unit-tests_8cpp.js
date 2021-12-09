@@ -1,6 +1,25 @@
 var unit_tests_8cpp =
 [
+    [ "__DEBUG__", "unit-tests_8cpp.html#a928bcd4ed1ca26fa864fe5516efa2b20", null ],
     [ "CATCH_CONFIG_MAIN", "unit-tests_8cpp.html#a656eb5868e824d59f489f910db438420", null ],
-    [ "display", "unit-tests_8cpp.html#a1e5b20fed15743656bb6d2e6a6ea6269", null ],
-    [ "TEST_CASE", "unit-tests_8cpp.html#af9b8902ce30a56fe75b743f4aa12cbc5", null ]
+    [ "close", "unit-tests_8cpp.html#a7a75a69f0399bc7515444a78c22ae340", null ],
+    [ "compileCode", "unit-tests_8cpp.html#a56291db6635c76d3ca178ebf715b983d", null ],
+    [ "REQUIRE", "unit-tests_8cpp.html#a8e3ec860b7bdd5646a95888a39e89589", null ],
+    [ "REQUIRE", "unit-tests_8cpp.html#a4d379e5736940cad2c12242c48f69262", null ],
+    [ "REQUIRE", "unit-tests_8cpp.html#a4052dce227c3496c222f4560554a769e", null ],
+    [ "REQUIRE", "unit-tests_8cpp.html#a4cb49ca3a0ade20c911595496634dc94", null ],
+    [ "REQUIRE", "unit-tests_8cpp.html#a0c5e00d368ab7a0b45fc85bb4bb3a45a", null ],
+    [ "TEST_CASE", "unit-tests_8cpp.html#a08018fd3d574f806e3dbf79e6cae8011", null ],
+    [ "TEST_CASE", "unit-tests_8cpp.html#a3ac96a474c764297a383b1ef3e2e1c7d", null ],
+    [ "TEST_CASE", "unit-tests_8cpp.html#a84c07361b6e7d7ceb5a0b3b9d6557c78", null ],
+    [ "TEST_CASE", "unit-tests_8cpp.html#a0f804fc4dd73cb6f4838b6c98baecf43", null ],
+    [ "TEST_CASE", "unit-tests_8cpp.html#a33d2ad5083286bc4eac08fba67af77db", null ],
+    [ "TEST_CASE", "unit-tests_8cpp.html#a27fde93863d66285bf1b63142d4e2430", null ],
+    [ "TEST_CASE", "unit-tests_8cpp.html#a54b90c9ac396cc3730ac5a4b5f7b3531", null ],
+    [ "TEST_CASE", "unit-tests_8cpp.html#a56f816f1d860522730febf6bd7e29ea1", null ],
+    [ "TEST_CASE", "unit-tests_8cpp.html#af9b8902ce30a56fe75b743f4aa12cbc5", null ],
+    [ "TEST_CASE", "unit-tests_8cpp.html#ac78b9e40e792eb63b53d2c779bc71972", null ],
+    [ "f", "unit-tests_8cpp.html#a2663edf6e3b43761c10ef64233d7493e", null ],
+    [ "file<< \"def f: (x) =>", "unit-tests_8cpp.html#a2576b7583e3bb4a817452f579884a095", null ],
+    [ "testGraph", "unit-tests_8cpp.html#a6cf06c36668402abd381fcfb42ae0d3c", null ]
 ];

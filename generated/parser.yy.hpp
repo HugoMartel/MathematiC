@@ -48,9 +48,9 @@ extern int yydebug;
 #line 146 "language/parser.y"
 
     typedef struct adr {
-        int jmp;  // adresse du jmp
-        int jc;  // adrese  du jc
-    } type_adresse;
+        int jmp;  // jmp address
+        int jc;   // jc addres
+    } Address;
   
 
 #line 57 "generated/parser.yy.hpp"
@@ -92,41 +92,43 @@ extern int yydebug;
     PROCEEDFOR = 283,              /* PROCEEDFOR  */
     IF = 284,                      /* IF  */
     ELSE = 285,                    /* ELSE  */
-    WHILE = 286,                   /* WHILE  */
-    TAN = 287,                     /* TAN  */
-    ARCCOS = 288,                  /* ARCCOS  */
-    ARCSIN = 289,                  /* ARCSIN  */
-    ARCTAN = 290,                  /* ARCTAN  */
-    COSH = 291,                    /* COSH  */
-    SINH = 292,                    /* SINH  */
-    TANH = 293,                    /* TANH  */
-    ARCSINH = 294,                 /* ARCSINH  */
-    ARCCOSH = 295,                 /* ARCCOSH  */
-    ARCTANH = 296,                 /* ARCTANH  */
-    SQRT = 297,                    /* SQRT  */
-    LOG = 298,                     /* LOG  */
-    DRAW = 299,                    /* DRAW  */
-    JMP = 300,                     /* JMP  */
-    JMPCOND = 301,                 /* JMPCOND  */
-    ASSIGN = 302,                  /* ASSIGN  */
-    CALL = 303,                    /* CALL  */
-    PLUS = 304,                    /* PLUS  */
-    MIN = 305,                     /* MIN  */
-    TIMES = 306,                   /* TIMES  */
-    DIV = 307,                     /* DIV  */
-    PLUS_EQUAL = 308,              /* PLUS_EQUAL  */
-    MIN_EQUAL = 309,               /* MIN_EQUAL  */
-    TIMES_EQUAL = 310,             /* TIMES_EQUAL  */
-    DIV_EQUAL = 311,               /* DIV_EQUAL  */
-    EQUAL = 312,                   /* EQUAL  */
-    NOT_EQ = 313,                  /* NOT_EQ  */
-    INF_STRICT = 314,              /* INF_STRICT  */
-    SUP_STRICT = 315,              /* SUP_STRICT  */
-    INF = 316,                     /* INF  */
-    SUP = 317,                     /* SUP  */
-    AND = 318,                     /* AND  */
-    OR = 319,                      /* OR  */
-    NOT = 320                      /* NOT  */
+    THEN = 286,                    /* THEN  */
+    WHILE = 287,                   /* WHILE  */
+    TAN = 288,                     /* TAN  */
+    ARCCOS = 289,                  /* ARCCOS  */
+    ARCSIN = 290,                  /* ARCSIN  */
+    ARCTAN = 291,                  /* ARCTAN  */
+    COSH = 292,                    /* COSH  */
+    SINH = 293,                    /* SINH  */
+    TANH = 294,                    /* TANH  */
+    ARCSINH = 295,                 /* ARCSINH  */
+    ARCCOSH = 296,                 /* ARCCOSH  */
+    ARCTANH = 297,                 /* ARCTANH  */
+    SQRT = 298,                    /* SQRT  */
+    LOG = 299,                     /* LOG  */
+    DRAW = 300,                    /* DRAW  */
+    JMP = 301,                     /* JMP  */
+    JMPCOND = 302,                 /* JMPCOND  */
+    ASSIGN = 303,                  /* ASSIGN  */
+    CALL = 304,                    /* CALL  */
+    PLUS = 305,                    /* PLUS  */
+    MIN = 306,                     /* MIN  */
+    OPP = 307,                     /* OPP  */
+    TIMES = 308,                   /* TIMES  */
+    DIV = 309,                     /* DIV  */
+    PLUS_EQUAL = 310,              /* PLUS_EQUAL  */
+    MIN_EQUAL = 311,               /* MIN_EQUAL  */
+    TIMES_EQUAL = 312,             /* TIMES_EQUAL  */
+    DIV_EQUAL = 313,               /* DIV_EQUAL  */
+    EQUAL = 314,                   /* EQUAL  */
+    NOT_EQ = 315,                  /* NOT_EQ  */
+    INF_STRICT = 316,              /* INF_STRICT  */
+    SUP_STRICT = 317,              /* SUP_STRICT  */
+    INF = 318,                     /* INF  */
+    SUP = 319,                     /* SUP  */
+    AND = 320,                     /* AND  */
+    OR = 321,                      /* OR  */
+    NOT = 322                      /* NOT  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -140,9 +142,9 @@ union YYSTYPE
     double dvalue;
     char svalue[50];
     bool bvalue;
-    type_adresse adresse;
+    Address address;
 
-#line 146 "generated/parser.yy.hpp"
+#line 148 "generated/parser.yy.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -167,6 +169,6 @@ int yyparse (void);
      */
     int compileCode(const char *filename, GraphSetup *graph);
 
-#line 171 "generated/parser.yy.hpp"
+#line 173 "generated/parser.yy.hpp"
 
 #endif /* !YY_YY_GENERATED_PARSER_YY_HPP_INCLUDED  */

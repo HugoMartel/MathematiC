@@ -28,7 +28,8 @@ var NAVTREE =
     [ "Libraries used", "index.html#autotoc_md1", null ],
     [ "Interface", "index.html#autotoc_md2", null ],
     [ "Code examples", "index.html#autotoc_md3", null ],
-    [ "Compile", "index.html#autotoc_md4", null ],
+    [ "Documentation", "index.html#autotoc_md4", null ],
+    [ "Compile", "index.html#autotoc_md5", null ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Index", "classes.html", null ],

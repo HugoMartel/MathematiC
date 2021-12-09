@@ -88,8 +88,7 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p><a class="anchor" id="md_README"></a> <img src="./img/banner.png" alt="Logo" class="inline"/></p>
-<p>A small function visualizer langage to be able to quickly draw a Mathematical funtion. <br  />
- In order to learn how to use it, check the Wiki.</p>
+<p>A small function visualizer langage to be able to quickly draw a Mathematical funtion. In order to learn how to use it, check the Manual.</p>
 <h1><a class="anchor" id="autotoc_md1"></a>
 Libraries used</h1>
 <ul>
@@ -107,12 +106,12 @@ Code examples</h1>
 <div class="line">var b = 2;</div>
 <div class="line">var c = 3;</div>
 <div class="line"> </div>
-<div class="line">def fonction1: (x) =&gt; {</div>
+<div class="line">def function1: (x) =&gt; {</div>
 <div class="line">    return a*x^2 + b*x + b;</div>
 <div class="line">}</div>
 <div class="line"> </div>
-<div class="line">draw fonction1 in [-8..8] {</div>
-<div class="line">    color: red,</div>
+<div class="line">draw function1 in [-8,8] {</div>
+<div class="line">    color: [ &quot;red&quot; ],</div>
 <div class="line">    label: &quot;Fonction 1&quot;</div>
 <div class="line">}</div>
 </div><!-- fragment --><div class="fragment"><div class="line">def f: (x) =&gt; {</div>
@@ -126,7 +125,7 @@ Code examples</h1>
 <div class="line">}</div>
 <div class="line"> </div>
 <div class="line">draw f, g {</div>
-<div class="line">    color: green,</div>
+<div class="line">    color: [ &quot;green&quot;, &quot;blue&quot; ],</div>
 <div class="line">    ymin: 0,</div>
 <div class="line">    ymax: 4</div>
 <div class="line">}</div>
@@ -138,10 +137,14 @@ Code examples</h1>
 <div class="line">    }</div>
 <div class="line">}</div>
 <div class="line"> </div>
-<div class="line">draw sg in [-1..1];</div>
+<div class="line">draw sg in [-1,1];</div>
 </div><!-- fragment --><h1><a class="anchor" id="autotoc_md4"></a>
+Documentation</h1>
+<p>As mentionned before, the manual for the language is available in <a href="https://github.com/HugoMartel/Projet_ThL/blob/main/doc/MANUAL.md">doc/MANUAL.md</a>. Examples can also be found in the <code>doc/examples/</code> folder.</p>
+<p>Documentation for the source code has been generated with <a href="https://www.doxygen.nl/index.html">Doxygen</a> and is available at <code>doc/html/index.html</code>.</p>
+<h1><a class="anchor" id="autotoc_md5"></a>
 Compile</h1>
-<p><b>Use commands in the root folder of the cloned repo</b></p>
+<p><b>Use commands in the root folder of the cloned repo</b> <em>Compilation tested on PopOS! 21, Ubuntu 21, Archlinux &amp; Fedora 35</em> <em>Compiles on Windows 11 with WSL2 but has some strange behaviour with CTRL shortcuts...</em></p>
 <p><em>Main Program:</em> </p><div class="fragment"><div class="line">make all</div>
 <div class="line">./MathematiC</div>
 </div><!-- fragment --><p><em>Unit Testing:</em> </p><div class="fragment"><div class="line">make unit_test</div>

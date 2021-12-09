@@ -260,7 +260,7 @@ while condition {
 draw functionName in [interval], otherFunctionName, ... {
     parameter1,
     parameter2,
-    ...    
+    ...
 }
 ```
 
@@ -271,8 +271,8 @@ draw functionName in [interval], otherFunctionName, ... {
 
 ---
 
-## VI. Keyboard Shortcuts  
-You can of course use keyboard shortcuts in the program, some of them can be used everywhere, some other only work when you're typing code, **the following is for AZERTY keyboard**. 
+## VI. Keyboard Shortcuts
+You can of course use keyboard shortcuts in the program, some of them can be used everywhere, some other only work when you're typing code, **the following is for AZERTY keyboard**.
 
 
 | keyboard input |   output    |

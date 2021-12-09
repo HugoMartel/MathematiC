@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['value_44',['value',['../classInstruction.html#aae2a505882171dc7d7f3770424d82ad7',1,'Instruction']]],
-  ['verbose_45',['verbose',['../interface_8cpp.html#aa5173624fc07510bc994c09e0f06e7a9',1,'verbose(std::string &amp;mOutput, bool mIsError, bool read, bool reset):&#160;interface.cpp'],['../interface_8hpp.html#a23817805866240b9728ba40e45c44612',1,'verbose(std::string &amp;, bool=true, bool=false, bool=false):&#160;interface.cpp']]]
+  ['unit_2dtests_2ecpp_46',['unit-tests.cpp',['../unit-tests_8cpp.html',1,'']]],
+  ['updatecurves_47',['updateCurves',['../classGraphSetup.html#aa3b3f0d0d493ab2c5f81ff7b9d7e4d06',1,'GraphSetup']]]
 ];

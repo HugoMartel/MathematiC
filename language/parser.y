@@ -34,7 +34,7 @@
     #define DOUBLE dvalue
     #define STRING svalue
     #define BOOL bvalue
-    #define ADDRESS adresse
+    #define ADDRESS address
 
 
     /*===================*/
@@ -97,7 +97,7 @@
     int add_instruction(const int &c, const double &v=0, const string &n="") {
         /* Check where this instruction should be put */
         if (current_scope.empty()) {
-            error = "Instructions not placed in a function...";
+            error = "Instructions not placed in a function...\n";
             verbose(error);
         } else {
             /* Write to the appropriated function stack */
@@ -145,16 +145,16 @@
 %code requires
   {
     typedef struct adr {
-        int jmp;  // adresse du jmp
-        int jc;  // adrese  du jc
-    } type_adresse;
+        int jmp;  // jmp address
+        int jc;   // jc addres
+    } Address;
   }
 
 %union {
     double dvalue;
     char svalue[50];
     bool bvalue;
-    type_adresse adresse;
+    Address address;
 }
 
 %type <DOUBLE> expr
@@ -194,6 +194,7 @@
 %token <BOOL> PROCEEDFOR
 %token <ADDRESS> IF
 %token <ADDRESS> ELSE
+%token THEN
 %token <ADDRESS> WHILE
 %token <DOUBLE> TAN
 %token <DOUBLE> ARCCOS
@@ -218,6 +219,7 @@
 /* Operators */
 %token <DOUBLE> PLUS
 %token <DOUBLE> MIN
+%token <DOUBLE> OPP
 %token <DOUBLE> TIMES
 %token <DOUBLE> DIV
 %token <DOUBLE> PLUS_EQUAL
@@ -276,7 +278,7 @@ declarations: %empty /* \epsilon */                 { /* End of declarations */
 #endif
 
                                                         } else {
-                                                            error = "Variable " + std::string($3) + " has already been declared...";
+                                                            error = "Variable " + std::string($3) + " has already been declared...\n";
                                                             verbose(error);
                                                         }
                                                     }
@@ -287,7 +289,7 @@ declarations: %empty /* \epsilon */                 { /* End of declarations */
                                                             printf("Declared %s (=0)\n", $3);
 #endif
                                                         } else {
-                                                            error = "Variable " + std::string($3) + " has already been declared...";
+                                                            error = "Variable " + std::string($3) + " has already been declared...\n";
                                                             verbose(error);
                                                         }
                                                     }
@@ -309,14 +311,14 @@ fonctions: DEF VAR ':' '(' parameters ')' arrow '{'     {
                                                                     if (!functions[$2].parameters.count(argQueue.front()))
                                                                         functions[$2].parameters[argQueue.front()] = 0;
                                                                     else {
-                                                                        error = "Parameter already used...";
+                                                                        error = "Parameter already used...\n";
                                                                         verbose(error);
                                                                     }
 
                                                                     argQueue.pop();
                                                                 }
                                                             } else {
-                                                                error = "Function already declared...";
+                                                                error = "Function already declared...\n";
                                                                 verbose(error);
                                                             }
 
@@ -324,8 +326,8 @@ fonctions: DEF VAR ':' '(' parameters ')' arrow '{'     {
                 instruction
           '}' fonctions                                 {
                                                              /* Dequeue since we left the function scope */
-                                                             if (current_scope.empty())
-                                                                 current_scope.pop_back();
+                                                             if (!current_scope.empty())
+                                                                current_scope.pop_back();
                                                              /*Clear the queue in case it is not empty*/
                                                              while (!argQueue.empty())
                                                                  argQueue.pop();
@@ -343,14 +345,14 @@ parameters: VAR                                         {
 /*===========================================================================================*/
 draw_func: VAR in '[' NUM ',' NUM ']'                   {
                                                             /* Load function names to send to the front-end */
-                                                            current_scope[0] = $1;
+                                                            current_scope.push_back($1);
 
                                                             /* Check if the function is already drawn */
                                                             if (functions.count($1)) {
                                                                 functions[$1].xInterval.first = $4;
                                                                 functions[$1].xInterval.second = $6;
                                                             } else {
-                                                                error = "Function already drawn...";
+                                                                error = "Function already declared...\n";
                                                                 verbose(error);
                                                             }
                                                         }
@@ -360,7 +362,7 @@ draw_func: VAR in '[' NUM ',' NUM ']'                   {
 
                                                             /* Check if the function is already drawn */
                                                             if (!functions.count($1)) {
-                                                                error = "Function already drawn...";
+                                                                error = "Function already declared...\n";
                                                                 verbose(error);
                                                             }
                                                         }
@@ -371,10 +373,6 @@ draw_func: VAR in '[' NUM ',' NUM ']'                   {
 affichage: DRAW draw_func '{'
                 draw_args
           '}'                                           {
-                                                            if(!argQueue.empty()){
-                                                                error = "The number of function to draw doesn't match the number of arg";
-                                                                verbose(error);
-                                                            }
 #ifdef __DEBUG__
                                                             for (size_t i = 0; i < current_scope.size(); ++i) {
                                                                 std::cout << i << ": " << current_scope[i] << "\n";
@@ -383,10 +381,6 @@ affichage: DRAW draw_func '{'
                                                         }
 
          | DRAW draw_func ';'                           {
-                                                            if(!argQueue.empty()){
-                                                                error = "The number of function to draw doesn't match the number of arg";
-                                                                verbose(error);
-                                                            }
 #ifdef __DEBUG__
                                                             for (size_t i = 0; i < current_scope.size(); ++i) {
                                                                 std::cout << i << ": " << current_scope[i] << "\n";
@@ -407,6 +401,9 @@ draw_args: color ':' '[' color_args ']'                 { /* getting the multipl
                                                                     argQueue.pop();
                                                                     ++functionToEdit;
                                                                 }
+                                                            } else {
+                                                                error = "The number of function to draw doesn't match the number of arg\n";
+                                                                verbose(error);
                                                             }
                                                         }
          | style ':' '[' style_args ']'                 { /* getting the multiples style args (or not) */
@@ -420,6 +417,9 @@ draw_args: color ':' '[' color_args ']'                 { /* getting the multipl
                                                                     argQueue.pop();
                                                                     ++functionToEdit;
                                                                 }
+                                                            } else {
+                                                                error = "The number of function to draw doesn't match the number of arg\n";
+                                                                verbose(error);
                                                             }
                                                         }
          | label ':' STRING                             { argLabel = $3; argLabel = argLabel.substr(1, argLabel.size()-2); }
@@ -446,7 +446,7 @@ style_args: STYLE_PARAM                                 {
                                                             } else if (!strcmp($1, "\"filled\"")) {
                                                                 argQueue.push("filled");
                                                             } else {
-                                                                error = std::to_string(yylineno) + "Wrong curve style value...";
+                                                                error = std::to_string(yylineno) + "Wrong curve style value...\n";
                                                                 verbose(error);
                                                             }
                                                         }
@@ -486,58 +486,51 @@ color_args: COLOR_PARAM                                 {
 instruction: %empty /* \epsilon */                      { /* No instructions left */ }
            | instruction expr ';'                       { /* new line */ }
            | instruction RETURN expr ';'                {
-               /* The return instruction will jump to the main instruction (out of function) */
-               add_instruction(JMP, -1);
-            }
-           | IF logic '{'                               {
+                                                            /* The return instruction will jump to the main instruction (out of function) */
+                                                            add_instruction(JMP, -1);
+                                                        }
+           | instruction IF logic '{'                   {
 
-                // Je sauvegarde l'endroit actuel pour revenir mofifier l'adresse
-                // lorsqu'elle sera connue (celle du JC)
+                                                            // Save current location to be able to modify it later
+                                                            $2.jc = functions[current_scope[0]].iic;
+                                                            add_instruction(JMPCOND);
+                                                        }
+                instruction                             {
+                                                            // Save current location to be able to modify it later
+                                                            $2.jmp = functions[current_scope[0]].iic;
+                                                            add_instruction(JMP);
 
-                $1.jc = functions[current_scope[0]].iic;
-                add_instruction(JMPCOND);
-}
-            instruction                                 {
-                // Je sauvegarde l'endroit actuel pour revenir mofifier l'adresse
-                // lorsqu'elle sera connue (celle du JMP)
-
-                $1.jmp = functions[current_scope[0]].iic;
-                add_instruction(JMP);
-
-                // Je mets à jour l'adresse du saut conditionnel
-                functions[current_scope[0]].code[$1.jc].value = functions[current_scope[0]].iic;
-}
+                                                            // Update condi jmp now that the instructions passed
+                                                            functions[current_scope[0]].code[$2.jc].value = functions[current_scope[0]].iic;
+                                                        }
              '}' ELSE '{'
-            instruction
+                instruction
              '}'                                        {
-                // Je mets à jour l'adresse du saut inconditionnel
-                 functions[current_scope[0]].code[$1.jmp].value = functions[current_scope[0]].iic;
-}
-           | FOR VAR in '[' expr ':' expr ':' expr ']' '{'  {
-                                                                if (!functions[$2].parameters.count($2)) {
-                                                                    add_instruction(FOR,0,$2);
-                                                                    $1.jmp = functions[current_scope[0]].iic;
-                                                                    add_instruction(PROCEEDFOR,0,$2);
-                                                                    $1.jc = functions[current_scope[0]].iic;
-                                                                    add_instruction(JMPCOND, $1.jc);
-                                                                } else
-                                                                    error = "Parameter already used...";
-                                                                    verbose(error);
+                                                            // Update JMP value for when we don't go to the else part, skip it entirely
+                                                            functions[current_scope[0]].code[$2.jmp].value = functions[current_scope[0]].iic;
+                                                        }
+           | instruction FOR VAR in '[' expr ':' expr ':' expr ']' '{'  {
+
+                                                                add_instruction(FOR,0,$3);
+                                                                $2.jmp = functions[current_scope[0]].iic;
+                                                                add_instruction(PROCEEDFOR,0,$3);
+                                                                $2.jc = functions[current_scope[0]].iic;
+                                                                add_instruction(JMPCOND, $2.jc);
 
                                                             }
-                instruction                                 {   add_instruction(JMP, $1.jmp);   }
+                instruction                                 {   add_instruction(JMP, $2.jmp);   }
              '}'                                            {
                                                                 //! Check stack value
-                                                                functions[current_scope[0]].code[$1.jc].value = functions[current_scope[0]].iic;
+                                                                functions[current_scope[0]].code[$2.jc].value = functions[current_scope[0]].iic;
                                                             }
-           | WHILE logic '{'                                {
+           | instruction WHILE logic '{'                    {
                                                                 // Store instruction vector index of both jumps
-                                                                $1.jc = functions[current_scope[0]].iic;
-                                                                add_instruction(JMPCOND, $1.jc);
+                                                                $2.jc = functions[current_scope[0]].iic;
+                                                                add_instruction(JMPCOND, $2.jc);
                                                             }
                 instruction                                 {   add_instruction(JMP, 0); }
              '}'                                            {
-                                                                functions[current_scope[0]].code[$1.jc].value = functions[current_scope[0]].iic;
+                                                                functions[current_scope[0]].code[$2.jc].value = functions[current_scope[0]].iic;
                                                             }
 
 
@@ -653,6 +646,12 @@ expr: NUM                   {
                                     $$ = atanh($3);
                             }
     | '(' expr ')'          { $$ = $2; }
+    | MIN expr              {
+                                if (!current_scope.empty())
+                                    add_instruction(OPP);
+                                else
+                                    $$ = -$2;
+                            }
     | expr PLUS expr        {
                                 if (!current_scope.empty())
                                     add_instruction(PLUS);
@@ -661,22 +660,22 @@ expr: NUM                   {
                             }
     | expr MIN expr         {
                                 if (!current_scope.empty())
-                                    add_instruction(PLUS);
+                                    add_instruction(MIN);
                                 else
                                     $$ = $1 - $3;
                             }
     | expr TIMES expr       {
                                 if (!current_scope.empty())
-                                    add_instruction(PLUS);
+                                    add_instruction(TIMES);
                                 else
                                     $$ = $1 * $3;
                             }
     | expr DIV expr         {
                                 if (!current_scope.empty())
-                                    add_instruction(PLUS);
+                                    add_instruction(DIV);
                                 else {
                                     if ($3 == 0.) {
-                                        error = "Dividing by 0...";
+                                        error = "Dividing by 0...\n";
                                         verbose(error);
                                     } else
                                         $$ = $1 / $3;
@@ -687,7 +686,7 @@ expr: NUM                   {
                                             add_instruction(POW);
                                         else {
                                             if ($1 == 0. && $3 == 0.) {
-                                                error = "Can't put 0 to the power 0...";
+                                                error = "Can't put 0 to the power 0...\n";
                                                 verbose(error);
                                             } else
                                                 $$ = pow($1,$3);
@@ -698,7 +697,7 @@ expr: NUM                   {
                                             add_instruction(POW);
                                         else {
                                             if ($3 == 0. && $5 == 0.) {
-                                                error = "Can't put 0 to the power 0...";
+                                                error = "Can't put 0 to the power 0...\n";
                                                 verbose(error);
                                             } else
                                                 $$ = pow($3,$5);
@@ -736,7 +735,7 @@ expr: NUM                   {
                                         if (!current_scope.empty()) {
                                             add_instruction(ASSIGN,0,$1);
                                         } else {
-                                            error = "Can only assign to an already declared variable when in a function...";
+                                            error = "Can only assign to an already declared variable when in a function...\n";
                                             verbose(error);
                                         }
                                     }
@@ -747,40 +746,41 @@ expr: NUM                   {
                                             add_instruction(PLUS);
                                             add_instruction(ASSIGN,0,$1);
                                         } else {
-                                            error ="Can only assign to an already declared variable when in a function...";
+                                            error ="Can only assign to an already declared variable when in a function...\n";
                                             verbose(error);
                                         }
                                     }
     | VAR MIN_EQUAL expr            {
                                         /* Only add to the ins vector if we are in a function */
-                                        if (current_scope.empty()) {
+                                        if (!current_scope.empty()) {
                                             add_instruction(VAR,0,$1);
                                             add_instruction(MIN);
+                                            add_instruction(OPP);
                                             add_instruction(ASSIGN,0,$1);
                                         } else {
-                                            error = "Can only assign to an already declared variable when in a function...";
+                                            error = "Can only assign to an already declared variable when in a function...\n";
                                             verbose(error);
                                         }
                                     }
     | VAR TIMES_EQUAL expr          {
                                         /* Only add to the ins vector if we are in a function */
-                                        if (current_scope.empty()) {
+                                        if (!current_scope.empty()) {
                                             add_instruction(VAR,0,$1);
                                             add_instruction(TIMES);
                                             add_instruction(ASSIGN,0,$1);
                                         } else {
-                                            error = "Can only assign to an already declared variable when in a function...";
+                                            error = "Can only assign to an already declared variable when in a function...\n";
                                             verbose(error);
                                         }
                                     }
     | VAR DIV_EQUAL expr            {
                                         /* Only add to the ins vector if we are in a function */
-                                        if (current_scope.empty()) {
+                                        if (!current_scope.empty()) {
                                             add_instruction(VAR,0,$1);
                                             add_instruction(DIV);
                                             add_instruction(ASSIGN,0,$1);
                                         } else {
-                                            error = "Can only assign to an already declared variable when in a function...";
+                                            error = "Can only assign to an already declared variable when in a function...\n";
                                             verbose(error);
                                         }
                                     }
@@ -817,6 +817,7 @@ string print_code(const int &ins) {
         /* Operators */
         case PLUS           : return "+";
         case MIN            : return "-";
+        case OPP            : return "(-)";
         case TIMES          : return "*";
         case DIV            : return "/";
         /* Logic */
@@ -848,6 +849,7 @@ string print_code(const int &ins) {
         case EXP            : return "EXP";
         case LOG            : return "LOG";
         case SQRT           : return "SQRT";
+        /* Variable */
         case VAR            : return "VAR";
         /* Adress Instructions */
         case DEF            : return "DEF";
@@ -878,6 +880,9 @@ double Function::operator()(...)
 
     for (auto &paramValue :this->parameters) {
         paramValue.second = va_arg(params, double);
+#ifdef __DEBUG__
+        printf("%s: %lf\n", paramValue.first.c_str(), paramValue.second);
+#endif
     }
 
     va_end(params);
@@ -891,7 +896,10 @@ double Function::operator()(...)
 
         /* Load the next instruction to execute */
         ins = code[ic];
-        std::vector<std::string> current_functions;
+
+#ifdef __DEBUG__
+        printf("%zu\t%s\t%lf\t%s\n", ic, print_code(ins.code).c_str(), ins.value, ins.name.c_str());
+#endif
 
         switch (ins.code) {
         case PLUS:
@@ -914,9 +922,11 @@ double Function::operator()(...)
 
             if (r2 != 0)
                 pile.push(r1/r2);
-            else
-                error = "Division by 0...";
+            else {
+                error = "Division by 0...\n";
                 verbose(error);
+                return (r1 < 0 ? - DBL_MAX : DBL_MAX);
+            }
             ++ic;
             break;
 
@@ -928,6 +938,14 @@ double Function::operator()(...)
             pile.pop();
 
             pile.push(r1-r2);
+            ++ic;
+            break;
+
+        case OPP:
+            r1 = pile.top();
+            pile.pop();
+
+            pile.push(-r1);
             ++ic;
             break;
 
@@ -1128,10 +1146,10 @@ double Function::operator()(...)
             break;
 
         case POW:               // power
-            r1 = pile.top();
+            r2 = pile.top();
             pile.pop();
 
-            r2 = pile.top();
+            r1 = pile.top();
             pile.pop();
 
             pile.push(std::pow(r1, r2)); // r1^r2
@@ -1155,13 +1173,23 @@ double Function::operator()(...)
         case SQRT:              // square root function
             r1 = pile.top();
             pile.pop();
+            if (r1 < 0.) {
+                error = "Square root of negative value...\n";
+                verbose(error);
+                return -1;
+            }
             pile.push(std::sqrt(r1));
             ++ic;
             break;
 
         case JMP:
             /* Go to the stored address */
-            ic = ins.value;
+            if (ins.value == -1) {
+                /* Return case */
+                ic = code.size();
+            } else {
+                ic = ins.value;
+            }
             break;
 
         case JMPCOND:
@@ -1171,9 +1199,9 @@ double Function::operator()(...)
             if (r1)              // Logic true => go to next instruction
                ++ic;
             else                 // Otherwise  => go to the given address
-               ic = (int)ins.value;
+               ic = ins.value;
 #ifdef __DEBUG__
-            std::cout << "A JMPCOND with logic : " << r1 << " and JMP to : " << (int)ins.value <<" \n";
+            // std::cout << "A JMPCOND with logic : " << r1 << " and JMP to : " << (int)ins.value <<" \n";
 #endif
             break;
 
@@ -1185,56 +1213,94 @@ double Function::operator()(...)
         case ASSIGN:
             r1 = pile.top();    // Récupérer la tête de pile;
             pile.pop();
-            variables[ins.name] = r1;
+            if (this->parameters.count(ins.name))
+                this->parameters.at(ins.name) = r1;
+            else
+                variables.at(ins.name) = r1;
             ++ic;
             break;
 
         case VAR:               // Get the value from a param (local) or a variable (global)
-            if (this->parameters.count(ins.name))
+            if (this->parameters.count(ins.name)) {
                 pile.push(this->parameters.at(ins.name));
-            else
+            } else {
                 pile.push(variables.at(ins.name));
+            }
+
+#ifdef __DEBUG__
+            printf("\t%lf\n", pile.top());
+#endif
             ++ic;
             break;
 
         case FOR:
-            r1 = pile.top();
+            r1 = pile.top();//Stop
             pile.pop();
-            r2 = pile.top();
+            r2 = pile.top();//Step
             pile.pop();
-            r4 = pile.top();
+            r4 = pile.top();//Start
             pile.pop();
-            variables[ins.name] = r4 - r2;
+
+            // Init
+            if (!this->parameters.count(ins.name) && !variables.count(ins.name)) {
+                /* If the parameter didn't exist */
+                this->parameters[ins.name] = r4 - r2;
+            } else if (this->parameters.count(ins.name)) {
+                this->parameters.at(ins.name) = r4 - r2;
+            } else {
+                variables.at(ins.name) = r4;
+            }
+
+#ifdef __DEBUG__
+            std::cout << "r1: " << r1 << ", r2: " << r2 << ", r4: " << r4 << "\n";
+#endif
+
             forArguments[ins.name] = std::make_tuple (r4,r2,r1);
-            if (this->parameters.count(ins.name))
-                pile.push(this->parameters.at(ins.name));
-            else
-                pile.push(variables.at(ins.name));
 
             ++ic;
-        break;
+            break;
 
         case PROCEEDFOR:
-            r1 = std::get<2>(forArguments[ins.name]);
-            r2 = std::get<1>(forArguments[ins.name]);
-            r4 = std::get<0>(forArguments[ins.name]);
-            variables[ins.name] = variables[ins.name] + r2;
-            if(r2>0){
-                pile.push(variables[ins.name] <= r1);
-            }else if(r2<0){
-                pile.push(variables[ins.name] >= r1);
-            }else{
-                pile.push(1);
+            r1 = std::get<2>(forArguments[ins.name]);// Stop
+            r2 = std::get<1>(forArguments[ins.name]);// Step
+            //r4 = std::get<0>(forArguments[ins.name]);// Start
+
+#ifdef __DEBUG__
+            std::cout << "r1: " << r1 << ", r2: " << r2 /*<< ", r4: " << r4*/ << "\n";
+#endif
+
+            if (this->parameters.count(ins.name)) {
+                this->parameters.at(ins.name) += r2;
+                if (this->parameters.at(ins.name) > r1)
+                    pile.push(0.0);// False, trigger the conditionnal JMP
+                else
+                    pile.push(1.0);// True ++ic
+            } else {
+                variables.at(ins.name) += r2;
+                if (variables.at(ins.name) > r1)
+                    pile.push(0.0);// False, trigger the conditionnal JMP
+                else
+                    pile.push(1.0);// True, ++ic
             }
+
             ++ic;
 #ifdef __DEBUG__
-            std::cout << "value of FOR var init : " << r4 << " step : " << r2 << " stop : " << r1 << " variable : "<< variables[ins.name] << " logic :" << pile.top() << "\n";
+            // std::cout << "value of FOR var init : " << r4 << " step : " << r2 << " stop : " << r1 << " variable : "<< variables[ins.name] << " logic :" << pile.top() << "\n";
 #endif
-        break;
+            break;
         }
     }
 
 #ifdef __DEBUG__
+    printf("Stack:\n");
+    double elem;
+    while (!pile.empty()) {
+        elem = pile.top();
+        printf("\t%lf\n", elem);
+        pile.pop();
+
+    }
+    pile.push(elem);
     printf("RETURN %lf;", pile.top());
     printf("\n------- FUNCTION RETURNED OR ENDED ---------\n");
 #endif

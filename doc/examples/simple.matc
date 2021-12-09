@@ -1,0 +1,14 @@
+/**
+ * Simple example for the language
+ */
+
+// Declarations
+var a = 2;
+
+// Definitions
+def f: (x) => {
+    return a * x^2;
+}
+
+// Draw
+draw f;

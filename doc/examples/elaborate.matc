@@ -1,0 +1,54 @@
+/**
+ * More elaborate example, showing the possibilities of the language
+ */
+
+// Declarations
+var a = cos(0);
+var b = 4 * 0.5;
+var c = 3;
+var d = 0;
+
+// Functions
+def func: (x) => {
+    // Function Instructions
+    if a < b {
+        if b > c {
+            a = sin(2);
+            b = x + pi;
+        } else {
+            c = arctan(pi);
+        }
+    } else {
+        a += 2;
+    }
+    return sin(a*x^2 + b*x + c);/* simple polynomial */
+}
+
+def g: (x) => {
+    return tan(x * pi);
+}
+
+def h: (x) => {
+    if x < 0 {
+        return -x;
+    } else {
+        for d in [ 2 : 2 : 10] {
+            x += cos(d);
+        }
+    }
+    while x > 10 {
+        x = x/2;
+    }
+    return x;
+}
+
+// Draw Functions
+draw h, func in [-10,10], g in [-3,2] {
+    color: ["red", "white", "blue"],
+    style: ["filled", "hist", "solid"],
+    label: "Functions",
+    xmin: -9,
+    xmax: 11,
+    ymin: -3,
+    ymax: 8
+}

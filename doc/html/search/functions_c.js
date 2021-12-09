@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['_7efunction_91',['~Function',['../classFunction.html#a3b03f7cf0b75d16edebdda1dee1db6fd',1,'Function']]],
-  ['_7einstruction_92',['~Instruction',['../classInstruction.html#a26eb634480beff1ad7a20235c11f521d',1,'Instruction']]]
+  ['verbose_95',['verbose',['../interface_8cpp.html#aa5173624fc07510bc994c09e0f06e7a9',1,'verbose(std::string &amp;mOutput, bool mIsError, bool read, bool reset):&#160;interface.cpp'],['../interface_8hpp.html#a23817805866240b9728ba40e45c44612',1,'verbose(std::string &amp;, bool=true, bool=false, bool=false):&#160;interface.cpp']]]
 ];
